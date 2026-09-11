@@ -1,0 +1,96 @@
+{
+  "exercises": [
+    { "id": "db_shoulder_press", "displayName": "DB Shoulder Press", "aliases": [] },
+    { "id": "cable_hip_adduction", "displayName": "Cable Hip Adduction", "aliases": [] },
+    { "id": "hack_squat", "displayName": "Hack Squat", "aliases": [] },
+    { "id": "lat_pulldown_crunches", "displayName": "Lat Pulldown Crunches", "aliases": [] },
+    { "id": "leg_extension", "displayName": "Leg Extension", "aliases": ["LegExtension"] },
+    { "id": "cable_lateral_raises", "displayName": "Cable Lateral Raises", "aliases": [] },
+    { "id": "db_flat_press", "displayName": "DB Flat Press", "aliases": [] },
+    { "id": "sa_overhead", "displayName": "SA Overhead", "aliases": [] },
+    { "id": "low_incline_db_press", "displayName": "Low Incline DB Press", "aliases": ["Low Incline DB Pres"] },
+    { "id": "butterfly", "displayName": "Butterfly", "aliases": [] },
+    { "id": "single_arm_pushdown", "displayName": "Single Arm Pushdown", "aliases": [] },
+    { "id": "cable_reverse_curls", "displayName": "Cable Reverse Curls", "aliases": [] },
+    { "id": "upper_back_row", "displayName": "Upper Back Row", "aliases": ["Upperback Row", "Upper back Row"] },
+    { "id": "preacher_curl_machine", "displayName": "Preacher Curl Machine", "aliases": [] },
+    { "id": "rear_delt_flies", "displayName": "Rear Delt Flies", "aliases": [] },
+    { "id": "lying_leg_curl", "displayName": "Lying Leg Curl", "aliases": [] },
+    { "id": "hip_extensions", "displayName": "Hip Extensions", "aliases": [] },
+    { "id": "calf_raises", "displayName": "Calf Raises", "aliases": [] },
+    { "id": "wide_grip_lat_pulldown", "displayName": "Wide Grip Lat Pulldown", "aliases": [] },
+    { "id": "wrist_curls", "displayName": "Wrist Curls", "aliases": [] },
+    { "id": "face_away_curl", "displayName": "Face Away Curl", "aliases": [] },
+    { "id": "cable_shrugs", "displayName": "Cable Shrugs", "aliases": [] },
+    { "id": "db_lat_row", "displayName": "DB Lat Row", "aliases": [] },
+    { "id": "pallof_press", "displayName": "Pallof Press", "aliases": [] },
+    { "id": "pallof_rotation", "displayName": "Pallof Rotation", "aliases": [] },
+    { "id": "external_rotation", "displayName": "External Rotation", "aliases": [] },
+    { "id": "scapula_push_plus", "displayName": "Scapula Push Plus", "aliases": [] }
+  ],
+
+  "programs": [
+    {
+      "id": "anterior_a", "name": "Anterior A", "version": 1, "order": 1,
+      "exercises": [
+        { "exerciseId": "db_shoulder_press",     "heating": "1-2", "workingSets": 1, "reps": "6-8",  "rest": "3-5", "weight": "50K" },
+        { "exerciseId": "cable_hip_adduction",   "heating": "1-2", "workingSets": 1, "reps": "6-10", "rest": "-",   "weight": "65k" },
+        { "exerciseId": "hack_squat",            "heating": "1-3", "workingSets": 2, "reps": "5-8",  "rest": "3-5", "weight": "200k" },
+        { "exerciseId": "lat_pulldown_crunches", "heating": "0",   "workingSets": 2, "reps": "6-10", "rest": "3-5", "weight": "57.5k" },
+        { "exerciseId": "leg_extension",         "heating": "1-2", "workingSets": 1, "reps": "8-12", "rest": "3-5", "weight": "50k" },
+        { "exerciseId": "cable_lateral_raises",  "heating": "1-2", "workingSets": 3, "reps": "6-8",  "rest": "3-5", "weight": "7.5k" },
+        { "exerciseId": "db_flat_press",         "heating": "1-2", "workingSets": 3, "reps": "6-10", "rest": "3-5", "weight": "80k" },
+        { "exerciseId": "sa_overhead",           "heating": "0",   "workingSets": 2, "reps": "6-10", "rest": "3-5", "weight": "17.5k" }
+      ]
+    },
+    {
+      "id": "posterior_a", "name": "Posterior A", "version": 1, "order": 2,
+      "exercises": [
+        { "exerciseId": "upper_back_row",          "heating": "1-2", "workingSets": 2, "reps": "5-7",  "rest": "3-5", "weight": "65k" },
+        { "exerciseId": "preacher_curl_machine",   "heating": "0",   "workingSets": 2, "reps": "6-10", "rest": "3-5", "weight": "15k" },
+        { "exerciseId": "rear_delt_flies",         "heating": "0",   "workingSets": 1, "reps": "6-10", "rest": "3-5", "weight": "10k" },
+        { "exerciseId": "lying_leg_curl",          "heating": "1-2", "workingSets": 2, "reps": "8-12", "rest": "3-5", "weight": "57k" },
+        { "exerciseId": "hip_extensions",          "heating": "1-3", "workingSets": 1, "reps": "5-8",  "rest": "3-5", "weight": "40k" },
+        { "exerciseId": "calf_raises",             "heating": "1-2", "workingSets": 2, "reps": "5-7",  "rest": "3-5", "weight": "150B" },
+        { "exerciseId": "wide_grip_lat_pulldown",  "heating": "1-3", "workingSets": 3, "reps": "6-8",  "rest": "3-5", "weight": "57k" },
+        { "exerciseId": "wrist_curls",             "heating": "0",   "workingSets": 2, "reps": "6-10", "rest": "3-5", "weight": "24.5k" }
+      ]
+    },
+    {
+      "id": "anterior_b", "name": "Anterior B", "version": 1, "order": 3,
+      "exercises": [
+        { "exerciseId": "low_incline_db_press",  "heating": "1-2", "workingSets": 2, "reps": "6-10", "rest": "3-5", "weight": "35k" },
+        { "exerciseId": "db_shoulder_press",     "heating": "1-2", "workingSets": 2, "reps": "6-8",  "rest": "3-5", "weight": "50K" },
+        { "exerciseId": "cable_lateral_raises",  "heating": "1-2", "workingSets": 2, "reps": "6-8",  "rest": "3-5", "weight": "7.5k" },
+        { "exerciseId": "leg_extension",         "heating": "1-2", "workingSets": 3, "reps": "8-12", "rest": "3-5", "weight": "95B" },
+        { "exerciseId": "butterfly",             "heating": "1-2", "workingSets": 1, "reps": "6-10", "rest": "3-5", "weight": "12.5k" },
+        { "exerciseId": "single_arm_pushdown",   "heating": "0",   "workingSets": 3, "reps": "6-10", "rest": "3-5", "weight": "21k" },
+        { "exerciseId": "cable_hip_adduction",   "heating": "1-2", "workingSets": 1, "reps": "6-8",  "rest": "3-5", "weight": "65k" },
+        { "exerciseId": "cable_reverse_curls",   "heating": "0",   "workingSets": 2, "reps": "6-10", "rest": "0",   "weight": "102.5B" }
+      ]
+    },
+    {
+      "id": "posterior_b", "name": "Posterior B", "version": 1, "order": 4,
+      "exercises": [
+        { "exerciseId": "face_away_curl",  "heating": "0",   "workingSets": 2, "reps": "6-10", "rest": "3-5", "weight": "15k" },
+        { "exerciseId": "upper_back_row",  "heating": "1-2", "workingSets": 2, "reps": "5-7",  "rest": "3-5", "weight": "65K" },
+        { "exerciseId": "calf_raises",     "heating": "1-2", "workingSets": 2, "reps": "5-7",  "rest": "3-5", "weight": "150B" },
+        { "exerciseId": "lying_leg_curl",  "heating": "1-2", "workingSets": 2, "reps": "8-12", "rest": "3-5", "weight": "57k" },
+        { "exerciseId": "cable_shrugs",    "heating": "1",   "workingSets": 1, "reps": "6-10", "rest": "-",   "weight": "50B" },
+        { "exerciseId": "db_lat_row",      "heating": "1-3", "workingSets": 2, "reps": "6-8",  "rest": "3-5", "weight": "25K" },
+        { "exerciseId": "rear_delt_flies", "heating": "0",   "workingSets": 1, "reps": "6-10", "rest": "3-5", "weight": "10k" },
+        { "exerciseId": "hip_extensions",  "heating": "1-3", "workingSets": 1, "reps": "5-8",  "rest": "3-5", "weight": "40K" }
+      ]
+    }
+  ],
+
+  "activationRoutine": {
+    "id": "warming", "name": "Warming",
+    "exercises": [
+      { "exerciseId": "pallof_press",      "sets": 2, "reps": 10, "weight": "2" },
+      { "exerciseId": "pallof_rotation",   "sets": 2, "reps": 10, "weight": "2" },
+      { "exerciseId": "external_rotation", "sets": 2, "reps": 10, "weight": "2" },
+      { "exerciseId": "scapula_push_plus", "sets": 2, "reps": 10, "weight": "2" }
+    ]
+  }
+}
