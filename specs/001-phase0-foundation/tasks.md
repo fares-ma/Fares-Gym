@@ -17,10 +17,10 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Initialize Next.js 15 project (App Router) with Tailwind CSS v4 in `/` (root)
-- [ ] T002 [P] Configure standard `shadcn/ui` components setup and `lucide-react`
-- [ ] T003 [P] Add `tremor` for future chart readiness in `tailwind.config.ts` (if v4 config needs adjustments)
-- [ ] T004 Install validation and auth dependencies (`zod`, `argon2`)
+- [X] T001 Initialize Next.js 15 project (App Router) with Tailwind CSS v4 in `/` (root)
+- [X] T002 [P] Configure standard `shadcn/ui` components setup and `lucide-react`
+- [X] T003 [P] Add `tremor` for future chart readiness in `tailwind.config.ts` (if v4 config needs adjustments)
+- [X] T004 Install validation and auth dependencies (`zod`, `argon2`)
 
 ---
 
@@ -30,11 +30,11 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T005 [P] Install `better-sqlite3`, `drizzle-orm`, and `drizzle-kit`
-- [ ] T006 Create DB connection in `src/data/db.ts`
-- [ ] T007 [US3] Create Drizzle schema for `sessions` and `app_settings` in `src/data/schema.ts`
-- [ ] T008 [US3] Create `drizzle.config.ts` for migrations and DB setup
-- [ ] T009 Add `db:push` and `db:generate` scripts to `package.json`
+- [X] T005 [P] Install `better-sqlite3`, `drizzle-orm`, and `drizzle-kit`
+- [X] T006 Create DB connection in `src/data/db.ts`
+- [X] T007 [US3] Create Drizzle schema for `sessions` and `app_settings` in `src/data/schema.ts`
+- [X] T008 [US3] Create `drizzle.config.ts` for migrations and DB setup
+- [X] T009 Add `db:push` and `db:generate` scripts to `package.json`
 
 **Checkpoint**: Foundation ready - DB setup works, user story implementation can now begin in parallel
 
@@ -48,13 +48,13 @@
 
 ### Implementation for User Story 1
 
-- [ ] T010 [P] [US1] Create validation schemas in `src/lib/validations.ts` for login form
-- [ ] T011 [P] [US1] Create password hashing and verification utilities using argon2 in `src/server/hash.ts`
-- [ ] T012 [US1] Create Session management functions (create, validate, destroy) in `src/server/session.ts`
-- [ ] T013 [US1] Create Server Actions for login and logout in `src/server/auth-actions.ts`
-- [ ] T014 [US1] Implement Auth Middleware to protect routes in `src/middleware.ts`
-- [ ] T015 [US1] Build the Login UI page in `app/(auth)/login/page.tsx`
-- [ ] T016 [US1] Implement rate limiting for failed login attempts (in-memory or DB)
+- [X] T010 [P] [US1] Create validation schemas in `src/lib/validations.ts` for login form
+- [X] T011 [P] [US1] Create password hashing and verification utilities using argon2 in `src/server/hash.ts`
+- [X] T012 [US1] Create Session management functions (create, validate, destroy) in `src/server/session.ts`
+- [X] T013 [US1] Create Server Actions for login and logout in `src/server/auth-actions.ts`
+- [X] T014 [US1] Implement Auth Middleware to protect routes in `src/middleware.ts`
+- [X] T015 [US1] Build the Login UI page in `app/(auth)/login/page.tsx`
+- [X] T016 [US1] Implement rate limiting for failed login attempts (in-memory or DB)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently (Login flow works end-to-end)
 
@@ -68,12 +68,12 @@
 
 ### Implementation for User Story 2
 
-- [ ] T017 [P] [US2] Create centralized Egyptian Arabic localization file in `src/i18n/ar.ts`
-- [ ] T018 [P] [US2] Create theme toggle and persistence logic (AppSettings DB or cookies) in `src/lib/theme.ts`
-- [ ] T019 [P] [US2] Create Sidebar component for desktop in `src/ui/Sidebar.tsx`
-- [ ] T020 [P] [US2] Create Bottom Nav component for mobile in `src/ui/BottomNav.tsx`
-- [ ] T021 [US2] Update `app/layout.tsx` to set `dir="rtl"` and inject basic theme providers
-- [ ] T022 [US2] Create the authenticated layout shell `app/(app)/layout.tsx` tying Sidebar and Bottom Nav
+- [X] T017 [P] [US2] Create centralized Egyptian Arabic localization file in `src/i18n/ar.ts`
+- [X] T018 [P] [US2] Create theme toggle and persistence logic (AppSettings DB or cookies) in `src/lib/theme.ts`
+- [X] T019 [P] [US2] Create Sidebar component for desktop in `src/ui/Sidebar.tsx`
+- [X] T020 [P] [US2] Create Bottom Nav component for mobile in `src/ui/BottomNav.tsx`
+- [X] T021 [US2] Update `app/layout.tsx` to set `dir="rtl"` and inject basic theme providers
+- [X] T022 [US2] Create the authenticated layout shell `app/(app)/layout.tsx` tying Sidebar and Bottom Nav
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently. Layout adapts to screen size.
 
@@ -87,9 +87,9 @@
 
 ### Implementation for User Story 4
 
-- [ ] T023 [P] [US4] Create time-aware greeting utility function in `src/lib/utils.ts`
-- [ ] T024 [US4] Create Home page UI with greeting in `app/(app)/page.tsx`
-- [ ] T025 [US4] Add placeholder cards (Gym, Nutrition, Activities) using shadcn Card components in `app/(app)/page.tsx`
+- [X] T023 [P] [US4] Create time-aware greeting utility function in `src/lib/utils.ts`
+- [X] T024 [US4] Create Home page UI with greeting in `app/(app)/page.tsx`
+- [X] T025 [US4] Add placeholder cards (Gym, Nutrition, Activities) using shadcn Card components in `app/(app)/page.tsx`
 
 **Checkpoint**: All user stories should now be independently functional.
 
@@ -99,9 +99,9 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T026 Code cleanup and strict type verification (`tsc --noEmit`)
-- [ ] T027 Run quickstart.md validation scenarios to ensure 100% compliance
-- [ ] T028 Ensure no hardcoded English strings exist in UI components
+- [X] T026 Code cleanup and strict type verification (`tsc --noEmit`)
+- [X] T027 Run quickstart.md validation scenarios to ensure 100% compliance
+- [X] T028 Ensure no hardcoded English strings exist in UI components
 
 ---
 
