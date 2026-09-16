@@ -67,6 +67,8 @@ export const workoutSessions = pgTable("workout_sessions", {
   programVersion: integer("program_version").notNull(),
   startedAt: timestamp("started_at", { mode: "date" }).notNull(),
   completedAt: timestamp("completed_at", { mode: "date" }),
+  status: text("status").notNull().default("in_progress"), // "in_progress" | "completed" | "abandoned"
+  durationSeconds: integer("duration_seconds"),
   notes: text("notes"),
 });
 
@@ -75,7 +77,7 @@ export const performedSets = pgTable("performed_sets", {
   sessionId: text("session_id").notNull(),
   exerciseId: text("exercise_id").notNull(),
   setNumber: integer("set_number").notNull(),
-  type: text("type").notNull(), // "warmup" | "working"
+  type: text("type").notNull(), // "heating" | "working"
   targetReps: text("target_reps"),
   actualReps: integer("actual_reps"),
   targetWeight: jsonb("target_weight").$type<WeightValue>(),
@@ -83,6 +85,8 @@ export const performedSets = pgTable("performed_sets", {
   completed: boolean("completed").default(false),
   timestamp: timestamp("timestamp", { mode: "date" }).notNull(),
 });
+
+export const workoutSetEntries = performedSets;
 
 // 5. الإحماء والتسخين والتفعيل
 export const warmupRules = pgTable("warmup_rules", {
