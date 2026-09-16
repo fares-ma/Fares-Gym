@@ -1,6 +1,6 @@
 <!--
 === Sync Impact Report ===
-Version change: 1.0.0 → 1.1.0
+Version change: 1.0.0 → 2.0.0
 Added principles:
   - VI. Neon Postgres Source of Truth + Mandatory Backup (replaces SQLite on-premises)
 Added sections:
@@ -159,4 +159,4 @@ without explicit written approval from the project owner:
 - **Compliance review**: Every PR or agent-generated changeset MUST be
   verified against these principles before merge.
 
-**Version**: 1.1.0 | **Ratified**: 2026-09-11 | **Last Amended**: 2026-09-16
+**Version**: 2.0.0 | **Ratified**: 2026-09-11 | **Last Amended**: 2026-09-16

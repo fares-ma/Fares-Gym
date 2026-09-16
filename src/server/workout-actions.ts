@@ -158,84 +158,87 @@ export async function logSetEntryAction(input: {
   if (!isAuthed) return { success: false, error: "Unauthorized" };
 
   try {
-    // 1. Fetch entry to verify existence and get exercise/session info
-    const [entry] = await db
-      .select()
-      .from(performedSets)
-      .where(eq(performedSets.id, input.entryId))
-      .limit(1);
-
-    if (!entry) {
-      return { success: false, error: "Set entry not found" };
-    }
-
-    // 2. Verify parent WorkoutSession has status in_progress
-    const [parentSession] = await db
-      .select()
-      .from(workoutSessions)
-      .where(eq(workoutSessions.id, entry.sessionId))
-      .limit(1);
-
-    if (!parentSession || parentSession.status !== "in_progress") {
-      return {
-        success: false,
-        error: "Cannot modify sets in a completed or inactive session",
-      };
-    }
-
-    // 3. Parse weight and validate unit tag against existing entries for this exercise
     const parsedWeight = parseWeight(input.actualWeight);
+    const setStatus = input.status ?? (input.isCompleted ? "completed" : "pending");
+    const isCompleted = setStatus === "completed";
 
-    if (parsedWeight.unitTag) {
-      const exerciseEntries = await db
-        .select({
-          actualWeight: performedSets.actualWeight,
-          targetWeight: performedSets.targetWeight,
-        })
+    await db.transaction(async (tx) => {
+      // 1. Fetch entry to verify existence and get exercise/session info
+      const [entry] = await tx
+        .select()
         .from(performedSets)
+        .where(eq(performedSets.id, input.entryId))
+        .limit(1);
+
+      if (!entry) {
+        throw new Error("Set entry not found");
+      }
+
+      // 2. Verify parent WorkoutSession has status in_progress atomically
+      const [parentSession] = await tx
+        .select()
+        .from(workoutSessions)
         .where(
           and(
-            eq(performedSets.sessionId, entry.sessionId),
-            eq(performedSets.exerciseId, entry.exerciseId)
+            eq(workoutSessions.id, entry.sessionId),
+            eq(workoutSessions.status, "in_progress")
           )
-        );
+        )
+        .limit(1);
 
-      for (const ex of exerciseEntries) {
-        const existingActualTag = (ex.actualWeight as WeightValue)?.unitTag;
-        const existingTargetTag = (ex.targetWeight as WeightValue)?.unitTag;
-        const existingTag = existingActualTag || existingTargetTag;
+      if (!parentSession) {
+        throw new Error("Cannot modify sets in a completed or inactive session");
+      }
 
-        if (existingTag && existingTag !== parsedWeight.unitTag) {
-          // Rule: Unit tags "K" and "B" are opaque machine identifiers and must never be mixed with other tags
-          if (
-            parsedWeight.unitTag === "K" ||
-            parsedWeight.unitTag === "B" ||
-            existingTag === "K" ||
-            existingTag === "B"
-          ) {
-            return {
-              success: false,
-              error: `Unit tag '${parsedWeight.unitTag}' cannot be mixed with existing tag '${existingTag}' for this exercise`,
-            };
+      // 3. Validate unit tag against existing entries for this exercise
+      if (parsedWeight.unitTag) {
+        const exerciseEntries = await tx
+          .select({
+            actualWeight: performedSets.actualWeight,
+            targetWeight: performedSets.targetWeight,
+          })
+          .from(performedSets)
+          .where(
+            and(
+              eq(performedSets.sessionId, entry.sessionId),
+              eq(performedSets.exerciseId, entry.exerciseId)
+            )
+          );
+
+        for (const ex of exerciseEntries) {
+          const existingActualTag = (ex.actualWeight as WeightValue)?.unitTag;
+          const existingTargetTag = (ex.targetWeight as WeightValue)?.unitTag;
+          const existingTag = existingActualTag || existingTargetTag;
+
+          if (existingTag && existingTag !== parsedWeight.unitTag) {
+            // Rule: Unit tags "K" and "B" are opaque machine identifiers and must never be mixed with other tags
+            if (
+              parsedWeight.unitTag === "K" ||
+              parsedWeight.unitTag === "B" ||
+              existingTag === "K" ||
+              existingTag === "B"
+            ) {
+              throw new Error(
+                `Unit tag '${parsedWeight.unitTag}' cannot be mixed with existing tag '${existingTag}' for this exercise`
+              );
+            }
           }
         }
       }
-    }
 
-    const setStatus = input.status ?? (input.isCompleted ? "completed" : "pending");
-    const isCompleted = setStatus === "completed" || input.isCompleted === true;
-
-    await db
-      .update(performedSets)
-      .set({
-        actualWeight: parsedWeight,
-        actualReps: input.actualReps,
-        completed: isCompleted,
-        status: setStatus,
-        notes: input.notes !== undefined ? input.notes : entry.notes,
-        timestamp: new Date(),
-      })
-      .where(eq(performedSets.id, input.entryId));
+      // 4. Update the set entry atomically
+      await tx
+        .update(performedSets)
+        .set({
+          actualWeight: parsedWeight,
+          actualReps: input.actualReps,
+          completed: isCompleted,
+          status: setStatus,
+          notes: input.notes !== undefined ? input.notes : entry.notes,
+          timestamp: new Date(),
+        })
+        .where(eq(performedSets.id, input.entryId));
+    });
 
     revalidatePath("/workout/active");
     return { success: true };
