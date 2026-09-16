@@ -6,13 +6,13 @@
 موقع شخصي لمستخدم واحد بس (فارس) — مش SaaS، مفيش accounts متعددة، مفيش social features. بيتابع:
 تمارين الجيم (برامج + جلسات + progress) — السعرات والأكل — الأنشطة/الجدول/التذكيرات — تقدم عام عبر الوقت.
 
-## الـ Stack (ثابت — محدش يغيّره من غير ما ياخد موافقة صريحة)
+## الـ Stack (ثابت — بعد اعتماد الترقية لـ Vercel + Neon)
 - **Next.js 15 (App Router) + TypeScript strict** — frontend وbackend في نفس المشروع (API عبر Route Handlers / Server Actions)
 - **Tailwind CSS v4 + shadcn/ui** للـ UI، **Tremor** للـ charts
-- **SQLite (better-sqlite3) + Drizzle ORM** + drizzle-kit migrations — ملف واحد، مفيش خدمة DB منفصلة
+- **PostgreSQL (Neon / Vercel Postgres) + Drizzle ORM** + drizzle-kit push/migrations — سحابي وسريع ومجاني بالكامل
 - **Zod** لكل input/output validation
-- **Auth مخصص وبسيط**: argon2/bcrypt hash + HTTP-only signed session cookie. مفيش NextAuth، مفيش OAuth، مفيش multi-user roles — مستخدم واحد بس
-- **Hosting**: home server (Ubuntu، IP ثابت 192.168.170.5) + **Tailscale Serve** للوصول الآمن من أي جهاز، **PM2** لإدارة الـ process. **من غير Docker** إلا لو فعلاً اتحطت ضرورة واضحة وطلبت الموافقة
+- **Auth مخصص وبسيط**: bcryptjs hash + HTTP-only signed session cookie. مفيش NextAuth، مفيش OAuth، مفيش multi-user roles — مستخدم واحد بس (فارس)
+- **Hosting**: **Vercel** (استضافة سحابية مجانية ودائمة) مع ربط تلقائي بـ GitHub
 - **PWA**: قابل للتثبيت على الموبايل + caching للقراءة أوفلاين
 
 ## قواعد صارمة (Data Integrity — لا نقاش فيها)
@@ -21,8 +21,8 @@
 3. أي تعديل على `WorkoutProgram` بيعمل نسخة جديدة (`programVersion + 1`). الجلسات القديمة تفضل مربوطة بالنسخة اللي كانت شغالة وقتها — تعديل البرنامج **ميغيرش** تاريخ الجلسات القديمة.
 4. **ممنوع** تخترع أو "تقترح" calorie targets / macro targets / أي نصيحة طبية أو تدريبية. القيم دي بتتدخل يدوي من فارس فقط. أي حاسبة TDEE (لو اتعملت) لازم توصف كصيغة عامة قياسية — مش نصيحة مخصصة — وتظهر كرقم مقترح قابل للتعديل، أبدًا auto-apply.
 5. الملاحظات/الذاكرة الشخصية ما تتسجلش من الـ AI من غير تأكيد صريح من فارس (tap/زر Confirm).
-6. SQLite على السيرفر هو الـ **source of truth** الوحيد. باك أب دوري (cron) إجباري من أول Phase 0 — راجع قسم Backup في SPEC.md.
-7. الـ secrets (session secret، أي API key مستقبلي) في env vars بس. ولا سر يتحط جوا الكود أو يتعمله commit.
+6. Neon Postgres السحابي هو الـ **source of truth** الوحيد. الباك أب تصدير JSON دوري وVercel Cron.
+7. الـ secrets (session secret، أي API key مستقبلي، DATABASE_URL) في env vars بس. ولا سر يتحط جوا الكود أو يتعمله commit.
 8. أي شاشة/API بتتعامل مع بيانات المستخدم لازم تكون خلف الـ auth. مفيش endpoint مفتوح بدون session.
 
 ## بروتوكول الشغل

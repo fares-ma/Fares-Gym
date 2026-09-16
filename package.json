@@ -9,11 +9,11 @@
     "lint": "next lint",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx --env-file=.env src/data/seed.ts"
   },
   "dependencies": {
-    "@libsql/client": "^0.18.0",
-    "@node-rs/argon2": "^2.2.1",
+    "@neondatabase/serverless": "^0.10.0",
     "@tremor/react": "^3.18.7",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",

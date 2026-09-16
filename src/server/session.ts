@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { cookies } from "next/headers";
-import { db, initializeDatabase } from "../data/db";
+import { db } from "../data/db";
 import { sessions } from "../data/schema";
 import { eq, and, gt } from "drizzle-orm";
 
@@ -17,7 +17,6 @@ function hashToken(token: string): string {
  * Creates a new session in DB and sets an HTTP-only cookie.
  */
 export async function createSession(): Promise<string> {
-  await initializeDatabase();
   const rawToken = crypto.randomBytes(32).toString("hex");
   const tokenHashed = hashToken(rawToken);
   const sessionId = crypto.randomUUID();
@@ -51,7 +50,6 @@ export async function createSession(): Promise<string> {
  * Validates the session from the cookie and implements sliding window renewal.
  */
 export async function validateSession(): Promise<boolean> {
-  await initializeDatabase();
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get(COOKIE_NAME)?.value;
 

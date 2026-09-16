@@ -2,7 +2,7 @@
 
 import crypto from "crypto";
 import { headers } from "next/headers";
-import { db, initializeDatabase } from "../data/db";
+import { db } from "../data/db";
 import { loginAttempts } from "../data/schema";
 import { eq, and, gt, desc } from "drizzle-orm";
 import { verifyPassword } from "./hash";
@@ -27,7 +27,6 @@ async function getClientIp(): Promise<string> {
 }
 
 async function isRateLimited(ip: string): Promise<boolean> {
-  await initializeDatabase();
   const now = new Date();
   const windowStart = new Date(now.getTime() - RATE_LIMIT_WINDOW_MS);
 
@@ -47,7 +46,6 @@ async function isRateLimited(ip: string): Promise<boolean> {
 }
 
 async function recordAttempt(ip: string, success: boolean): Promise<void> {
-  await initializeDatabase();
   await db.insert(loginAttempts).values({
     id: crypto.randomUUID(),
     ipAddress: ip,
