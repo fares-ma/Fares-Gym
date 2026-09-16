@@ -85,19 +85,18 @@ explicit user confirmation (tap / Confirm button).
 **Rationale**: The user owns their data narrative; nothing should appear in
 their record that they did not consciously approve.
 
-### VI. SQLite Source of Truth + Mandatory Backup
+### VI. Neon Postgres Source of Truth + Mandatory Backup
 
-SQLite on the server is the **single source of truth**.
+Neon Serverless PostgreSQL in the cloud is the **single source of truth**.
 
-- Automated periodic backups (cron) MUST be operational from Phase 0 onward.
-- Backup strategy and retention policy are defined in `docs/SPEC.md` §Backup.
+- Automated periodic backups and JSON data export MUST be operational.
+- Backup strategy and retention policy are defined in `SPEC.md`.
 
-**Rationale**: A single-file database with no external service simplifies
-operations but demands proactive backup to prevent catastrophic data loss.
+**Rationale**: A serverless managed cloud database provides persistent, reliable multi-device access and zero local hardware maintenance.
 
 ### VII. Secrets in Environment Variables Only
 
-Session secrets, API keys, and any future credentials MUST reside exclusively
+Session secrets, API keys, and database connection strings MUST reside exclusively
 in environment variables.
 
 - No secret value may be hard-coded in source files or committed to version
@@ -126,12 +125,11 @@ without explicit written approval from the project owner:
 | Framework    | Next.js 15 (App Router) + TypeScript (strict mode)    |
 | UI           | Tailwind CSS v4 + shadcn/ui                           |
 | Charts       | Tremor                                                |
-| Database     | SQLite via better-sqlite3 + Drizzle ORM               |
+| Database     | PostgreSQL via Neon Serverless + Drizzle ORM          |
 | Migrations   | drizzle-kit                                           |
 | Validation   | Zod (all input/output boundaries)                     |
-| Auth         | Custom: argon2/bcrypt hash + HTTP-only signed cookie   |
-| Hosting      | Home server (Ubuntu) + Tailscale Serve + PM2          |
-| Containers   | **No Docker** unless necessity is proven and approved  |
+| Auth         | Custom: bcryptjs hash + HTTP-only signed cookie       |
+| Hosting      | Vercel (Hobby tier, serverless)                       |
 | Installable  | PWA (mobile-installable + offline read caching)       |
 
 - Frontend and backend live in the same Next.js project (Route Handlers /
