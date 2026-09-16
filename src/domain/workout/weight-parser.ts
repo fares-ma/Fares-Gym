@@ -25,8 +25,8 @@ export function parseWeight(raw: string | null | undefined): WeightValue {
   }
 
   const clean = raw.trim();
-  // Match digits with optional decimals, followed by optional unit suffix
-  const match = clean.match(/^([0-9.]+)\s*([a-zA-Z]*)$/);
+  // Match digits with at most one decimal point, followed by optional unit suffix
+  const match = clean.match(/^([0-9]+(?:\.[0-9]+)?)\s*([a-zA-Z]*)$/);
 
   if (!match) {
     return {

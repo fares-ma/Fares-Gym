@@ -33,7 +33,7 @@ export function StartProgramButton({ programId, label }: StartProgramButtonProps
       className="flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg shadow-emerald-950/40 disabled:opacity-50"
     >
       <Play className="w-4 h-4 fill-current" />
-      <span>{isPending ? ar.auth.loggingIn : label}</span>
+      <span>{isPending ? ar.workout.active.saving : label}</span>
     </button>
   );
 }

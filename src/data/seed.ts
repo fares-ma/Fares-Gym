@@ -1,18 +1,7 @@
 import { db } from "./db";
-import { exercises, workoutPrograms, workoutProgramExercises, WeightValue } from "./schema";
+import { exercises, workoutPrograms, workoutProgramExercises } from "./schema";
+import { parseWeight } from "../domain/workout/weight-parser";
 import gymData from "../../gym-data.json";
-
-function parseSeedWeight(raw: string): WeightValue {
-  const match = raw.match(/^([0-9.]+)\s*([a-zA-Z]*)$/);
-  const num = match ? parseFloat(match[1]) : 0;
-  const tag = match && match[2] ? match[2].toUpperCase() : "";
-  return {
-    rawWeight: raw,
-    numericValue: num,
-    unitTag: tag || "K",
-    isUnitConfirmed: true,
-  };
-}
 
 export async function seedDatabase() {
   console.log("Seeding database from gym-data.json...");
@@ -59,7 +48,7 @@ export async function seedDatabase() {
           workingSets: e.workingSets,
           targetReps: e.reps,
           rest: e.rest,
-          defaultWeight: parseSeedWeight(e.weight),
+          defaultWeight: parseWeight(e.weight),
         })
         .onConflictDoNothing();
     }

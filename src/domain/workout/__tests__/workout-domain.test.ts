@@ -40,6 +40,16 @@ describe("Weight Parser Domain Logic", () => {
     assert.equal(formatWeight({ rawWeight: "50K", numericValue: 50, unitTag: "K", isUnitConfirmed: true }), "50K");
     assert.equal(formatWeight(null), "-");
   });
+
+  it("should reject malformed decimal values like '1.2.3' and '.'", () => {
+    const res1 = parseWeight("1.2.3K");
+    assert.equal(res1.numericValue, 0);
+    assert.equal(res1.isUnitConfirmed, false);
+
+    const res2 = parseWeight(".K");
+    assert.equal(res2.numericValue, 0);
+    assert.equal(res2.isUnitConfirmed, false);
+  });
 });
 
 describe("Program Rotation Engine", () => {

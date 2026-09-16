@@ -1,20 +1,12 @@
 <!--
 === Sync Impact Report ===
-Version change: (new) → 1.0.0
+Version change: 1.0.0 → 1.1.0
 Added principles:
-  - I. Opaque Weight Units
-  - II. Immutable Completed Sessions
-  - III. Program Versioning
-  - IV. No Medical / Nutritional Advice
-  - V. Explicit User Consent
-  - VI. SQLite Source of Truth + Mandatory Backup
-  - VII. Secrets in Env Only
-  - VIII. Authenticated Endpoints Only
+  - VI. Neon Postgres Source of Truth + Mandatory Backup (replaces SQLite on-premises)
 Added sections:
-  - Stack Constraints
-  - Development Workflow
-  - Governance
-Removed sections: (none — first ratification)
+  - Stack Constraints: Updated to Vercel (Hobby tier) + Neon Serverless PostgreSQL + bcryptjs
+Amendments:
+  - Approved migration from self-hosted Ubuntu/SQLite to Vercel + Neon Serverless PostgreSQL deployment.
 Deferred TODOs: (none)
 -->
 
@@ -167,4 +159,4 @@ without explicit written approval from the project owner:
 - **Compliance review**: Every PR or agent-generated changeset MUST be
   verified against these principles before merge.
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-11 | **Last Amended**: 2026-09-11
+**Version**: 1.1.0 | **Ratified**: 2026-09-11 | **Last Amended**: 2026-09-16

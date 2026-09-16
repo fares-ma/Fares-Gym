@@ -110,7 +110,7 @@ export function SetEntryRow({
           <input
             type="number"
             value={reps}
-            onChange={(e) => setReps(parseInt(e.target.value, 10) || 0)}
+            onChange={(e) => setReps(Math.max(1, parseInt(e.target.value, 10) || 1))}
             disabled={isCompleted || isPending}
             min={1}
             max={99}

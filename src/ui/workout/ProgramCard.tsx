@@ -75,7 +75,7 @@ export function ProgramCard({ program }: ProgramCardProps) {
           } disabled:opacity-50`}
         >
           <Play className="w-4 h-4 fill-current" />
-          <span>{isPending ? ar.auth.loggingIn : ar.workout.rotation.startCTA}</span>
+          <span>{isPending ? ar.workout.active.saving : ar.workout.rotation.startCTA}</span>
         </button>
 
         <Link

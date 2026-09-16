@@ -10,7 +10,7 @@ This guide documents the end-to-end verification steps for testing Phase 1 in th
 ## Verification Scenarios
 
 ### Scenario 1: Verify Program List & Rotation Highlight
-1. Open browser to `http://localhost:3000/login` and log in with username `fares` and password `Fars#agwa2468100`.
+1. Open browser to `http://localhost:3000/login` and log in with your configured username (`fares`) and password from `.env`.
 2. Click on the **Workout** tab from the sidebar or bottom navigation (`/workout`).
 3. **Expected Outcome**:
    - Four programs appear: `Anterior A`, `Posterior A`, `Anterior B`, `Posterior B`.

@@ -44,6 +44,7 @@ export async function startWorkoutSessionAction(programId: string): Promise<{
       .select()
       .from(workoutPrograms)
       .where(eq(workoutPrograms.id, programId))
+      .orderBy(desc(workoutPrograms.version))
       .limit(1);
 
     if (!program) {
@@ -53,74 +54,85 @@ export async function startWorkoutSessionAction(programId: string): Promise<{
     const sessionId = crypto.randomUUID();
     const startedAt = new Date();
 
-    // 3. Create the workout_sessions record
-    await db.insert(workoutSessions).values({
-      id: sessionId,
-      programId: program.id,
-      programVersion: program.version,
-      status: "in_progress",
-      startedAt,
-    });
+    // 3. Create the workout_sessions record and initial sets in a single transaction
+    await db.transaction(async (tx) => {
+      await tx.insert(workoutSessions).values({
+        id: sessionId,
+        programId: program.id,
+        programVersion: program.version,
+        status: "in_progress",
+        startedAt,
+      });
 
-    // 4. Fetch the program's exercise sequence
-    const progExercises = await db
-      .select()
-      .from(workoutProgramExercises)
-      .where(
-        and(
-          eq(workoutProgramExercises.programId, program.id),
-          eq(workoutProgramExercises.programVersion, program.version)
+      // 4. Fetch the program's exercise sequence
+      const progExercises = await tx
+        .select()
+        .from(workoutProgramExercises)
+        .where(
+          and(
+            eq(workoutProgramExercises.programId, program.id),
+            eq(workoutProgramExercises.programVersion, program.version)
+          )
         )
-      )
-      .orderBy(workoutProgramExercises.orderIndex);
+        .orderBy(workoutProgramExercises.orderIndex);
 
-    // 5. Pre-populate set entries for each exercise
-    for (const pe of progExercises) {
-      const defaultWeight = (pe.defaultWeight as WeightValue) || {
-        rawWeight: "0K",
-        numericValue: 0,
-        unitTag: "K",
-        isUnitConfirmed: true,
-      };
+      // 5. Pre-populate set entries for each exercise
+      const setsToInsert = [];
+      for (const pe of progExercises) {
+        const defaultWeight = (pe.defaultWeight as WeightValue) || {
+          rawWeight: "0K",
+          numericValue: 0,
+          unitTag: "K",
+          isUnitConfirmed: true,
+        };
 
-      // Heating sets
-      const warmupSets = calculateWarmupSets(defaultWeight, pe.heating);
-      let setCounter = 1;
+        // Heating sets
+        const warmupSets = calculateWarmupSets(defaultWeight, pe.heating);
+        let setCounter = 1;
 
-      for (const ws of warmupSets) {
-        await db.insert(performedSets).values({
-          id: crypto.randomUUID(),
-          sessionId,
-          exerciseId: pe.exerciseId,
-          setNumber: setCounter++,
-          type: "heating",
-          targetWeight: ws.weight,
-          actualWeight: ws.weight,
-          targetReps: ws.suggestedReps,
-          actualReps: parseInt(ws.suggestedReps.split("-")[0], 10) || 6,
-          completed: false,
-          timestamp: new Date(),
-        });
+        for (const ws of warmupSets) {
+          setsToInsert.push({
+            id: crypto.randomUUID(),
+            sessionId,
+            exerciseId: pe.exerciseId,
+            setNumber: setCounter++,
+            type: "heating",
+            targetWeight: ws.weight,
+            actualWeight: ws.weight,
+            targetReps: ws.suggestedReps,
+            actualReps: parseInt(ws.suggestedReps.split("-")[0], 10) || 6,
+            completed: false,
+            status: "pending",
+            notes: null,
+            timestamp: new Date(),
+          });
+        }
+
+        // Working sets
+        const workingTargetReps = parseInt(pe.targetReps.split("-")[0], 10) || 8;
+        for (let w = 0; w < pe.workingSets; w++) {
+          setsToInsert.push({
+            id: crypto.randomUUID(),
+            sessionId,
+            exerciseId: pe.exerciseId,
+            setNumber: setCounter++,
+            type: "working",
+            targetWeight: defaultWeight,
+            actualWeight: defaultWeight,
+            targetReps: pe.targetReps,
+            actualReps: workingTargetReps,
+            completed: false,
+            status: "pending",
+            notes: null,
+            timestamp: new Date(),
+          });
+        }
       }
 
-      // Working sets
-      const workingTargetReps = parseInt(pe.targetReps.split("-")[0], 10) || 8;
-      for (let w = 0; w < pe.workingSets; w++) {
-        await db.insert(performedSets).values({
-          id: crypto.randomUUID(),
-          sessionId,
-          exerciseId: pe.exerciseId,
-          setNumber: setCounter++,
-          type: "working",
-          targetWeight: defaultWeight,
-          actualWeight: defaultWeight,
-          targetReps: pe.targetReps,
-          actualReps: workingTargetReps,
-          completed: false,
-          timestamp: new Date(),
-        });
+      if (setsToInsert.length > 0) {
+        await tx.insert(performedSets).values(setsToInsert);
       }
-    }
+    });
 
     revalidatePath("/workout");
     revalidatePath("/workout/active");
@@ -138,20 +150,89 @@ export async function logSetEntryAction(input: {
   entryId: string;
   actualWeight: string;
   actualReps: number;
-  isCompleted: boolean;
+  isCompleted?: boolean;
+  status?: "pending" | "completed" | "skipped";
+  notes?: string;
 }): Promise<{ success: boolean; error?: string }> {
   const isAuthed = await validateSession();
   if (!isAuthed) return { success: false, error: "Unauthorized" };
 
   try {
+    // 1. Fetch entry to verify existence and get exercise/session info
+    const [entry] = await db
+      .select()
+      .from(performedSets)
+      .where(eq(performedSets.id, input.entryId))
+      .limit(1);
+
+    if (!entry) {
+      return { success: false, error: "Set entry not found" };
+    }
+
+    // 2. Verify parent WorkoutSession has status in_progress
+    const [parentSession] = await db
+      .select()
+      .from(workoutSessions)
+      .where(eq(workoutSessions.id, entry.sessionId))
+      .limit(1);
+
+    if (!parentSession || parentSession.status !== "in_progress") {
+      return {
+        success: false,
+        error: "Cannot modify sets in a completed or inactive session",
+      };
+    }
+
+    // 3. Parse weight and validate unit tag against existing entries for this exercise
     const parsedWeight = parseWeight(input.actualWeight);
+
+    if (parsedWeight.unitTag) {
+      const exerciseEntries = await db
+        .select({
+          actualWeight: performedSets.actualWeight,
+          targetWeight: performedSets.targetWeight,
+        })
+        .from(performedSets)
+        .where(
+          and(
+            eq(performedSets.sessionId, entry.sessionId),
+            eq(performedSets.exerciseId, entry.exerciseId)
+          )
+        );
+
+      for (const ex of exerciseEntries) {
+        const existingActualTag = (ex.actualWeight as WeightValue)?.unitTag;
+        const existingTargetTag = (ex.targetWeight as WeightValue)?.unitTag;
+        const existingTag = existingActualTag || existingTargetTag;
+
+        if (existingTag && existingTag !== parsedWeight.unitTag) {
+          // Rule: Unit tags "K" and "B" are opaque machine identifiers and must never be mixed with other tags
+          if (
+            parsedWeight.unitTag === "K" ||
+            parsedWeight.unitTag === "B" ||
+            existingTag === "K" ||
+            existingTag === "B"
+          ) {
+            return {
+              success: false,
+              error: `Unit tag '${parsedWeight.unitTag}' cannot be mixed with existing tag '${existingTag}' for this exercise`,
+            };
+          }
+        }
+      }
+    }
+
+    const setStatus = input.status ?? (input.isCompleted ? "completed" : "pending");
+    const isCompleted = setStatus === "completed" || input.isCompleted === true;
 
     await db
       .update(performedSets)
       .set({
         actualWeight: parsedWeight,
         actualReps: input.actualReps,
-        completed: input.isCompleted,
+        completed: isCompleted,
+        status: setStatus,
+        notes: input.notes !== undefined ? input.notes : entry.notes,
         timestamp: new Date(),
       })
       .where(eq(performedSets.id, input.entryId));
@@ -182,8 +263,8 @@ export async function completeWorkoutSessionAction(
       .limit(1);
 
     if (!session) return { success: false, error: "Session not found" };
-    if (session.status === "completed") {
-      return { success: false, error: "Session is already completed and immutable" };
+    if (session.status !== "in_progress") {
+      return { success: false, error: "Session is already completed or inactive" };
     }
 
     const completedAt = new Date();
@@ -191,7 +272,8 @@ export async function completeWorkoutSessionAction(
       (completedAt.getTime() - new Date(session.startedAt).getTime()) / 1000
     );
 
-    await db
+    // Atomically filter by both sessionId and status "in_progress"
+    const updatedRows = await db
       .update(workoutSessions)
       .set({
         status: "completed",
@@ -199,7 +281,20 @@ export async function completeWorkoutSessionAction(
         durationSeconds,
         notes: notes || null,
       })
-      .where(eq(workoutSessions.id, sessionId));
+      .where(
+        and(
+          eq(workoutSessions.id, sessionId),
+          eq(workoutSessions.status, "in_progress")
+        )
+      )
+      .returning({ id: workoutSessions.id });
+
+    if (!updatedRows || updatedRows.length === 0) {
+      return {
+        success: false,
+        error: "Failed to complete session: session was not in progress",
+      };
+    }
 
     revalidatePath("/workout");
     revalidatePath("/workout/history");

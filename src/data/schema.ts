@@ -1,4 +1,4 @@
-import { pgTable, text, integer, real, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, real, boolean, timestamp, jsonb, primaryKey } from "drizzle-orm/pg-core";
 
 // 1. نوع الوزن المخصص المعتم (Opaque Unit Tags: K / B)
 export type WeightValue = {
@@ -39,13 +39,17 @@ export const exercises = pgTable("exercises", {
   personalNotes: text("personal_notes"),
 });
 
-export const workoutPrograms = pgTable("workout_programs", {
-  id: text("id").primaryKey(), // anterior_a
-  name: text("name").notNull(),
-  version: integer("version").notNull().default(1),
-  orderIndex: integer("order_index").notNull(),
-  isActive: boolean("is_active").default(true),
-});
+export const workoutPrograms = pgTable(
+  "workout_programs",
+  {
+    id: text("id").notNull(), // anterior_a
+    name: text("name").notNull(),
+    version: integer("version").notNull().default(1),
+    orderIndex: integer("order_index").notNull(),
+    isActive: boolean("is_active").default(true),
+  },
+  (table) => [primaryKey({ columns: [table.id, table.version] })]
+);
 
 export const workoutProgramExercises = pgTable("workout_program_exercises", {
   id: text("id").primaryKey(),
@@ -83,6 +87,8 @@ export const performedSets = pgTable("performed_sets", {
   targetWeight: jsonb("target_weight").$type<WeightValue>(),
   actualWeight: jsonb("actual_weight").$type<WeightValue>(),
   completed: boolean("completed").default(false),
+  status: text("status").notNull().default("pending"), // "pending" | "completed" | "skipped"
+  notes: text("notes"),
   timestamp: timestamp("timestamp", { mode: "date" }).notNull(),
 });
 

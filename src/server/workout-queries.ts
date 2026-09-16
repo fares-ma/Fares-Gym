@@ -91,14 +91,23 @@ export async function getWorkoutProgramsWithRotation(): Promise<{
 /**
  * Fetches details for a single workout program including all exercises in order.
  */
-export async function getProgramDetails(programId: string): Promise<{
+export async function getProgramDetails(
+  programId: string,
+  version?: number
+): Promise<{
   program: typeof workoutPrograms.$inferSelect;
   exercises: ExerciseTarget[];
 } | null> {
+  const whereCondition =
+    version !== undefined
+      ? and(eq(workoutPrograms.id, programId), eq(workoutPrograms.version, version))
+      : eq(workoutPrograms.id, programId);
+
   const [program] = await db
     .select()
     .from(workoutPrograms)
-    .where(eq(workoutPrograms.id, programId))
+    .where(whereCondition)
+    .orderBy(desc(workoutPrograms.version))
     .limit(1);
 
   if (!program) return null;
@@ -162,8 +171,11 @@ export async function getActiveWorkoutSession() {
 
   if (!activeSession) return null;
 
-  // Fetch program info
-  const details = await getProgramDetails(activeSession.programId);
+  // Fetch program info for the locked version recorded on the active session
+  const details = await getProgramDetails(
+    activeSession.programId,
+    activeSession.programVersion
+  );
   if (!details) return null;
 
   // Fetch all set entries
@@ -197,7 +209,13 @@ export async function getWorkoutHistory(limit = 30) {
       programName: workoutPrograms.name,
     })
     .from(workoutSessions)
-    .innerJoin(workoutPrograms, eq(workoutSessions.programId, workoutPrograms.id))
+    .innerJoin(
+      workoutPrograms,
+      and(
+        eq(workoutSessions.programId, workoutPrograms.id),
+        eq(workoutSessions.programVersion, workoutPrograms.version)
+      )
+    )
     .where(eq(workoutSessions.status, "completed"))
     .orderBy(desc(workoutSessions.completedAt))
     .limit(limit);

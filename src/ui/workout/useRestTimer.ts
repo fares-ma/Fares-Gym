@@ -25,6 +25,10 @@ function playChime() {
     osc.connect(gain);
     gain.connect(ctx.destination);
 
+    osc.onended = () => {
+      ctx.close().catch(() => {});
+    };
+
     osc.start();
     osc.stop(ctx.currentTime + 0.6);
   } catch {
@@ -45,6 +49,7 @@ export function useRestTimer() {
       clearInterval(timerIdRef.current);
       timerIdRef.current = null;
     }
+    endTimeRef.current = null;
   }, []);
 
   const startTimer = useCallback(
