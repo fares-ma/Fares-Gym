@@ -1,6 +1,18 @@
 import { db } from "./db";
-import { exercises, workoutPrograms } from "./schema";
+import { exercises, workoutPrograms, workoutProgramExercises, WeightValue } from "./schema";
 import gymData from "../../gym-data.json";
+
+function parseSeedWeight(raw: string): WeightValue {
+  const match = raw.match(/^([0-9.]+)\s*([a-zA-Z]*)$/);
+  const num = match ? parseFloat(match[1]) : 0;
+  const tag = match && match[2] ? match[2].toUpperCase() : "";
+  return {
+    rawWeight: raw,
+    numericValue: num,
+    unitTag: tag || "K",
+    isUnitConfirmed: true,
+  };
+}
 
 export async function seedDatabase() {
   console.log("Seeding database from gym-data.json...");
@@ -18,7 +30,7 @@ export async function seedDatabase() {
   }
   console.log(`Inserted / verified ${gymData.exercises.length} exercises.`);
 
-  // 2. Seed Programs
+  // 2. Seed Programs and Program Exercises
   for (const prog of gymData.programs) {
     await db
       .insert(workoutPrograms)
@@ -28,12 +40,31 @@ export async function seedDatabase() {
         version: prog.version,
         orderIndex: prog.order,
         isActive: true,
-        daysPerWeek: 4,
-        rotationOrder: prog.exercises.map((e) => e.exerciseId),
       })
       .onConflictDoNothing();
+
+    for (let i = 0; i < prog.exercises.length; i++) {
+      const e = prog.exercises[i];
+      const progExId = `${prog.id}_v${prog.version}_${e.exerciseId}`;
+
+      await db
+        .insert(workoutProgramExercises)
+        .values({
+          id: progExId,
+          programId: prog.id,
+          programVersion: prog.version,
+          exerciseId: e.exerciseId,
+          orderIndex: i + 1,
+          heating: e.heating,
+          workingSets: e.workingSets,
+          targetReps: e.reps,
+          rest: e.rest,
+          defaultWeight: parseSeedWeight(e.weight),
+        })
+        .onConflictDoNothing();
+    }
   }
-  console.log(`Inserted / verified ${gymData.programs.length} workout programs.`);
+  console.log(`Inserted / verified ${gymData.programs.length} workout programs with full exercise configurations.`);
   console.log("Seeding complete!");
 }
 
