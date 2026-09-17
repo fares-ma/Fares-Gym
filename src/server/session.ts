@@ -86,14 +86,18 @@ export async function validateSession(): Promise<boolean> {
     .set({ expiresAt: newExpiresAt })
     .where(eq(sessions.id, sessionId));
 
-  // Update cookie expiry
-  cookieStore.set(COOKIE_NAME, sessionCookie, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    expires: newExpiresAt,
-  });
+  // Update cookie expiry if in a context allowing cookie mutation (Server Action / Route Handler)
+  try {
+    cookieStore.set(COOKIE_NAME, sessionCookie, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      expires: newExpiresAt,
+    });
+  } catch {
+    // Read-only context (Server Component layout/page); DB session expiry was already extended
+  }
 
   return true;
 }

@@ -3,16 +3,17 @@
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ProgramSummary } from "@/src/domain/workout/types";
-import { ar } from "@/src/i18n/ar";
-import { startWorkoutSessionAction } from "@/src/server/workout-actions";
-import { Dumbbell, Calendar, ArrowLeft, Play, CheckCircle2 } from "lucide-react";
+import { ProgramSummary } from "@/domain/workout/types";
+import { ar } from "@/i18n/ar";
+import { startWorkoutSessionAction } from "@/server/workout-actions";
+import { Dumbbell, Calendar, ArrowLeft, Play, Sparkles } from "lucide-react";
 
 interface ProgramCardProps {
   program: ProgramSummary;
+  orderIndex?: number;
 }
 
-export function ProgramCard({ program }: ProgramCardProps) {
+export function ProgramCard({ program, orderIndex = 1 }: ProgramCardProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -27,63 +28,83 @@ export function ProgramCard({ program }: ProgramCardProps) {
     });
   };
 
+  const formattedIndex = String(orderIndex).padStart(2, "0");
+
   return (
     <div
-      className={`relative rounded-2xl p-6 transition-all duration-200 border ${
+      className={`relative rounded-2xl p-5 transition-all duration-200 ${
         program.isNextScheduled
-          ? "bg-slate-900/90 border-emerald-500/50 shadow-lg shadow-emerald-950/30"
-          : "bg-slate-900/40 border-slate-800 hover:border-slate-700"
+          ? "comic-card-accent shadow-xl shadow-[#7C1D38]/15"
+          : "comic-card hover:border-[#3D3542]"
       }`}
     >
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4 mb-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-xl font-bold text-slate-100">{program.name}</h3>
-            {program.isNextScheduled && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                {ar.workout.rotation.nextBadge}
+      {/* Top blueprint row: index + next badge */}
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl font-black text-[#D6AA63] font-mono leading-none">
+            {formattedIndex}
+          </span>
+          <div>
+            <h3 className="text-lg font-black text-[#F2EADF] leading-snug">
+              {program.name}
+            </h3>
+            <p className="text-xs text-[#9D969D] flex items-center gap-1 mt-0.5">
+              <Dumbbell className="w-3.5 h-3.5 text-[#7C1D38]" />
+              <span>
+                {ar.workout.rotation.exercisesCount.replace(
+                  "{count}",
+                  String(program.exerciseCount)
+                )}
               </span>
-            )}
+            </p>
           </div>
-          <p className="text-sm text-slate-400 flex items-center gap-1.5">
-            <Dumbbell className="w-4 h-4 text-slate-500" />
-            <span>{ar.workout.rotation.exercisesCount.replace("{count}", String(program.exerciseCount))}</span>
-          </p>
         </div>
 
-        <div className="text-xs text-slate-400 flex items-center gap-1 bg-slate-800/60 px-2.5 py-1 rounded-lg">
-          <Calendar className="w-3.5 h-3.5 text-slate-500" />
-          <span>
-            {program.lastCompletedAt
-              ? `${ar.workout.rotation.lastDone} ${new Date(program.lastCompletedAt).toLocaleDateString("ar-EG")}`
-              : ar.workout.rotation.neverDone}
-          </span>
-        </div>
+        {program.isNextScheduled && (
+          <div className="comic-badge text-[11px] bg-[#7C1D38] text-[#F2EADF] border-none flex items-center gap-1 shadow-md">
+            <Sparkles className="w-3 h-3 text-[#D6AA63]" />
+            <span>{ar.workout.rotation.nextBadge}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Date metadata */}
+      <div className="text-[11px] text-[#9D969D] flex items-center gap-1.5 bg-[#211C23] px-3 py-1.5 rounded-lg w-fit mb-4">
+        <Calendar className="w-3.5 h-3.5 text-[#D6AA63]" />
+        <span>
+          {program.lastCompletedAt
+            ? `${ar.workout.rotation.lastDone} ${new Date(
+                program.lastCompletedAt
+              ).toLocaleDateString("ar-EG")}`
+            : ar.workout.rotation.neverDone}
+        </span>
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-3 pt-4 border-t border-slate-800/80 mt-2">
+      <div className="flex items-center gap-2 pt-3 border-t border-[#2B252E]">
         <button
           onClick={handleStartWorkout}
           disabled={isPending}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium text-sm transition-all ${
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-black text-xs transition-all cursor-pointer ${
             program.isNextScheduled
-              ? "bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-900/30 font-semibold"
-              : "bg-indigo-600 hover:bg-indigo-500 text-white"
+              ? "comic-btn-primary"
+              : "comic-btn-secondary"
           } disabled:opacity-50`}
         >
-          <Play className="w-4 h-4 fill-current" />
-          <span>{isPending ? ar.workout.active.saving : ar.workout.rotation.startCTA}</span>
+          <Play className="w-3.5 h-3.5 fill-current" />
+          <span>
+            {isPending
+              ? ar.workout.active.saving
+              : ar.workout.rotation.startCTA}
+          </span>
         </button>
 
         <Link
           href={`/workout/program/${program.id}`}
-          className="flex items-center justify-center gap-1.5 py-3 px-4 rounded-xl text-sm font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white transition-colors border border-slate-700/50"
+          className="flex items-center justify-center gap-1 py-2.5 px-3.5 rounded-xl text-xs font-bold text-[#9D969D] hover:text-[#F2EADF] bg-[#211C23] border border-[#362E3B] hover:border-[#7C1D38] transition-colors"
         >
           <span>{ar.workout.rotation.viewDetails}</span>
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-3.5 h-3.5" />
         </Link>
       </div>
     </div>

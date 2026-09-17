@@ -2,56 +2,166 @@
 
 @layer base {
   :root {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 217.2 32.6% 12%;
-    --card-foreground: 210 40% 98%;
-    --popover: 217.2 32.6% 12%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 38 92% 50%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 38 92% 50%;
+    /* Dark Comic Palette */
+    --background: 276 13% 6%; /* #0F0D11 */
+    --foreground: 36 43% 91%; /* #F2EADF Cream */
+    
+    --card: 275 12% 10%; /* #18151B */
+    --card-foreground: 36 43% 91%; /* #F2EADF */
+    
+    --popover: 275 12% 10%;
+    --popover-foreground: 36 43% 91%;
+    
+    --primary: 343 62% 30%; /* #7C1D38 Burgundy */
+    --primary-foreground: 36 43% 91%; /* #F2EADF */
+    
+    --secondary: 275 11% 13%; /* #211C23 Surface 2 */
+    --secondary-foreground: 36 43% 91%;
+    
+    --muted: 275 11% 15%;
+    --muted-foreground: 290 4% 61%; /* #9D969D */
+    
+    --accent: 343 62% 30%; /* Burgundy */
+    --accent-foreground: 36 43% 91%;
+    
+    --gold: 37 59% 61%; /* #D6AA63 */
+    
+    --destructive: 0 74% 65%; /* #F87171 */
+    --destructive-foreground: 36 43% 91%;
+    
+    --border: 275 10% 18%; /* #2B252E */
+    --input: 275 10% 18%;
+    --ring: 343 62% 40%;
     --radius: 0.75rem;
-  }
-
-  .light {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 98%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 38 92% 50%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 38 92% 50%;
   }
 }
 
 body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
+  background-color: #0F0D11;
+  color: #F2EADF;
   font-family: var(--font-cairo), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
+}
+
+/* Comic UI Tokens and Surfaces */
+.comic-card {
+  background-color: #18151B;
+  border: 1px solid #2B252E;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.comic-card:hover {
+  border-color: rgba(124, 29, 56, 0.4);
+}
+
+.comic-card-accent {
+  background-color: #18151B;
+  border: 1.5px solid #7C1D38;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px -2px rgba(124, 29, 56, 0.2);
+}
+
+.comic-badge {
+  background-color: #211C23;
+  color: #D6AA63;
+  border: 1px solid rgba(214, 170, 99, 0.3);
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 2px 8px;
+}
+
+.comic-btn-primary {
+  background: linear-gradient(135deg, #8B1F3F 0%, #63142B 100%);
+  color: #F2EADF;
+  border: 1px solid #A83252;
+  font-weight: 800;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(124, 29, 56, 0.35);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.comic-btn-primary:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px rgba(124, 29, 56, 0.2);
+}
+
+.comic-btn-primary:hover {
+  background: linear-gradient(135deg, #9C2347 0%, #701732 100%);
+  border-color: #C03B5F;
+}
+
+.comic-btn-secondary {
+  background-color: #211C23;
+  color: #F2EADF;
+  border: 1px solid #362E3B;
+  font-weight: 700;
+  border-radius: 12px;
+  transition: all 0.15s ease;
+}
+
+.comic-btn-secondary:active {
+  transform: scale(0.97);
+}
+
+.comic-btn-secondary:hover {
+  border-color: #7C1D38;
+  background-color: #28212B;
+}
+
+/* Animations for Mini Fares */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025) translateY(-2px);
+  }
+}
+
+@keyframes subtle-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(0.5deg);
+  }
+}
+
+@keyframes pulse-burgundy {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(124, 29, 56, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(124, 29, 56, 0);
+  }
+}
+
+.animate-breathe {
+  animation: breathe 3.5s ease-in-out infinite;
+}
+
+.animate-bounce-subtle {
+  animation: subtle-bounce 1.8s ease-in-out infinite;
+}
+
+.animate-float-gentle {
+  animation: float-gentle 4s ease-in-out infinite;
+}
+
+.animate-pulse-burgundy {
+  animation: pulse-burgundy 2s infinite;
 }
 
 /* Custom scrollbar */
@@ -65,10 +175,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--border));
+  background: #2B252E;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground));
+  background: #7C1D38;
 }

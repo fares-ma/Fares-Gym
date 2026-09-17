@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { formatWeight } from "@/src/domain/workout/weight-parser";
-import { WeightValue } from "@/src/domain/workout/types";
-import { ar } from "@/src/i18n/ar";
-import { logSetEntryAction } from "@/src/server/workout-actions";
+import { formatWeight } from "@/domain/workout/weight-parser";
+import { WeightValue } from "@/domain/workout/types";
+import { ar } from "@/i18n/ar";
+import { logSetEntryAction } from "@/server/workout-actions";
 import { Check, Flame, Dumbbell } from "lucide-react";
 
 interface SetEntryRowProps {
@@ -60,36 +60,36 @@ export function SetEntryRow({
 
   return (
     <div
-      className={`rounded-xl p-3 sm:p-4 border transition-all flex items-center justify-between gap-3 ${
+      className={`rounded-xl p-3 sm:p-3.5 border transition-all flex items-center justify-between gap-2.5 ${
         isCompleted
-          ? "bg-emerald-950/20 border-emerald-500/40"
+          ? "bg-[#18151B] border-[#34D399]/60 shadow-sm"
           : isHeating
-          ? "bg-slate-900/40 border-amber-500/20"
-          : "bg-slate-900/60 border-slate-800 hover:border-slate-700"
+          ? "bg-[#18151B] border-[#D6AA63]/30"
+          : "bg-[#18151B] border-[#2B252E] hover:border-[#7C1D38]/50"
       }`}
     >
       {/* Set Label */}
-      <div className="flex items-center gap-2 min-w-[90px]">
+      <div className="flex items-center gap-2 min-w-[85px]">
         {isHeating ? (
-          <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400">
-            <Flame className="w-4 h-4" />
+          <span className="p-1.5 rounded-lg bg-[#211C23] text-[#D6AA63] border border-[#D6AA63]/30">
+            <Flame className="w-3.5 h-3.5" />
           </span>
         ) : (
-          <span className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400">
-            <Dumbbell className="w-4 h-4" />
+          <span className="p-1.5 rounded-lg bg-[#211C23] text-[#7C1D38] border border-[#7C1D38]/40">
+            <Dumbbell className="w-3.5 h-3.5" />
           </span>
         )}
         <div className="text-right">
-          <span className="text-xs font-bold text-slate-200 block">
+          <span className="text-xs font-black text-[#F2EADF] block">
             {ar.workout.active.setNumber.replace("{num}", String(setNumber))}
           </span>
-          <span className="text-[10px] text-slate-400 font-mono">
+          <span className="text-[10px] text-[#9D969D] font-mono">
             {formatWeight(targetWeight)}
           </span>
         </div>
       </div>
 
-      {/* Editable Inputs */}
+      {/* Inputs for weight & reps */}
       <div className="flex items-center gap-2 flex-1 justify-center max-w-[200px]">
         {/* Weight input */}
         <div className="flex-1">
@@ -99,40 +99,48 @@ export function SetEntryRow({
             onChange={(e) => setWeightStr(e.target.value)}
             disabled={isCompleted || isPending}
             placeholder={ar.workout.active.weightPlaceholder}
-            className="w-full bg-slate-800/80 border border-slate-700/80 rounded-lg py-1.5 px-2.5 text-center text-sm font-mono font-bold text-white focus:outline-none focus:border-indigo-500 disabled:opacity-75"
+            className="w-full bg-[#211C23] border border-[#362E3B] rounded-lg py-2 px-2 text-center text-sm font-mono font-black text-[#F2EADF] focus:outline-none focus:border-[#7C1D38] disabled:opacity-75"
           />
         </div>
 
-        <span className="text-slate-500 text-xs font-bold">×</span>
+        <span className="text-[#9D969D] text-xs font-bold">×</span>
 
         {/* Reps input */}
         <div className="w-14">
           <input
             type="number"
             value={reps}
-            onChange={(e) => setReps(Math.max(1, parseInt(e.target.value, 10) || 1))}
+            onChange={(e) =>
+              setReps(Math.max(1, parseInt(e.target.value, 10) || 1))
+            }
             disabled={isCompleted || isPending}
             min={1}
             max={99}
-            className="w-full bg-slate-800/80 border border-slate-700/80 rounded-lg py-1.5 px-2 text-center text-sm font-mono font-bold text-white focus:outline-none focus:border-indigo-500 disabled:opacity-75"
+            className="w-full bg-[#211C23] border border-[#362E3B] rounded-lg py-2 px-2 text-center text-sm font-mono font-black text-[#F2EADF] focus:outline-none focus:border-[#7C1D38] disabled:opacity-75"
           />
         </div>
       </div>
 
-      {/* Complete Set Action Button */}
+      {/* Complete Button */}
       <button
         onClick={handleToggleComplete}
         disabled={isPending}
-        className={`flex items-center justify-center gap-1.5 py-2 px-3 sm:px-4 rounded-xl text-xs font-bold transition-all ${
+        className={`flex items-center justify-center gap-1.5 py-2 px-3 sm:px-4 rounded-xl text-xs font-black transition-all cursor-pointer ${
           isCompleted
-            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500/30"
+            ? "bg-[#34D399]/20 text-[#34D399] border border-[#34D399]/40 hover:bg-[#34D399]/30"
             : isHeating
-            ? "bg-amber-600 hover:bg-amber-500 text-white"
-            : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-900/30"
+            ? "comic-btn-secondary"
+            : "comic-btn-primary"
         } disabled:opacity-50 min-w-[85px]`}
       >
-        <Check className={`w-3.5 h-3.5 ${isCompleted ? "text-emerald-400" : ""}`} />
-        <span>{isCompleted ? ar.workout.active.setCompleted : ar.workout.active.completeSetBtn}</span>
+        <Check
+          className={`w-3.5 h-3.5 ${isCompleted ? "text-[#34D399]" : ""}`}
+        />
+        <span>
+          {isCompleted
+            ? ar.workout.active.setCompleted
+            : ar.workout.active.completeSetBtn}
+        </span>
       </button>
     </div>
   );

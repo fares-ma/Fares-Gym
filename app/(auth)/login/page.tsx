@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { loginAction } from "@/src/server/auth";
-import { ar } from "@/src/i18n/ar";
+import { loginAction } from "@/server/auth";
+import { ar } from "@/i18n/ar";
 import { Lock, User, Loader2 } from "lucide-react";
+import { MiniFares, CharacterPose, CharacterFace } from "@/ui/MiniFares";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,8 +25,10 @@ export default function LoginPage() {
         setError(res.error || ar.auth.invalidCredentials);
         setLoading(false);
       } else {
-        // Successful login
-        window.location.href = "/";
+        setLoginSuccess(true);
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 500);
       }
     } catch {
       setError(ar.errors.generic);
@@ -31,30 +36,58 @@ export default function LoginPage() {
     }
   };
 
+  // Determine character state
+  let currentPose: CharacterPose | undefined = "waving";
+  let currentFace: CharacterFace | undefined = undefined;
+
+  if (loginSuccess) {
+    currentPose = "thumbs-up";
+  } else if (error) {
+    currentPose = undefined;
+    currentFace = "angry";
+  } else if (isPasswordFocused) {
+    currentPose = "shushing";
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-950 text-slate-100">
-      <div className="w-full max-w-md bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
-        {/* Header with Avatar */}
-        <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-amber-500/50 shadow-lg mb-4 bg-slate-800">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/fares.jpeg"
-              alt="Fares"
-              className="w-full h-full object-cover"
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[#0F0D11] text-[#F2EADF] selection:bg-[#7C1D38] selection:text-[#F2EADF]">
+      <div className="w-full max-w-md comic-card p-6 sm:p-8 relative border border-[#2B252E] shadow-2xl">
+        {/* Hub Badge */}
+        <div className="flex items-center justify-between mb-4 border-b border-[#2B252E] pb-3">
+          <div>
+            <h2 className="text-sm font-black tracking-widest text-[#D6AA63] uppercase font-mono">
+              FARES HUB
+            </h2>
+            <p className="text-[11px] text-[#9D969D] font-mono">
+              Discipline Builds Freedom
+            </p>
+          </div>
+          <div className="comic-badge text-[10px]">SECURE ENTRY</div>
+        </div>
+
+        {/* Character Reaction Container */}
+        <div className="flex flex-col items-center text-center my-3">
+          <div className="w-28 h-28 flex items-center justify-center mb-1">
+            <MiniFares
+              pose={currentPose}
+              face={currentFace}
+              size="lg"
+              animate={loginSuccess ? "bounce" : "breathe"}
+              priority
+              alt="Mini Fares Login"
             />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-100">
+          <h1 className="text-2xl font-black tracking-tight text-[#F2EADF]">
             {ar.auth.loginTitle}
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            {ar.auth.loginSubtitle}
+          <p className="text-xs font-semibold text-[#9D969D] mt-1">
+            Same Guy... Higher Standards
           </p>
         </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium flex items-center gap-2">
+          <div className="mb-4 p-3 rounded-xl bg-red-950/40 border border-red-800/60 text-red-300 text-xs font-bold flex items-center gap-2">
             <span>⚠️</span>
             <span>{error}</span>
           </div>
@@ -63,11 +96,11 @@ export default function LoginPage() {
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+            <label className="block text-xs font-bold text-[#F2EADF] mb-1.5">
               {ar.auth.usernameLabel}
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none text-slate-500">
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none text-[#9D969D]">
                 <User className="w-4 h-4" />
               </div>
               <input
@@ -76,26 +109,28 @@ export default function LoginPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder={ar.auth.usernamePlaceholder}
                 required
-                className="w-full bg-slate-800/60 border border-slate-700/60 rounded-xl py-2.5 ps-10 pe-4 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
+                className="w-full bg-[#211C23] border border-[#362E3B] rounded-xl py-2.5 ps-10 pe-4 text-sm text-[#F2EADF] placeholder-[#9D969D]/60 focus:outline-none focus:border-[#7C1D38] focus:ring-1 focus:ring-[#7C1D38] transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+            <label className="block text-xs font-bold text-[#F2EADF] mb-1.5">
               {ar.auth.passwordLabel}
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none text-slate-500">
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none text-[#9D969D]">
                 <Lock className="w-4 h-4" />
               </div>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setIsPasswordFocused(true)}
+                onBlur={() => setIsPasswordFocused(false)}
                 placeholder={ar.auth.passwordPlaceholder}
                 required
-                className="w-full bg-slate-800/60 border border-slate-700/60 rounded-xl py-2.5 ps-10 pe-4 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors"
+                className="w-full bg-[#211C23] border border-[#362E3B] rounded-xl py-2.5 ps-10 pe-4 text-sm text-[#F2EADF] placeholder-[#9D969D]/60 focus:outline-none focus:border-[#7C1D38] focus:ring-1 focus:ring-[#7C1D38] transition-colors"
               />
             </div>
           </div>
@@ -103,15 +138,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-2.5 px-4 rounded-xl shadow-lg transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full mt-3 comic-btn-primary py-3 px-4 rounded-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>{ar.auth.loggingIn}</span>
+                <Loader2 className="w-4 h-4 animate-spin text-[#F2EADF]" />
+                <span className="font-bold text-sm">{ar.auth.loggingIn}</span>
               </>
             ) : (
-              <span>{ar.auth.loginButton}</span>
+              <span className="font-black text-sm tracking-wide">ENTER HUB ➔</span>
             )}
           </button>
         </form>

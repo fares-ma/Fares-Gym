@@ -2,8 +2,8 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { startWorkoutSessionAction } from "@/src/server/workout-actions";
-import { ar } from "@/src/i18n/ar";
+import { startWorkoutSessionAction } from "@/server/workout-actions";
+import { ar } from "@/i18n/ar";
 import { Play } from "lucide-react";
 
 interface StartProgramButtonProps {
@@ -30,9 +30,9 @@ export function StartProgramButton({ programId, label }: StartProgramButtonProps
     <button
       onClick={handleStart}
       disabled={isPending}
-      className="flex items-center justify-center gap-2 py-3 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg shadow-emerald-950/40 disabled:opacity-50"
+      className="comic-btn-primary flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-black text-sm tracking-wide transition-all shadow-lg shadow-[#7C1D38]/30 cursor-pointer disabled:opacity-50"
     >
-      <Play className="w-4 h-4 fill-current" />
+      <Play className="w-4 h-4 fill-current text-[#D6AA63]" />
       <span>{isPending ? ar.workout.active.saving : label}</span>
     </button>
   );

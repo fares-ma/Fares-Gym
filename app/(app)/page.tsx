@@ -1,96 +1,203 @@
 import Link from "next/link";
-import { getTimeAwareGreeting } from "@/src/lib/utils";
-import { ar } from "@/src/i18n/ar";
-import { Dumbbell, Utensils, Calendar, ArrowLeft, ShieldCheck } from "lucide-react";
+import Image from "next/image";
+import { getTimeAwareGreeting } from "@/lib/utils";
+import { ar } from "@/i18n/ar";
+import { Dumbbell, ArrowRight, Flame } from "lucide-react";
+import { MiniFares } from "@/ui/MiniFares";
+import { ScheduleStepper } from "@/ui/ScheduleStepper";
+import { NutritionSnapshotCard } from "@/ui/NutritionSnapshotCard";
+import { RemindersCard } from "@/ui/RemindersCard";
+import { QuoteBanner } from "@/ui/QuoteBanner";
+import { ThemeToggle } from "@/ui/ThemeToggle";
+import {
+  getWorkoutProgramsWithRotation,
+  getActiveWorkoutSession,
+} from "@/server/workout-queries";
+import { getDailyNutrition } from "@/src/server/nutrition-queries";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
   const greeting = getTimeAwareGreeting();
+  const todayStr = new Date().toISOString().split("T")[0];
 
-  const cards = [
-    {
-      title: ar.home.sections.workout.title,
-      desc: ar.home.sections.workout.desc,
-      cta: ar.home.sections.workout.cta,
-      href: "/workout",
-      icon: Dumbbell,
-      accent: "from-amber-500/20 to-amber-600/5 text-amber-400 border-amber-500/20",
-      iconBg: "bg-amber-500/10 text-amber-400",
-    },
-    {
-      title: ar.home.sections.nutrition.title,
-      desc: ar.home.sections.nutrition.desc,
-      cta: ar.home.sections.nutrition.cta,
-      href: "/nutrition",
-      icon: Utensils,
-      accent: "from-emerald-500/20 to-emerald-600/5 text-emerald-400 border-emerald-500/20",
-      iconBg: "bg-emerald-500/10 text-emerald-400",
-    },
-    {
-      title: ar.home.sections.activities.title,
-      desc: ar.home.sections.activities.desc,
-      cta: ar.home.sections.activities.cta,
-      href: "/activities",
-      icon: Calendar,
-      accent: "from-blue-500/20 to-blue-600/5 text-blue-400 border-blue-500/20",
-      iconBg: "bg-blue-500/10 text-blue-400",
-    },
-  ];
+  // Fetch real workout & nutrition data
+  let nextProgramName = "Posterior A";
+  let exerciseCount = 8;
+  let activeSessionId: string | null = null;
+  let todayNutrition = null;
+
+  try {
+    const [{ programs }, activeData, nutritionData] = await Promise.all([
+      getWorkoutProgramsWithRotation(),
+      getActiveWorkoutSession(),
+      getDailyNutrition(todayStr),
+    ]);
+
+    todayNutrition = nutritionData;
+
+    if (activeData) {
+      nextProgramName = activeData.program.name;
+      exerciseCount = activeData.exercises?.length || 8;
+      activeSessionId = activeData.session.id;
+    } else {
+      const nextProg = programs.find((p) => p.isNextScheduled) || programs[0];
+      if (nextProg) {
+        nextProgramName = nextProg.name;
+        exerciseCount = nextProg.exerciseCount || 8;
+      }
+    }
+  } catch {
+    // Graceful fallback if database is loading/seeding
+  }
+
+  // Current Arabic Date formatted
+  const now = new Date();
+  const arabicDate = now.toLocaleDateString("ar-EG", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
-    <div className="space-y-8">
-      {/* Top Banner / Greeting */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-900/80 to-slate-900/40 border border-slate-800/80 rounded-2xl p-6 sm:p-8 shadow-xl backdrop-blur-xl relative overflow-hidden">
-        <div className="absolute top-0 end-0 -mt-8 -me-8 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight">
-              {greeting}
-            </h1>
-            <p className="text-sm text-slate-400 mt-2">
-              {ar.home.subtitle}
-            </p>
+    <div className="space-y-4 md:space-y-5 pb-6">
+      {/* 1. Header Section */}
+      <div className="flex items-center justify-between gap-3 pt-1">
+        {/* User Greeting & Date */}
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-black text-[#D6AA63] tracking-widest uppercase font-mono">
+              FARES HUB
+            </span>
+            <span className="text-[10px] text-[#9D969D]/80 font-mono hidden sm:inline">
+              • Discipline Builds Freedom
+            </span>
           </div>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-[#F2EADF] tracking-tight mt-0.5">
+            {greeting}
+          </h1>
+          <p className="text-xs text-[#9D969D] mt-0.5 font-medium">
+            {arabicDate}
+          </p>
+        </div>
 
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs text-amber-400 font-medium">
-            <ShieldCheck className="w-4 h-4 text-amber-400" />
-            <span>{ar.home.quickStats.weightUnitNote}</span>
+        {/* Right side: Theme toggle + Crown Avatar */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle />
+          <div className="flex flex-col items-end">
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#D6AA63] shadow-lg bg-[#211C23] relative">
+              <Image
+                src="/character/avatar.png"
+                alt="Fares"
+                width={48}
+                height={48}
+                className="w-full h-full object-cover scale-110"
+              />
+            </div>
+            <span className="text-[9px] text-[#D6AA63] font-mono tracking-tight -mt-0.5 hidden sm:inline">
+              Same Guy... Higher Standards
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Feature Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {cards.map((card) => {
-          const Icon = card.icon;
-          return (
-            <div
-              key={card.title}
-              className={`bg-gradient-to-b ${card.accent} border rounded-2xl p-6 flex flex-col justify-between transition-all hover:scale-[1.01] hover:shadow-lg`}
-            >
-              <div>
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${card.iconBg}`}>
-                  <Icon className="w-6 h-6" />
-                </div>
-                <h2 className="text-lg font-bold text-slate-100 mb-2">
-                  {card.title}
-                </h2>
-                <p className="text-xs text-slate-400 leading-relaxed mb-6">
-                  {card.desc}
-                </p>
-              </div>
+      {/* 2. TODAY'S MISSION (Hero Card) */}
+      <div className="relative rounded-2xl overflow-hidden border-1.5 border-[#7C1D38] bg-gradient-to-br from-[#25101A] via-[#1A1218] to-[#120E15] p-5 sm:p-6 shadow-xl">
+        {/* Background glow & decorative subtle lines */}
+        <div className="absolute top-0 right-1/4 w-40 h-40 bg-[#7C1D38]/20 rounded-full blur-3xl pointer-events-none" />
 
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
+          {/* Mission Details */}
+          <div className="flex-1 space-y-3 text-right w-full sm:w-auto">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black tracking-widest text-[#E0537A] uppercase font-mono">
+                TODAY&apos;S MISSION
+              </span>
+              {activeSessionId && (
+                <span className="comic-badge text-[10px] bg-[#7C1D38] text-[#F2EADF] animate-pulse">
+                  جلسة نشطة الآن
+                </span>
+              )}
+            </div>
+
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-[#F2EADF] tracking-tight">
+                {nextProgramName}
+              </h2>
+              <div className="flex items-center gap-2 mt-1 text-xs font-bold text-[#D6AA63]">
+                <Dumbbell className="w-4 h-4" />
+                <span>{exerciseCount} تمارين</span>
+              </div>
+            </div>
+
+            {/* Motivational Speech */}
+            <p className="text-xs sm:text-sm text-[#9D969D] font-medium leading-relaxed max-w-sm">
+              ❝ يلا نتحرك.. الأداء بيصنع الفرق ❞
+            </p>
+
+            {/* CTA Button */}
+            <div className="pt-1">
               <Link
-                href={card.href}
-                className="inline-flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-slate-100 transition-colors group"
+                href={activeSessionId ? "/workout/active" : "/workout"}
+                className="inline-flex items-center gap-2 comic-btn-primary px-6 py-3 rounded-xl text-sm font-black tracking-wide shadow-lg shadow-[#7C1D38]/30 group cursor-pointer"
               >
-                <span>{card.cta}</span>
-                <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                {activeSessionId ? (
+                  <>
+                    <Flame className="w-4 h-4 text-[#D6AA63] animate-pulse" />
+                    <span>استئناف الجلسة</span>
+                  </>
+                ) : (
+                  <>
+                    <span>START WORKOUT</span>
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </>
+                )}
               </Link>
             </div>
-          );
-        })}
+          </div>
+
+          {/* Hero Mini Fares Character Illustration */}
+          <div className="relative shrink-0 flex items-center justify-center pt-2 sm:pt-0">
+            {/* "LET'S GO!" comic sticker */}
+            <div className="absolute -top-1 -right-2 comic-badge text-[11px] font-black bg-[#D6AA63] text-black border-none rotate-6 shadow-md z-20 select-none">
+              LET&apos;S GO!
+            </div>
+            <div className="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 relative">
+              <MiniFares
+                pose="hero-bench"
+                size="xl"
+                animate="breathe"
+                priority
+                className="w-full h-full"
+                imageClassName="scale-110"
+              />
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* 3. Schedule Stepper (الجدول الحالي) */}
+      <ScheduleStepper />
+
+      {/* 4. Dual Cards: Nutrition Snapshot + Reminders */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <NutritionSnapshotCard
+          consumedCalories={todayNutrition?.calories.consumed}
+          targetCalories={todayNutrition?.calories.target}
+          proteinConsumed={todayNutrition?.protein.consumed}
+          proteinTarget={todayNutrition?.protein.target}
+          carbsConsumed={todayNutrition?.carbs.consumed}
+          carbsTarget={todayNutrition?.carbs.target}
+          fatConsumed={todayNutrition?.fats.consumed}
+          fatTarget={todayNutrition?.fats.target}
+          loggedMeals={todayNutrition?.meals.length}
+        />
+        <RemindersCard />
+      </div>
+
+      {/* 5. Quote Banner with Mini Fares */}
+      <QuoteBanner context="home" tag="CONSISTENCY WINS." />
     </div>
   );
 }
