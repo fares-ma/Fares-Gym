@@ -36,7 +36,7 @@ export function BottomNav() {
             className="comic-card p-4 mb-16 space-y-2 border border-[#7C1D38]/50 shadow-2xl animate-breathe"
           >
             <div className="text-xs font-black text-[#D6AA63] tracking-widest uppercase mb-2">
-              المزيد من الصفحات
+              {ar.nav.morePages}
             </div>
             <Link
               href="/workout/history"
@@ -44,7 +44,7 @@ export function BottomNav() {
               className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#211C23] text-sm font-bold text-[#F2EADF]"
             >
               <span>📜</span>
-              <span>سجل التمارين</span>
+              <span>{ar.nav.workoutHistory}</span>
             </Link>
             <Link
               href="/progress"
@@ -52,7 +52,7 @@ export function BottomNav() {
               className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#211C23] text-sm font-bold text-[#F2EADF]"
             >
               <span>📈</span>
-              <span>التقدم والتحليلات</span>
+              <span>{ar.nav.progress}</span>
             </Link>
             <Link
               href="/settings"
@@ -60,7 +60,7 @@ export function BottomNav() {
               className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#211C23] text-sm font-bold text-[#F2EADF]"
             >
               <span>⚙️</span>
-              <span>الإعدادات</span>
+              <span>{ar.nav.settings}</span>
             </Link>
           </div>
         </div>
@@ -118,7 +118,7 @@ export function BottomNav() {
             <div className="p-1">
               <Menu className="w-5 h-5" />
             </div>
-            <span className="text-[10px] tracking-tight font-bold">المزيد</span>
+            <span className="text-[10px] tracking-tight font-bold">{ar.nav.more}</span>
             {(isMoreActive || moreMenuOpen) && (
               <div className="w-4 h-1 rounded-full bg-[#7C1D38] mt-0.5" />
             )}

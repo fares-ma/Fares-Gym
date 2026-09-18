@@ -8,7 +8,7 @@ import { ar } from "@/src/i18n/ar";
 
 interface EditTargetsModalProps {
   isOpen: boolean;
-  currentTarget: NutritionTarget;
+  currentTarget: NutritionTarget | null;
   date: string;
   onClose: () => void;
   onTargetsUpdated?: () => void;
@@ -21,10 +21,10 @@ export function EditTargetsModal({
   onClose,
   onTargetsUpdated,
 }: EditTargetsModalProps) {
-  const [calories, setCalories] = useState(String(currentTarget.targetCalories));
-  const [protein, setProtein] = useState(String(currentTarget.targetProtein));
-  const [carbs, setCarbs] = useState(String(currentTarget.targetCarbs));
-  const [fats, setFats] = useState(String(currentTarget.targetFats));
+  const [calories, setCalories] = useState(currentTarget ? String(currentTarget.targetCalories) : "");
+  const [protein, setProtein] = useState(currentTarget ? String(currentTarget.targetProtein) : "");
+  const [carbs, setCarbs] = useState(currentTarget ? String(currentTarget.targetCarbs) : "");
+  const [fats, setFats] = useState(currentTarget ? String(currentTarget.targetFats) : "");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -38,7 +38,7 @@ export function EditTargetsModal({
     const f = parseFloat(fats);
 
     if (isNaN(cal) || cal <= 0) {
-      setError("برجاء إدخال هدف سعرات صحيح أكبر من الصفر");
+      setError(ar.nutrition.editTargetsModal.caloriesRequired);
       return;
     }
 
@@ -172,7 +172,7 @@ export function EditTargetsModal({
               disabled={isPending}
               className="px-4 py-2.5 rounded-xl border border-[#2B252E] text-xs font-bold text-[#9D969D] hover:text-[#F2EADF] hover:bg-[#211C23] transition-colors"
             >
-              إلغاء
+              {ar.nutrition.editTargetsModal.cancelBtn}
             </button>
             <button
               type="submit"

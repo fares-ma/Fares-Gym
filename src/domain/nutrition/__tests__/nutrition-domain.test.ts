@@ -114,6 +114,34 @@ describe("Nutrition Calculation Engine", () => {
     assert.equal(summary.fats.percentage, 50);
   });
 
+  it("should build daily nutrition summary with null target safely using 0 targets", () => {
+    const meals: MealEntry[] = [
+      {
+        id: "m1",
+        date: "2026-09-17",
+        name: "Meal 1",
+        calories: 500,
+        proteinGrams: 40,
+        carbsGrams: 50,
+        fatsGrams: 15,
+        loggedAt: new Date(),
+      },
+    ];
+
+    const summary = buildDailyNutritionSummary("2026-09-17", null, meals);
+    assert.equal(summary.date, "2026-09-17");
+    assert.equal(summary.target, null);
+    assert.equal(summary.calories.target, 0);
+    assert.equal(summary.calories.consumed, 500);
+    assert.equal(summary.calories.isSurplus, true);
+    assert.equal(summary.protein.target, 0);
+    assert.equal(summary.protein.consumed, 40);
+    assert.equal(summary.carbs.target, 0);
+    assert.equal(summary.carbs.consumed, 50);
+    assert.equal(summary.fats.target, 0);
+    assert.equal(summary.fats.consumed, 15);
+  });
+
   it("should calculate standard TDEE with Mifflin-St Jeor formula", () => {
     // 80kg, 180cm, 25 years old, moderate activity (1.55)
     // BMR = (10 * 80) + (6.25 * 180) - (5 * 25) + 5 = 800 + 1125 - 125 + 5 = 1805

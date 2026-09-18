@@ -26,14 +26,15 @@ export function AddMealModal({ isOpen, date, onClose, onMealAdded }: AddMealModa
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError("برجاء إدخال اسم الوجبة");
+      setError(ar.nutrition.addMealModal.nameRequired);
       return;
     }
     const calNum = parseInt(calories, 10);
     if (isNaN(calNum) || calNum <= 0) {
-      setError("برجاء إدخال عدد سعرات صحيح أكبر من الصفر");
+      setError(ar.nutrition.addMealModal.caloriesRequired);
       return;
     }
+
 
     setError(null);
     startTransition(async () => {
@@ -185,8 +186,9 @@ export function AddMealModal({ isOpen, date, onClose, onMealAdded }: AddMealModa
               disabled={isPending}
               className="px-4 py-2.5 rounded-xl border border-[#2B252E] text-xs font-bold text-[#9D969D] hover:text-[#F2EADF] hover:bg-[#211C23] transition-colors"
             >
-              إلغاء
+              {ar.nutrition.addMealModal.cancelBtn}
             </button>
+
             <button
               type="submit"
               disabled={isPending}

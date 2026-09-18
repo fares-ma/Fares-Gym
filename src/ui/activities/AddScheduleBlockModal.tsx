@@ -28,12 +28,12 @@ export function AddScheduleBlockModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
-      setError("برجاء إدخال اسم النشاط");
+      setError(ar.activities.blockModal.nameRequired);
       return;
     }
 
     if (startTime === endTime) {
-      setError("وقت البداية والنهاية لا يمكن أن يكونا متطابقين");
+      setError(ar.activities.blockModal.sameTimeError);
       return;
     }
 
@@ -157,7 +157,7 @@ export function AddScheduleBlockModal({
               disabled={isPending}
               className="px-4 py-2.5 rounded-xl border border-[#2B252E] text-xs font-bold text-[#9D969D] hover:text-[#F2EADF] hover:bg-[#211C23] transition-colors"
             >
-              إلغاء
+              {ar.activities.blockModal.cancelBtn}
             </button>
             <button
               type="submit"

@@ -7,6 +7,8 @@ import { db } from "../data/db";
 import { meals, nutritionTargets } from "../data/schema";
 import { eq } from "drizzle-orm";
 import { validateSession } from "./session";
+import { getUserTodayDateStr } from "../lib/date-utils";
+
 
 const MealInputSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
@@ -88,6 +90,7 @@ export async function deleteMealAction(
 
 /**
  * Records a new target snapshot with an effective date.
+
  */
 export async function updateNutritionTargetsAction(input: {
   effectiveDate?: string;
@@ -101,8 +104,9 @@ export async function updateNutritionTargetsAction(input: {
 
   try {
     const parsed = TargetInputSchema.parse(input);
-    const today = new Date().toISOString().split("T")[0];
+    const today = getUserTodayDateStr();
     const effectiveDate = parsed.effectiveDate || today;
+
 
     await db.insert(nutritionTargets).values({
       id: crypto.randomUUID(),

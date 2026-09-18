@@ -19,7 +19,8 @@ import {
   calculateSessionVolume,
   computeConsistencyMetrics,
 } from "../domain/progress/progress-engine";
-import { getUserNow } from "./activities-queries";
+import { getUserNow, getUserDateStr } from "../lib/date-utils";
+
 
 /**
  * Retrieves chronological body weight logs.
@@ -136,8 +137,9 @@ export async function getWorkoutVolumeHistory(): Promise<SessionVolumePoint[]> {
 
     for (const session of sessionsRows) {
       const sets = setsBySession[session.id] || [];
-      const dateStr = session.startedAt.toISOString().split("T")[0];
+      const dateStr = getUserDateStr(session.startedAt);
       const programName = programNames[session.programId] || session.programId;
+
 
       const validSets = sets.filter(
         (s) =>
@@ -199,10 +201,12 @@ export async function getProgressSummary(): Promise<{
   const now = getUserNow();
 
   try {
-    const sessionsRows = await db.select().from(workoutSessions);
-    const bodyWeights = await getBodyWeightHistory();
-    const prs = await getAllExercisePRs();
-    const volumes = await getWorkoutVolumeHistory();
+    const [sessionsRows, bodyWeights, prs, volumes] = await Promise.all([
+      db.select().from(workoutSessions),
+      getBodyWeightHistory(),
+      getAllExercisePRs(),
+      getWorkoutVolumeHistory(),
+    ]);
 
     const consistency = computeConsistencyMetrics(sessionsRows, now);
 

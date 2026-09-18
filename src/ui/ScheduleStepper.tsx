@@ -1,9 +1,8 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import { Dumbbell, Laptop, Utensils, Coffee, BookOpen, Check } from "lucide-react";
 import { EnrichedScheduleBlock } from "@/src/domain/activities/types";
+import { ar } from "@/i18n/ar";
 
 interface ScheduleStepperProps {
   blocks?: EnrichedScheduleBlock[];
@@ -34,13 +33,13 @@ export const ScheduleStepper: React.FC<ScheduleStepperProps> = ({ blocks = [] })
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-base md:text-lg font-black text-[#F2EADF]">
-          الجدول الحالي
+          {ar.home.scheduleTitle}
         </h3>
         <Link
           href="/activities"
           className="text-xs font-bold text-[#9D969D] hover:text-[#D6AA63] transition-colors flex items-center gap-1"
         >
-          <span>عرض الجدول الكامل</span>
+          <span>{ar.home.scheduleViewAll}</span>
           <span className="text-xs select-none">‹</span>
         </Link>
       </div>
@@ -48,7 +47,7 @@ export const ScheduleStepper: React.FC<ScheduleStepperProps> = ({ blocks = [] })
       {/* Stepper horizontal row or empty state */}
       {blocks.length === 0 ? (
         <div className="py-6 text-center text-xs text-[#9D969D]">
-          لا توجد فترات مجدولة لليوم
+          {ar.home.scheduleEmptyToday}
         </div>
       ) : (
         <div className="flex items-center justify-between gap-1 overflow-x-auto py-2 no-scrollbar">
@@ -73,7 +72,7 @@ export const ScheduleStepper: React.FC<ScheduleStepperProps> = ({ blocks = [] })
               >
                 {getIcon(item.title, isCurrent)}
                 {isCompleted && (
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#34D399] flex items-center justify-center text-black">
+                  <div className="absolute -bottom-1 -end-1 w-4 h-4 rounded-full bg-[#34D399] flex items-center justify-center text-black">
                     <Check className="w-2.5 h-2.5 stroke-[3]" />
                   </div>
                 )}
@@ -96,7 +95,7 @@ export const ScheduleStepper: React.FC<ScheduleStepperProps> = ({ blocks = [] })
               {/* Subtitle / Countdown */}
               {isCurrent && item.remainingMinutes !== undefined ? (
                 <span className="text-[10px] font-bold text-[#A83252] mt-0.5 whitespace-nowrap animate-pulse">
-                  متبقي {item.remainingMinutes} د
+                  {ar.activities.remainingMinutesShort.replace("{mins}", String(item.remainingMinutes))}
                 </span>
               ) : isCompleted ? (
                 <span className="text-[10px] text-[#34D399] mt-0.5">✓</span>

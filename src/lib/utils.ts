@@ -1,20 +1,23 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { ar } from "@/i18n/ar";
+import { getUserNow } from "./date-utils";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 /**
- * Returns a time-aware greeting in Egyptian Arabic.
+ * Returns a time-aware greeting in Egyptian Arabic respecting the configured timezone.
  */
 export function getTimeAwareGreeting(): string {
-  const hour = new Date().getHours();
+  const hour = getUserNow().getHours();
   if (hour >= 5 && hour < 12) {
-    return "صباح الفل يا فارس ☀️";
+    return ar.home.greetings.morning;
   } else if (hour >= 12 && hour < 17) {
-    return "مساء الخير يا بطل 💪";
+    return ar.home.greetings.afternoon;
   } else {
-    return "مساء النور يا كابتن 🌙";
+    return ar.home.greetings.evening;
   }
 }
+

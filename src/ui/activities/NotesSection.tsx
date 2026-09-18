@@ -110,7 +110,7 @@ export function NotesSection({ notes, onChanged }: NotesSectionProps) {
                   onClick={() => handleDelete(note.id)}
                   disabled={isPending}
                   className="p-1.5 rounded-lg text-[#9D969D] hover:text-red-400 hover:bg-red-950/20 transition-all disabled:opacity-40 shrink-0"
-                  title="حذف الملاحظة"
+                  title={ar.activities.deleteNoteTooltip}
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>

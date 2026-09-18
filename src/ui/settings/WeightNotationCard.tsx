@@ -33,11 +33,12 @@ export function WeightNotationCard({ tagK, tagB }: WeightNotationCardProps) {
         confirmed,
       });
       if (res.success) {
-        setSavedMsg(`تم حفظ وتأكيد إعدادات المعرّف [${tag}] بنجاح`);
+        setSavedMsg(ar.settings.tagSaved.replace("{tag}", tag));
         setTimeout(() => setSavedMsg(null), 3000);
       }
     });
   };
+
 
   return (
     <div className="comic-card p-5 border border-[#2B252E] space-y-4">
@@ -84,7 +85,7 @@ export function WeightNotationCard({ tagK, tagB }: WeightNotationCardProps) {
               </span>
             </div>
             <span className="text-[10px] font-mono text-[#9D969D]">
-              استخدم في {tagK.usageCount} مجاميع
+              {ar.settings.tagUsage.replace("{count}", String(tagK.usageCount))}
             </span>
           </div>
 
@@ -97,7 +98,7 @@ export function WeightNotationCard({ tagK, tagB }: WeightNotationCardProps) {
             value={descK}
             onChange={(e) => setDescK(e.target.value)}
             className="w-full bg-[#110D13] border border-[#2B252E] rounded-lg px-3 py-1.5 text-xs text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
-            placeholder="وصف المعرّف (مثل: Pin stack)"
+            placeholder={ar.settings.tagKPlaceholder}
           />
 
           <div className="flex items-center justify-between pt-1">
@@ -116,7 +117,7 @@ export function WeightNotationCard({ tagK, tagB }: WeightNotationCardProps) {
               disabled={isPending}
               className="comic-btn-primary px-3 py-1 rounded-lg text-xs font-bold cursor-pointer disabled:opacity-50"
             >
-              حفظ
+              {ar.settings.saveBtn}
             </button>
           </div>
         </div>
@@ -133,7 +134,7 @@ export function WeightNotationCard({ tagK, tagB }: WeightNotationCardProps) {
               </span>
             </div>
             <span className="text-[10px] font-mono text-[#9D969D]">
-              استخدم في {tagB.usageCount} مجاميع
+              {ar.settings.tagUsage.replace("{count}", String(tagB.usageCount))}
             </span>
           </div>
 
@@ -146,7 +147,7 @@ export function WeightNotationCard({ tagK, tagB }: WeightNotationCardProps) {
             value={descB}
             onChange={(e) => setDescB(e.target.value)}
             className="w-full bg-[#110D13] border border-[#2B252E] rounded-lg px-3 py-1.5 text-xs text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
-            placeholder="وصف المعرّف (مثل: Block stack)"
+            placeholder={ar.settings.tagBPlaceholder}
           />
 
           <div className="flex items-center justify-between pt-1">
@@ -165,11 +166,12 @@ export function WeightNotationCard({ tagK, tagB }: WeightNotationCardProps) {
               disabled={isPending}
               className="comic-btn-primary px-3 py-1 rounded-lg text-xs font-bold cursor-pointer disabled:opacity-50"
             >
-              حفظ
+              {ar.settings.saveBtn}
             </button>
           </div>
         </div>
       </div>
+
     </div>
   );
 }

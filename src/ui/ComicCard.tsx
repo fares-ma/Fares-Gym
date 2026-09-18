@@ -22,7 +22,7 @@ export const ComicCard: React.FC<ComicCardProps> = ({
       {...props}
     >
       {sticker && (
-        <div className="absolute -top-3 left-4 comic-badge text-xs uppercase tracking-wider shadow-sm select-none">
+        <div className="absolute -top-3 start-4 comic-badge text-xs uppercase tracking-wider shadow-sm select-none">
           {sticker}
         </div>
       )}

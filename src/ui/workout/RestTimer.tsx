@@ -32,7 +32,7 @@ export function RestTimer({
       : 100;
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 left-3 right-3 md:left-auto md:right-6 md:w-96 z-50 animate-in fade-in slide-in-from-bottom-5 duration-300">
+    <div className="fixed bottom-20 md:bottom-6 inset-x-3 md:inset-x-auto md:end-6 md:w-96 z-50 animate-in fade-in slide-in-from-bottom-5 duration-300">
       <div className="comic-card-accent p-4 shadow-2xl shadow-black/80 text-[#F2EADF] bg-[#18151B]">
         {/* Header */}
         <div className="flex items-center justify-between gap-2 mb-2">
@@ -72,7 +72,7 @@ export function RestTimer({
               {formattedTime}
             </div>
             <p className="text-[11px] text-[#9D969D] font-medium mt-0.5">
-              خد نفسك واشرب مية 💧
+              {ar.workout.timer.restTip}
             </p>
           </div>
         </div>

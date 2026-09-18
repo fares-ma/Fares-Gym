@@ -25,7 +25,7 @@ export function WorkoutVolumeChart({ volumes }: WorkoutVolumeChartProps) {
             {ar.progress.volumeTitle}
           </h3>
           <p className="text-xs text-[#9D969D]">
-            إجمالي الحجم التدريبي (الوزن × العداد للمجموعات العاملة)
+            {ar.progress.volumeSubtitle}
           </p>
         </div>
       </div>
@@ -57,8 +57,9 @@ export function WorkoutVolumeChart({ volumes }: WorkoutVolumeChartProps) {
                   </div>
                   <div className="flex items-center gap-2 font-mono">
                     <span className="text-[11px] text-[#9D969D]">
-                      {v.workingSetsCount} مجموعات
+                      {v.workingSetsCount} {ar.progress.setsSuffix}
                     </span>
+
                     <strong className="text-sm font-black text-[#D6AA63]">
                       {v.totalVolume.toLocaleString()}{v.unitTag ? ` [${v.unitTag}]` : ""}
                     </strong>

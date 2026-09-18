@@ -8,12 +8,16 @@ import { scheduleBlocks, reminders, notes } from "../data/schema";
 import { eq } from "drizzle-orm";
 import { validateSession } from "./session";
 
-const ScheduleBlockSchema = z.object({
-  title: z.string().trim().min(1, "Title is required"),
-  dayOfWeek: z.number().int().min(0).max(7),
-  startTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Invalid start time (HH:MM)"),
-  endTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Invalid end time (HH:MM)"),
-});
+const ScheduleBlockSchema = z
+  .object({
+    title: z.string().trim().min(1, "Title is required"),
+    dayOfWeek: z.number().int().min(0).max(7),
+    startTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Invalid start time (HH:MM)"),
+    endTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Invalid end time (HH:MM)"),
+  })
+  .refine((data) => data.startTime !== data.endTime, {
+    message: "وقت البداية والنهاية لا يمكن أن يكونا متطابقين",
+  });
 
 const ReminderSchema = z.object({
   text: z.string().trim().min(1, "Reminder text is required"),

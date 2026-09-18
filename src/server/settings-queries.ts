@@ -8,7 +8,7 @@ import {
   bodyMetrics,
   performedSets,
 } from "../data/schema";
-import { eq } from "drizzle-orm";
+import { eq, count } from "drizzle-orm";
 
 export interface SettingsSummary {
   lastBackupAt: string | null;
@@ -33,20 +33,20 @@ export async function getAppSettingsSummary(): Promise<SettingsSummary> {
   try {
     const [
       settingsRows,
-      exRows,
-      sessRows,
-      mealRows,
-      schedRows,
-      weightRows,
+      exCountRow,
+      sessCountRow,
+      mealCountRow,
+      schedCountRow,
+      weightCountRow,
       setsRows,
     ] = await Promise.all([
       db.select().from(appSettings),
-      db.select().from(exercises),
-      db.select().from(workoutSessions).where(eq(workoutSessions.status, "completed")),
-      db.select().from(meals),
-      db.select().from(scheduleBlocks),
-      db.select().from(bodyMetrics),
-      db.select().from(performedSets),
+      db.select({ count: count() }).from(exercises),
+      db.select({ count: count() }).from(workoutSessions).where(eq(workoutSessions.status, "completed")),
+      db.select({ count: count() }).from(meals),
+      db.select({ count: count() }).from(scheduleBlocks),
+      db.select({ count: count() }).from(bodyMetrics),
+      db.select({ actualWeight: performedSets.actualWeight }).from(performedSets),
     ]);
 
     const settingsMap = new Map<string, string>();
@@ -82,11 +82,11 @@ export async function getAppSettingsSummary(): Promise<SettingsSummary> {
         },
       },
       tableStats: {
-        exercisesCount: exRows.length,
-        completedSessionsCount: sessRows.length,
-        loggedMealsCount: mealRows.length,
-        scheduleBlocksCount: schedRows.length,
-        weightLogsCount: weightRows.length,
+        exercisesCount: Number(exCountRow[0]?.count ?? 0),
+        completedSessionsCount: Number(sessCountRow[0]?.count ?? 0),
+        loggedMealsCount: Number(mealCountRow[0]?.count ?? 0),
+        scheduleBlocksCount: Number(schedCountRow[0]?.count ?? 0),
+        weightLogsCount: Number(weightCountRow[0]?.count ?? 0),
       },
     };
   } catch {

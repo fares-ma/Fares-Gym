@@ -30,20 +30,20 @@ export function ExercisePRsSection({ prs }: ExercisePRsSectionProps) {
               {ar.progress.recentPRsTitle}
             </h3>
             <p className="text-xs text-[#9D969D]">
-              أعلى وزن وتكرار لكل تمرين بنظام المجموعات العاملة
+              {ar.progress.prsSubtitle}
             </p>
           </div>
         </div>
 
         {/* Search input */}
         <div className="relative w-full sm:w-56">
-          <Search className="w-3.5 h-3.5 absolute right-3 top-3 text-[#9D969D]" />
+          <Search className="w-3.5 h-3.5 absolute end-3 top-3 text-[#9D969D]" />
           <input
             type="text"
-            placeholder="بحث في التمارين..."
+            placeholder={ar.progress.searchExercisesPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#141016] border border-[#2B252E] rounded-xl pr-9 pl-3 py-2 text-xs text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
+            className="w-full bg-[#141016] border border-[#2B252E] rounded-xl pe-9 ps-3 py-2 text-xs text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
           />
         </div>
       </div>
@@ -53,7 +53,7 @@ export function ExercisePRsSection({ prs }: ExercisePRsSectionProps) {
         <div className="py-8 text-center border border-dashed border-[#2B252E] rounded-2xl bg-[#161218] p-6 space-y-2">
           <Dumbbell className="w-8 h-8 text-[#9D969D] mx-auto opacity-50" />
           <p className="text-xs text-[#9D969D]">
-            {prs.length === 0 ? ar.progress.emptyPRs : "لا توجد نتائج مطابقة لبحثك."}
+            {prs.length === 0 ? ar.progress.emptyPRs : ar.progress.noMatchingPRs}
           </p>
         </div>
       ) : (
@@ -78,7 +78,7 @@ export function ExercisePRsSection({ prs }: ExercisePRsSectionProps) {
                   </span>
                   {pr.unitTag && (
                     <span className="comic-badge text-[10px] bg-[#211C23] text-[#D6AA63] border-[#D6AA63]/30">
-                      الوحدة: {pr.unitTag}
+                      {ar.progress.unitTagBadge} {pr.unitTag}
                     </span>
                   )}
                 </div>
@@ -89,8 +89,8 @@ export function ExercisePRsSection({ prs }: ExercisePRsSectionProps) {
                     <span className="text-xl sm:text-2xl font-black text-[#D6AA63] font-mono">
                       {pr.weight.rawWeight}
                     </span>
-                    <span className="text-xs font-bold text-[#9D969D] mr-2">
-                      × {pr.reps} عدات
+                    <span className="text-xs font-bold text-[#9D969D] me-2">
+                      × {pr.reps} {ar.progress.repsSuffix}
                     </span>
                   </div>
                   <div className="flex items-center gap-1 text-[10px] text-[#9D969D] font-mono">
@@ -101,7 +101,7 @@ export function ExercisePRsSection({ prs }: ExercisePRsSectionProps) {
 
                 {/* Objective Comparison string */}
                 <div className="text-[11px] text-[#9D969D] flex items-center gap-1.5 pt-0.5">
-                  <span className="text-[#34D399] font-bold">المقارنة:</span>
+                  <span className="text-[#34D399] font-bold">{ar.progress.comparisonLabel}</span>
                   <span className="font-mono text-[#F2EADF]/90 truncate">
                     {comparisonText}
                   </span>

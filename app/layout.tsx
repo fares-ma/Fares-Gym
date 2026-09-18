@@ -4,7 +4,6 @@ import "./globals.css";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
-  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-cairo",
   display: "swap",
 });
@@ -31,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" dir="rtl" className="dark" suppressHydrationWarning>
-      <body className={`${cairo.variable} font-sans antialiased min-h-screen bg-slate-950 text-slate-100`}>
+      <body className={`${cairo.variable} font-sans antialiased min-h-screen bg-[#0F0D11] text-[#F2EADF]`}>
         {children}
       </body>
     </html>

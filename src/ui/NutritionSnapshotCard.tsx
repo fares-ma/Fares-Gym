@@ -1,8 +1,7 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import { Flame, Utensils } from "lucide-react";
+import { ar } from "@/i18n/ar";
 
 interface NutritionSnapshotCardProps {
   consumedCalories?: number;
@@ -38,12 +37,12 @@ export const NutritionSnapshotCard: React.FC<NutritionSnapshotCardProps> = ({
     <div className="comic-card p-4 md:p-5 flex flex-col justify-between">
       {/* Card Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-base font-black text-[#F2EADF]">التغذية اليوم</h3>
+        <h3 className="text-base font-black text-[#F2EADF]">{ar.home.nutritionTitle}</h3>
         <Link
           href="/nutrition"
           className="text-xs font-bold text-[#9D969D] hover:text-[#D6AA63] transition-colors flex items-center gap-1"
         >
-          <span>عرض التفاصيل</span>
+          <span>{ar.home.nutritionViewDetails}</span>
           <span className="text-xs select-none">‹</span>
         </Link>
       </div>
@@ -78,7 +77,7 @@ export const NutritionSnapshotCard: React.FC<NutritionSnapshotCardProps> = ({
             <span className="text-[9px] text-[#9D969D] font-mono mt-0.5">
               / {targetCalories.toLocaleString()}
             </span>
-            <span className="text-[8px] text-[#9D969D]/80">سعرة حرارية</span>
+            <span className="text-[8px] text-[#9D969D]/80">{ar.home.caloriesUnit}</span>
           </div>
         </div>
 
@@ -87,7 +86,7 @@ export const NutritionSnapshotCard: React.FC<NutritionSnapshotCardProps> = ({
           {/* Protein */}
           <div>
             <div className="flex justify-between text-xs font-semibold text-[#9D969D] mb-1">
-              <span>بروتين</span>
+              <span>{ar.nutrition.protein}</span>
               <span className="font-mono text-[#F2EADF]">
                 {proteinConsumed} / {proteinTarget}g
               </span>
@@ -108,7 +107,7 @@ export const NutritionSnapshotCard: React.FC<NutritionSnapshotCardProps> = ({
           {/* Carbs */}
           <div>
             <div className="flex justify-between text-xs font-semibold text-[#9D969D] mb-1">
-              <span>كربوهيدرات</span>
+              <span>{ar.nutrition.carbs}</span>
               <span className="font-mono text-[#F2EADF]">
                 {carbsConsumed} / {carbsTarget}g
               </span>
@@ -129,7 +128,7 @@ export const NutritionSnapshotCard: React.FC<NutritionSnapshotCardProps> = ({
           {/* Fat */}
           <div>
             <div className="flex justify-between text-xs font-semibold text-[#9D969D] mb-1">
-              <span>دهون</span>
+              <span>{ar.nutrition.fats}</span>
               <span className="font-mono text-[#F2EADF]">
                 {fatConsumed} / {fatTarget}g
               </span>
@@ -150,7 +149,7 @@ export const NutritionSnapshotCard: React.FC<NutritionSnapshotCardProps> = ({
       <div className="mt-3 pt-2.5 border-t border-[#2B252E] flex items-center justify-between text-xs text-[#9D969D]">
         <div className="flex items-center gap-1.5">
           <Utensils className="w-3.5 h-3.5 text-[#7C1D38]" />
-          <span>وجبات مسجلة</span>
+          <span>{ar.home.loggedMeals}</span>
         </div>
         <span className="font-mono font-bold text-[#F2EADF]">
           {loggedMeals} / {totalMeals}

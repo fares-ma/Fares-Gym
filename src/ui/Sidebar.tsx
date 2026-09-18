@@ -16,31 +16,32 @@ import {
 import { logoutAction } from "../server/auth";
 import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "../lib/utils";
+import { ar } from "../i18n/ar";
 
 const NAV_GROUPS = [
   {
     title: "TODAY",
-    items: [{ href: "/", label: "اليوم", icon: Home }],
+    items: [{ href: "/", label: ar.nav.today, icon: Home }],
   },
   {
     title: "FITNESS",
     items: [
-      { href: "/workout", label: "التمارين", icon: Dumbbell },
-      { href: "/workout/history", label: "سجل التمارين", icon: History },
+      { href: "/workout", label: ar.nav.workout, icon: Dumbbell },
+      { href: "/workout/history", label: ar.nav.workoutHistory, icon: History },
     ],
   },
   {
     title: "LIFE",
     items: [
-      { href: "/nutrition", label: "التغذية", icon: Apple },
-      { href: "/activities", label: "الأنشطة والجدول", icon: Calendar },
+      { href: "/nutrition", label: ar.nav.nutrition, icon: Apple },
+      { href: "/activities", label: ar.nav.activities, icon: Calendar },
     ],
   },
   {
     title: "DATA",
     items: [
-      { href: "/progress", label: "التقدم والتحليلات", icon: TrendingUp },
-      { href: "/settings", label: "الإعدادات", icon: Settings },
+      { href: "/progress", label: ar.nav.progress, icon: TrendingUp },
+      { href: "/settings", label: ar.nav.settings, icon: Settings },
     ],
   },
 ];
@@ -49,7 +50,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex flex-col w-64 border-s border-[#2B252E] bg-[#18151B] h-screen sticky top-0 p-4 justify-between z-30 select-none">
+    <aside className="hidden md:flex flex-col w-64 border-e border-[#2B252E] bg-[#18151B] h-screen sticky top-0 p-4 justify-between z-30 select-none">
       <div className="space-y-6">
         {/* Brand Header */}
         <div className="flex items-center gap-3 px-2 py-2 border-b border-[#2B252E] pb-4">
@@ -113,7 +114,7 @@ export function Sidebar() {
       {/* Footer / Controls */}
       <div className="border-t border-[#2B252E] pt-4 space-y-2">
         <div className="flex items-center justify-between px-2">
-          <span className="text-[11px] text-[#9D969D] font-bold">المظهر</span>
+          <span className="text-[11px] text-[#9D969D] font-bold">{ar.nav.theme}</span>
           <ThemeToggle />
         </div>
 
@@ -126,7 +127,7 @@ export function Sidebar() {
           className="flex w-full items-center gap-3 px-3 py-2 text-xs font-bold rounded-xl text-red-400 hover:text-red-300 hover:bg-red-950/30 transition-colors cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
-          <span>تسجيل الخروج</span>
+          <span>{ar.auth.logout}</span>
         </button>
       </div>
     </aside>

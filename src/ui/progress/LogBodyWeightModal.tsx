@@ -43,7 +43,7 @@ export function LogBodyWeightModal({
     e.preventDefault();
     const parsedWeight = parseFloat(weightKg);
     if (isNaN(parsedWeight) || parsedWeight <= 0) {
-      setError("برجاء إدخال وزن صحيح بالكيلوجرام");
+      setError(ar.progress.weightModal.weightRequired);
       return;
     }
 
@@ -71,9 +71,9 @@ export function LogBodyWeightModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
       <div
-        className="comic-card w-full max-w-md p-6 border border-[#2B252E] bg-[#1A151D] shadow-2xl space-y-5"
+        className="comic-card w-full max-w-md p-5 md:p-6 bg-[#18151B] border border-[#2B252E] space-y-4 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -87,7 +87,7 @@ export function LogBodyWeightModal({
                 {ar.progress.weightModal.title}
               </h3>
               <p className="text-xs text-[#9D969D]">
-                سجل وزنك للمقارنة ومتابعة التطور
+                {ar.progress.weightModal.subtitle}
               </p>
             </div>
           </div>
@@ -132,13 +132,13 @@ export function LogBodyWeightModal({
                 type="number"
                 step="0.1"
                 required
-                placeholder="مثال: 78.5"
+                placeholder="78.5"
                 value={weightKg}
                 onChange={(e) => setWeightKg(e.target.value)}
                 className="w-full bg-[#110D13] border border-[#2B252E] rounded-xl px-3.5 py-2.5 text-sm text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
               />
-              <span className="absolute left-3 top-2.5 text-xs text-[#9D969D] font-mono select-none">
-                كجم
+              <span className="absolute end-3 top-2.5 text-xs text-[#9D969D] font-mono select-none">
+                {ar.progress.kgSuffix}
               </span>
             </div>
           </div>
@@ -164,7 +164,7 @@ export function LogBodyWeightModal({
               onClick={onClose}
               className="px-4 py-2 rounded-xl text-xs font-bold text-[#9D969D] hover:bg-[#211C23] transition-colors"
             >
-              إلغاء
+              {ar.progress.weightModal.cancelBtn}
             </button>
             <button
               type="submit"

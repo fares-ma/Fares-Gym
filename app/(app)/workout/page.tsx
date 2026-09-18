@@ -5,7 +5,8 @@ import {
 } from "@/server/workout-queries";
 import { ProgramCard } from "@/ui/workout/ProgramCard";
 import { ar } from "@/i18n/ar";
-import { Dumbbell, History, Flame, ArrowRight } from "lucide-react";
+import { Dumbbell, History, Flame, ArrowLeft } from "lucide-react";
+
 import { MiniFares } from "@/ui/MiniFares";
 import { QuoteBanner } from "@/ui/QuoteBanner";
 
@@ -70,7 +71,7 @@ export default async function WorkoutPage() {
                 {ar.workout.active.inProgressBanner}
               </h3>
               <p className="text-xs text-[#9D969D] mt-0.5">
-                {activeData.program.name} • تم البدء في{" "}
+                {activeData.program.name} • {ar.workout.active.startedAt}{" "}
                 {new Date(activeData.session.startedAt).toLocaleTimeString("ar-EG", {
                   hour: "2-digit",
                   minute: "2-digit",
@@ -84,9 +85,10 @@ export default async function WorkoutPage() {
             className="comic-btn-primary px-5 py-2.5 rounded-xl text-xs font-black tracking-wide inline-flex items-center justify-center gap-2"
           >
             <span>{ar.workout.active.resumeCTA}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" />
           </Link>
         </div>
+
       )}
 
       {/* Programs List */}

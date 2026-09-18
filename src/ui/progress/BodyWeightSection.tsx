@@ -77,7 +77,7 @@ export function BodyWeightSection({
             </h3>
             {latest && (
               <p className="text-xs text-[#9D969D]">
-                آخر قياس: <strong className="text-[#F2EADF] font-mono">{latest.weightKg} كجم</strong> ({latest.date})
+                {ar.progress.latestMeasurement} <strong className="text-[#F2EADF] font-mono">{latest.weightKg} {ar.progress.kgSuffix}</strong> ({latest.date})
               </p>
             )}
           </div>
@@ -105,14 +105,14 @@ export function BodyWeightSection({
           {latest && (
             <div className="flex items-center gap-4 bg-[#141016] p-3 rounded-xl border border-[#2B252E]">
               <div>
-                <span className="text-[11px] text-[#9D969D] block">الوزن الحالي</span>
+                <span className="text-[11px] text-[#9D969D] block">{ar.progress.currentWeight}</span>
                 <span className="text-2xl font-black text-[#F2EADF] font-mono">
-                  {latest.weightKg} <span className="text-xs font-bold text-[#D6AA63]">كجم</span>
+                  {latest.weightKg} <span className="text-xs font-bold text-[#D6AA63]">{ar.progress.kgSuffix}</span>
                 </span>
               </div>
               {diff !== null && (
-                <div className="border-r border-[#2B252E] pr-4">
-                  <span className="text-[11px] text-[#9D969D] block">الفارق عن السابق</span>
+                <div className="border-e border-[#2B252E] pe-4">
+                  <span className="text-[11px] text-[#9D969D] block">{ar.progress.diffFromPrevious}</span>
                   <div className="flex items-center gap-1">
                     {diff <= 0 ? (
                       <TrendingDown className="w-4 h-4 text-emerald-400" />
@@ -120,7 +120,7 @@ export function BodyWeightSection({
                       <TrendingUp className="w-4 h-4 text-amber-400" />
                     )}
                     <span className={`text-sm font-bold font-mono ${diff <= 0 ? "text-emerald-400" : "text-amber-400"}`}>
-                      {diff > 0 ? `+${diff}` : diff} كجم
+                      {diff > 0 ? `+${diff}` : diff} {ar.progress.kgSuffix}
                     </span>
                   </div>
                 </div>
@@ -132,8 +132,8 @@ export function BodyWeightSection({
           {chartPoints && (
             <div className="bg-[#120E15] p-3 rounded-xl border border-[#2B252E] overflow-hidden">
               <div className="flex items-center justify-between text-[10px] text-[#9D969D] font-mono mb-1">
-                <span>الحد الأقصى: {chartPoints.maxW} كجم</span>
-                <span>الحد الأدنى: {chartPoints.minW} كجم</span>
+                <span>{ar.progress.maxWeight} {chartPoints.maxW} {ar.progress.kgSuffix}</span>
+                <span>{ar.progress.minWeight} {chartPoints.minW} {ar.progress.kgSuffix}</span>
               </div>
               <svg
                 viewBox={`0 0 ${chartPoints.width} ${chartPoints.height}`}
@@ -168,8 +168,8 @@ export function BodyWeightSection({
 
           {/* Recent Entries History List */}
           <div className="space-y-1.5 pt-2">
-            <span className="text-xs font-bold text-[#F2EADF] block">سجل القياسات الأخيرة</span>
-            <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1">
+            <span className="text-xs font-bold text-[#F2EADF] block">{ar.progress.recentMeasurements}</span>
+            <div className="max-h-48 overflow-y-auto space-y-1.5 pe-1">
               {[...entries].reverse().slice(0, 5).map((e) => (
                 <div
                   key={e.id}
@@ -177,7 +177,7 @@ export function BodyWeightSection({
                 >
                   <div className="flex items-center gap-3">
                     <span className="font-mono text-[#F2EADF] font-bold text-sm">
-                      {e.weightKg} كجم
+                      {e.weightKg} {ar.progress.kgSuffix}
                     </span>
                     <span className="text-[11px] font-mono text-[#9D969D]">
                       {e.date}
@@ -191,7 +191,7 @@ export function BodyWeightSection({
                   <button
                     onClick={() => handleDelete(e.id)}
                     disabled={isPending}
-                    aria-label={`حذف قياس ${e.weightKg} كجم بتاريخ ${e.date}`}
+                    aria-label={ar.progress.deleteWeightAria.replace("{weight}", String(e.weightKg)).replace("{date}", e.date)}
                     className="text-[#9D969D] hover:text-rose-400 p-1 transition-colors cursor-pointer disabled:opacity-50"
                   >
                     <Trash2 className="w-3.5 h-3.5" />

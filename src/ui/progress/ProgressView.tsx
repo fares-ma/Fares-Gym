@@ -14,6 +14,8 @@ import { ExercisePRsSection } from "./ExercisePRsSection";
 import { WorkoutVolumeChart } from "./WorkoutVolumeChart";
 import { QuoteBanner } from "@/ui/QuoteBanner";
 import { Award, Scale, BarChart3, LayoutGrid } from "lucide-react";
+import { ar } from "@/i18n/ar";
+
 
 interface ProgressViewProps {
   consistency: ConsistencyMetrics;
@@ -53,7 +55,7 @@ export function ProgressView({
           }`}
         >
           <LayoutGrid className="w-3.5 h-3.5" />
-          <span>نظرة شاملة</span>
+          <span>{ar.progress.tabs.all}</span>
         </button>
 
         <button
@@ -65,7 +67,7 @@ export function ProgressView({
           }`}
         >
           <Award className="w-3.5 h-3.5" />
-          <span>الأرقام القياسية ({prs.length})</span>
+          <span>{ar.progress.tabs.prs} ({prs.length})</span>
         </button>
 
         <button
@@ -77,7 +79,7 @@ export function ProgressView({
           }`}
         >
           <Scale className="w-3.5 h-3.5" />
-          <span>وزن الجسم ({bodyWeights.length})</span>
+          <span>{ar.progress.tabs.weight} ({bodyWeights.length})</span>
         </button>
 
         <button
@@ -89,8 +91,9 @@ export function ProgressView({
           }`}
         >
           <BarChart3 className="w-3.5 h-3.5" />
-          <span>حجم التمارين</span>
+          <span>{ar.progress.tabs.volume}</span>
         </button>
+
       </div>
 
       {/* 3. Tab Content */}

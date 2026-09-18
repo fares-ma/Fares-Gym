@@ -166,7 +166,7 @@ export function RemindersSection({ reminders, onChanged }: RemindersSectionProps
                   onClick={() => handleDelete(item.id)}
                   disabled={isPending}
                   className="p-1.5 rounded-lg text-[#9D969D] hover:text-red-400 hover:bg-red-950/20 transition-all disabled:opacity-40"
-                  title="حذف التذكير"
+                  title={ar.activities.deleteReminderTooltip}
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>

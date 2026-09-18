@@ -82,36 +82,37 @@ export function BackupExportCard({
       {/* Tables count preview */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-1 text-center font-mono">
         <div className="p-2 rounded-xl bg-[#151117] border border-[#2B252E]">
-          <span className="text-[10px] text-[#9D969D] block">التمارين</span>
+          <span className="text-[10px] text-[#9D969D] block">{ar.settings.tables.exercises}</span>
           <strong className="text-sm text-[#F2EADF] font-black">
             {tableStats.exercisesCount}
           </strong>
         </div>
         <div className="p-2 rounded-xl bg-[#151117] border border-[#2B252E]">
-          <span className="text-[10px] text-[#9D969D] block">الجلسات</span>
+          <span className="text-[10px] text-[#9D969D] block">{ar.settings.tables.sessions}</span>
           <strong className="text-sm text-[#F2EADF] font-black">
             {tableStats.completedSessionsCount}
           </strong>
         </div>
         <div className="p-2 rounded-xl bg-[#151117] border border-[#2B252E]">
-          <span className="text-[10px] text-[#9D969D] block">الوجبات</span>
+          <span className="text-[10px] text-[#9D969D] block">{ar.settings.tables.meals}</span>
           <strong className="text-sm text-[#F2EADF] font-black">
             {tableStats.loggedMealsCount}
           </strong>
         </div>
         <div className="p-2 rounded-xl bg-[#151117] border border-[#2B252E]">
-          <span className="text-[10px] text-[#9D969D] block">البلوكات</span>
+          <span className="text-[10px] text-[#9D969D] block">{ar.settings.tables.blocks}</span>
           <strong className="text-sm text-[#F2EADF] font-black">
             {tableStats.scheduleBlocksCount}
           </strong>
         </div>
         <div className="p-2 rounded-xl bg-[#151117] border border-[#2B252E] col-span-2 sm:col-span-1">
-          <span className="text-[10px] text-[#9D969D] block">أوزان الجسم</span>
+          <span className="text-[10px] text-[#9D969D] block">{ar.settings.tables.weights}</span>
           <strong className="text-sm text-[#F2EADF] font-black">
             {tableStats.weightLogsCount}
           </strong>
         </div>
       </div>
+
 
       {/* Status & Last Export */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 text-xs border-t border-[#231E26]">

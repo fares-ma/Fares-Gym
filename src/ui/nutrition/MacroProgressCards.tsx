@@ -10,6 +10,7 @@ interface MacroProgressCardsProps {
 
 export function MacroProgressCards({ summary }: MacroProgressCardsProps) {
   const { calories, protein, carbs, fats } = summary;
+  const hasTarget = Boolean(summary.target && calories.target > 0);
 
   return (
     <div className="space-y-4">
@@ -30,27 +31,37 @@ export function MacroProgressCards({ summary }: MacroProgressCardsProps) {
                 {calories.consumed.toLocaleString()}
               </span>
               <span className="text-sm sm:text-base font-semibold text-[#9D969D] font-mono">
-                / {calories.target.toLocaleString()} {ar.nutrition.kcal}
+                {hasTarget
+                  ? `/ ${calories.target.toLocaleString()} ${ar.nutrition.kcal}`
+                  : `/ —`}
               </span>
             </div>
           </div>
 
           {/* Status Badge */}
           <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1.5">
-            <span
-              className={`comic-badge text-xs px-3 py-1 font-bold ${
-                calories.isSurplus
-                  ? "bg-amber-950/60 text-amber-300 border border-amber-500/30"
-                  : "bg-emerald-950/60 text-emerald-300 border border-emerald-500/30"
-              }`}
-            >
-              {calories.isSurplus
-                ? `+${(calories.consumed - calories.target).toLocaleString()} ${ar.nutrition.surplus}`
-                : `${calories.remaining.toLocaleString()} ${ar.nutrition.remaining}`}
-            </span>
-            <span className="text-xs font-mono text-[#9D969D]">
-              {calories.percentage}% {ar.nutrition.target}
-            </span>
+            {hasTarget ? (
+              <>
+                <span
+                  className={`comic-badge text-xs px-3 py-1 font-bold ${
+                    calories.isSurplus
+                      ? "bg-amber-950/60 text-amber-300 border border-amber-500/30"
+                      : "bg-emerald-950/60 text-emerald-300 border border-emerald-500/30"
+                  }`}
+                >
+                  {calories.isSurplus
+                    ? `+${(calories.consumed - calories.target).toLocaleString()} ${ar.nutrition.surplus}`
+                    : `${calories.remaining.toLocaleString()} ${ar.nutrition.remaining}`}
+                </span>
+                <span className="text-xs font-mono text-[#9D969D]">
+                  {calories.percentage}% {ar.nutrition.target}
+                </span>
+              </>
+            ) : (
+              <span className="comic-badge text-xs px-3 py-1 font-bold bg-[#211C23] text-[#D6AA63] border border-[#D6AA63]/30">
+                {ar.nutrition.noTargetsSet || "لم يتم تحديد أهداف بعد"}
+              </span>
+            )}
           </div>
         </div>
 
@@ -62,7 +73,7 @@ export function MacroProgressCards({ summary }: MacroProgressCardsProps) {
                 ? "bg-gradient-to-r from-amber-500 to-red-500"
                 : "bg-gradient-to-r from-orange-500 to-emerald-400"
             }`}
-            style={{ width: `${Math.min(100, calories.percentage)}%` }}
+            style={{ width: `${hasTarget ? Math.min(100, calories.percentage) : 0}%` }}
           />
         </div>
       </div>
@@ -81,7 +92,7 @@ export function MacroProgressCards({ summary }: MacroProgressCardsProps) {
               </span>
             </div>
             <span className="text-[11px] font-mono text-emerald-400 font-bold">
-              {protein.percentage}%
+              {hasTarget ? `${protein.percentage}%` : "—"}
             </span>
           </div>
 
@@ -91,20 +102,22 @@ export function MacroProgressCards({ summary }: MacroProgressCardsProps) {
                 {protein.consumed}
               </span>
               <span className="text-xs text-[#9D969D]">
-                / {protein.target} {ar.nutrition.grams}
+                / {hasTarget ? `${protein.target} ${ar.nutrition.grams}` : "—"}
               </span>
             </div>
             <span className="text-[10px] text-[#9D969D] block mt-0.5">
-              {protein.isSurplus
-                ? `+${Math.round((protein.consumed - protein.target) * 10) / 10} ${ar.nutrition.surplus}`
-                : `${protein.remaining} ${ar.nutrition.remaining}`}
+              {hasTarget
+                ? (protein.isSurplus
+                    ? `+${Math.round((protein.consumed - protein.target) * 10) / 10} ${ar.nutrition.surplus}`
+                    : `${protein.remaining} ${ar.nutrition.remaining}`)
+                : "—"}
             </span>
           </div>
 
           <div className="w-full bg-[#110D13] rounded-full h-2 overflow-hidden border border-[#2B252E]">
             <div
               className="h-full bg-emerald-500 rounded-full transition-all duration-500"
-              style={{ width: `${Math.min(100, protein.percentage)}%` }}
+              style={{ width: `${hasTarget ? Math.min(100, protein.percentage) : 0}%` }}
             />
           </div>
         </div>
@@ -121,7 +134,7 @@ export function MacroProgressCards({ summary }: MacroProgressCardsProps) {
               </span>
             </div>
             <span className="text-[11px] font-mono text-amber-400 font-bold">
-              {carbs.percentage}%
+              {hasTarget ? `${carbs.percentage}%` : "—"}
             </span>
           </div>
 
@@ -131,20 +144,22 @@ export function MacroProgressCards({ summary }: MacroProgressCardsProps) {
                 {carbs.consumed}
               </span>
               <span className="text-xs text-[#9D969D]">
-                / {carbs.target} {ar.nutrition.grams}
+                / {hasTarget ? `${carbs.target} ${ar.nutrition.grams}` : "—"}
               </span>
             </div>
             <span className="text-[10px] text-[#9D969D] block mt-0.5">
-              {carbs.isSurplus
-                ? `+${Math.round((carbs.consumed - carbs.target) * 10) / 10} ${ar.nutrition.surplus}`
-                : `${carbs.remaining} ${ar.nutrition.remaining}`}
+              {hasTarget
+                ? (carbs.isSurplus
+                    ? `+${Math.round((carbs.consumed - carbs.target) * 10) / 10} ${ar.nutrition.surplus}`
+                    : `${carbs.remaining} ${ar.nutrition.remaining}`)
+                : "—"}
             </span>
           </div>
 
           <div className="w-full bg-[#110D13] rounded-full h-2 overflow-hidden border border-[#2B252E]">
             <div
               className="h-full bg-amber-500 rounded-full transition-all duration-500"
-              style={{ width: `${Math.min(100, carbs.percentage)}%` }}
+              style={{ width: `${hasTarget ? Math.min(100, carbs.percentage) : 0}%` }}
             />
           </div>
         </div>
@@ -161,7 +176,7 @@ export function MacroProgressCards({ summary }: MacroProgressCardsProps) {
               </span>
             </div>
             <span className="text-[11px] font-mono text-sky-400 font-bold">
-              {fats.percentage}%
+              {hasTarget ? `${fats.percentage}%` : "—"}
             </span>
           </div>
 
@@ -171,20 +186,22 @@ export function MacroProgressCards({ summary }: MacroProgressCardsProps) {
                 {fats.consumed}
               </span>
               <span className="text-xs text-[#9D969D]">
-                / {fats.target} {ar.nutrition.grams}
+                / {hasTarget ? `${fats.target} ${ar.nutrition.grams}` : "—"}
               </span>
             </div>
             <span className="text-[10px] text-[#9D969D] block mt-0.5">
-              {fats.isSurplus
-                ? `+${Math.round((fats.consumed - fats.target) * 10) / 10} ${ar.nutrition.surplus}`
-                : `${fats.remaining} ${ar.nutrition.remaining}`}
+              {hasTarget
+                ? (fats.isSurplus
+                    ? `+${Math.round((fats.consumed - fats.target) * 10) / 10} ${ar.nutrition.surplus}`
+                    : `${fats.remaining} ${ar.nutrition.remaining}`)
+                : "—"}
             </span>
           </div>
 
           <div className="w-full bg-[#110D13] rounded-full h-2 overflow-hidden border border-[#2B252E]">
             <div
               className="h-full bg-sky-500 rounded-full transition-all duration-500"
-              style={{ width: `${Math.min(100, fats.percentage)}%` }}
+              style={{ width: `${hasTarget ? Math.min(100, fats.percentage) : 0}%` }}
             />
           </div>
         </div>

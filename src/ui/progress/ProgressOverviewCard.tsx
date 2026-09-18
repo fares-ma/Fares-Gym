@@ -29,7 +29,7 @@ export function ProgressOverviewCard({ metrics }: ProgressOverviewCardProps) {
               </span>
             </div>
             <h2 className="text-xl sm:text-2xl font-black text-[#F2EADF] mt-1">
-              الاستمرارية تبني النتيجة
+              {ar.progress.consistencySubtitle}
             </h2>
           </div>
 
@@ -71,8 +71,9 @@ export function ProgressOverviewCard({ metrics }: ProgressOverviewCardProps) {
               </div>
               <span className="text-lg sm:text-2xl font-black text-[#34D399] font-mono">
                 {metrics.last30DaysActiveCount}{" "}
-                <span className="text-[11px] text-[#9D969D]">يوم</span>
+                <span className="text-[11px] text-[#9D969D]">{ar.progress.daysSuffix}</span>
               </span>
+
               <span className="text-[10px] text-[#9D969D] font-medium leading-tight">
                 {ar.progress.activeDaysMonth} ({metrics.last30DaysRate}%)
               </span>

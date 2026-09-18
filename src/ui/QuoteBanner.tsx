@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { MiniFares } from "./MiniFares";
 import { useRandomQuote } from "@/lib/useRandomQuote";

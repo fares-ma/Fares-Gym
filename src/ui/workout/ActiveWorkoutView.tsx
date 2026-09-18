@@ -137,7 +137,7 @@ export function ActiveWorkoutView({
           <div className="comic-card-accent py-2 px-4 flex items-center gap-3 bg-[#211C23] shadow-2xl border-[#7C1D38]">
             <MiniFares pose="fist-pump" size="xs" animate="bounce" />
             <span className="text-xs font-black text-[#D6AA63]">
-              عاش يا بطل! Set Completed 💪
+              {ar.workout.active.setCelebration}
             </span>
           </div>
         </div>
@@ -321,7 +321,7 @@ export function ActiveWorkoutView({
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
-                placeholder="أداء ممتاز، زيادة وزن خفيفة..."
+                placeholder={ar.workout.active.notesPlaceholder}
                 className="w-full bg-[#211C23] border border-[#362E3B] rounded-xl p-3 text-xs text-[#F2EADF] placeholder-[#9D969D]/60 focus:outline-none focus:border-[#7C1D38]"
               />
             </div>
@@ -342,7 +342,7 @@ export function ActiveWorkoutView({
                 disabled={isPending}
                 className="comic-btn-secondary py-2.5 px-4 rounded-xl text-xs font-bold cursor-pointer"
               >
-                تراجع
+                {ar.workout.active.undo}
               </button>
             </div>
           </div>

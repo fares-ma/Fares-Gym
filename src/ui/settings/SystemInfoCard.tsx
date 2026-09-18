@@ -14,11 +14,12 @@ export function SystemInfoCard({ dbStatus }: SystemInfoCardProps) {
   const [isPending, startTransition] = useTransition();
 
   const handleLogout = () => {
-    if (!window.confirm("هل ترغب في تسجيل الخروج من الجلسة؟")) return;
+    if (!window.confirm(ar.settings.confirmLogout)) return;
     startTransition(async () => {
       await logoutAction();
     });
   };
+
 
   return (
     <div className="space-y-3">

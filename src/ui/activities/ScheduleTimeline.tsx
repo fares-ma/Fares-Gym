@@ -142,7 +142,7 @@ export function ScheduleTimeline({ blocks, onBlockDeleted }: ScheduleTimelinePro
                 onClick={() => handleDelete(block.id)}
                 disabled={isPending}
                 className="p-2 rounded-xl text-[#9D969D] hover:text-red-400 hover:bg-red-950/20 transition-all disabled:opacity-40"
-                title="حذف البلوك"
+                title={ar.activities.deleteBlockTooltip}
               >
                 <Trash2 className="w-4 h-4" />
               </button>

@@ -102,12 +102,29 @@ export async function getRecentNotes(limit = 30): Promise<QuickNote[]> {
   }));
 }
 
+import { getUserNow } from "../lib/date-utils";
+export { getUserNow };
+
+
 /**
- * Helper to get the current timestamp in the user's configured time zone (defaults to Africa/Cairo).
+ * Lightweight helper returning activities needed for the home dashboard (omits unused notes).
  */
-export function getUserNow(): Date {
-  const timeZone = process.env.APP_TIMEZONE || "Africa/Cairo";
-  return new Date(new Date().toLocaleString("en-US", { timeZone }));
+export async function getDashboardActivities(): Promise<{
+  schedule: EnrichedScheduleBlock[];
+  reminders: ReminderItem[];
+}> {
+  const now = getUserNow();
+  const currentDayOfWeek = now.getDay();
+
+  const [schedule, rems] = await Promise.all([
+    getScheduleBlocksForDay(currentDayOfWeek, now),
+    getAllReminders(),
+  ]);
+
+  return {
+    schedule,
+    reminders: rems,
+  };
 }
 
 /**

@@ -1,57 +1,15 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Moon } from "lucide-react";
+import { ar } from "@/i18n/ar";
 
 export function ThemeToggle() {
-  const [isDark, setIsDark] = useState(true);
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("fares_hub_theme");
-    if (savedTheme === "light") {
-      setIsDark(false);
-      document.documentElement.classList.remove("dark");
-      document.documentElement.classList.add("light");
-    } else {
-      setIsDark(true);
-      document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const nextIsDark = !isDark;
-    setIsDark(nextIsDark);
-    if (nextIsDark) {
-      document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
-      localStorage.setItem("fares_hub_theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      document.documentElement.classList.add("light");
-      localStorage.setItem("fares_hub_theme", "light");
-    }
-  };
-
   return (
-    <button
-      onClick={toggleTheme}
-      type="button"
-      className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-xl transition-colors text-slate-400 hover:text-slate-100 hover:bg-slate-800/60"
-      title="تبديل المظهر"
-      aria-label="تبديل المظهر"
+    <div
+      className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#211C23] border border-[#2B252E] text-[#D6AA63] select-none"
+      title={ar.theme.comicDark}
+      aria-label={ar.theme.comicDark}
     >
-      {isDark ? (
-        <>
-          <Sun className="w-4 h-4 text-amber-400" />
-          <span className="text-xs">نهاري</span>
-        </>
-      ) : (
-        <>
-          <Moon className="w-4 h-4 text-indigo-400" />
-          <span className="text-xs">ليلي</span>
-        </>
-      )}
-    </button>
+      <Moon className="w-3.5 h-3.5 text-[#D6AA63] fill-[#D6AA63]/20" />
+      <span className="text-[11px] font-bold text-[#F2EADF]">{ar.theme.darkShort}</span>
+    </div>
   );
 }

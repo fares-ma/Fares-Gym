@@ -2,6 +2,7 @@
 
 import crypto from "crypto";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { db } from "../data/db";
 import { loginAttempts } from "../data/schema";
 import { eq, and, gt, desc } from "drizzle-orm";
@@ -13,14 +14,18 @@ import { ar } from "../i18n/ar";
 const MAX_FAILED_ATTEMPTS = 5;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
-async function getClientIp(): Promise<string> {
+async function getClientIp(customHeaders?: Headers): Promise<string> {
   try {
-    const headerList = await headers();
+    const headerList = customHeaders || (await headers());
+    const realIp = headerList.get("x-real-ip");
+    if (realIp) {
+      return realIp.trim();
+    }
     const forwardedFor = headerList.get("x-forwarded-for");
     if (forwardedFor) {
       return forwardedFor.split(",")[0].trim();
     }
-    return headerList.get("x-real-ip") || "127.0.0.1";
+    return "127.0.0.1";
   } catch {
     return "127.0.0.1";
   }
@@ -80,13 +85,15 @@ export async function loginAction(input: LoginInput): Promise<AuthResult> {
     return { success: false, error: ar.auth.rateLimitExceeded };
   }
 
-  const expectedUsername = process.env.ADMIN_USERNAME || "fares";
-  const expectedPasswordHash = process.env.ADMIN_PASSWORD_HASH || "";
+  const expectedUsername = (process.env.ADMIN_USERNAME || "fares").trim().toLowerCase();
+  const rawHash = (process.env.ADMIN_PASSWORD_HASH || "").trim();
+  const expectedPasswordHash = rawHash.replace(/\\(\$)/g, "$1");
 
-  if (input.username !== expectedUsername) {
+  if (input.username.trim().toLowerCase() !== expectedUsername) {
     await recordAttempt(ip, false);
     return { success: false, error: ar.auth.invalidCredentials };
   }
+
 
   const isValid = await verifyPassword(input.password, expectedPasswordHash);
   if (!isValid) {
@@ -94,7 +101,20 @@ export async function loginAction(input: LoginInput): Promise<AuthResult> {
     return { success: false, error: ar.auth.invalidCredentials };
   }
 
-  // Success
+  // Success: clear failed login attempts for this IP
+  try {
+    await db
+      .delete(loginAttempts)
+      .where(
+        and(
+          eq(loginAttempts.ipAddress, ip),
+          eq(loginAttempts.success, false)
+        )
+      );
+  } catch (err) {
+    console.error("Failed to clear failed login attempts:", err);
+  }
+
   await recordAttempt(ip, true);
   await createSession();
 
@@ -103,4 +123,5 @@ export async function loginAction(input: LoginInput): Promise<AuthResult> {
 
 export async function logoutAction(): Promise<void> {
   await destroySession();
+  redirect("/login");
 }

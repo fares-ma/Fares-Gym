@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Bell, Check } from "lucide-react";
 import { ReminderItem } from "@/src/domain/activities/types";
 import { toggleReminderAction } from "@/src/server/activities-actions";
+import { ar } from "@/i18n/ar";
 
 interface RemindersCardProps {
   initialReminders?: ReminderItem[];
@@ -47,12 +48,12 @@ export const RemindersCard: React.FC<RemindersCardProps> = ({
     <div className="comic-card p-4 md:p-5 flex flex-col justify-between">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-base font-black text-[#F2EADF]">التذكيرات</h3>
+        <h3 className="text-base font-black text-[#F2EADF]">{ar.home.remindersTitle}</h3>
         <Link
           href="/activities"
           className="text-xs font-bold text-[#9D969D] hover:text-[#D6AA63] transition-colors flex items-center gap-1"
         >
-          <span>عرض الكل</span>
+          <span>{ar.home.remindersViewAll}</span>
           <span className="text-xs select-none">‹</span>
         </Link>
       </div>
@@ -60,15 +61,24 @@ export const RemindersCard: React.FC<RemindersCardProps> = ({
       {/* Checklist items or empty state */}
       {items.length === 0 ? (
         <div className="py-6 text-center text-xs text-[#9D969D] my-auto">
-          لا توجد تذكيرات مسجلة اليوم
+          {ar.home.remindersEmptyToday}
         </div>
       ) : (
         <div className="flex flex-col gap-2.5 my-auto">
           {items.slice(0, 4).map((item) => (
             <div
               key={item.id}
+              role="checkbox"
+              aria-checked={item.isCompleted}
+              tabIndex={0}
               onClick={() => toggleReminder(item.id)}
-              className="flex items-center justify-between gap-2 p-1.5 rounded-lg hover:bg-[#211C23]/60 cursor-pointer transition-colors"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  toggleReminder(item.id);
+                }
+              }}
+              className="flex items-center justify-between gap-2 p-1.5 rounded-lg hover:bg-[#211C23]/60 cursor-pointer transition-colors focus:outline-none focus:ring-1 focus:ring-[#D6AA63]/50"
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 {/* Checkbox */}
@@ -110,7 +120,7 @@ export const RemindersCard: React.FC<RemindersCardProps> = ({
         <Bell className="w-3.5 h-3.5 text-[#D6AA63]" />
         <span>
           <strong className="text-[#F2EADF] font-mono">{pendingCount}</strong>{" "}
-          تذكيرات متبقية
+          {ar.home.remindersPending}
         </span>
       </div>
     </div>

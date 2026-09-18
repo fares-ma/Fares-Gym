@@ -28,7 +28,7 @@ export interface MacroProgress {
 
 export interface DailyNutritionSummary {
   date: string;
-  target: NutritionTarget;
+  target: NutritionTarget | null;
   meals: MealEntry[];
   calories: MacroProgress;
   protein: MacroProgress;

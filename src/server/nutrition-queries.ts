@@ -8,19 +8,10 @@ import {
 } from "../domain/nutrition/types";
 import { buildDailyNutritionSummary } from "../domain/nutrition/nutrition-engine";
 
-const DEFAULT_TARGET: NutritionTarget = {
-  id: "default",
-  effectiveDate: "2026-01-01",
-  targetCalories: 2200,
-  targetProtein: 160,
-  targetCarbs: 220,
-  targetFats: 60,
-};
-
 /**
  * Retrieves the active nutrition target snapshot for a given date.
  */
-export async function getNutritionTargets(dateStr: string): Promise<NutritionTarget> {
+export async function getNutritionTargets(dateStr: string): Promise<NutritionTarget | null> {
   const [targetRow] = await db
     .select()
     .from(nutritionTargets)
@@ -29,7 +20,7 @@ export async function getNutritionTargets(dateStr: string): Promise<NutritionTar
     .limit(1);
 
   if (!targetRow) {
-    return DEFAULT_TARGET;
+    return null;
   }
 
   return {

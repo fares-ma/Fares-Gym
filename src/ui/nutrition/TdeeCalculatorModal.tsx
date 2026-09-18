@@ -203,15 +203,15 @@ export function TdeeCalculatorModal({
               <div className="grid grid-cols-3 gap-2 text-center font-mono">
                 <div className="p-2 rounded-lg bg-emerald-950/30 border border-emerald-500/20 text-emerald-300 text-xs">
                   <span className="block font-bold">{result.suggestedProteinGrams}g</span>
-                  <span className="text-[10px] text-[#9D969D]">بروتين</span>
+                  <span className="text-[10px] text-[#9D969D]">{ar.nutrition.protein}</span>
                 </div>
                 <div className="p-2 rounded-lg bg-amber-950/30 border border-amber-500/20 text-amber-300 text-xs">
                   <span className="block font-bold">{result.suggestedCarbsGrams}g</span>
-                  <span className="text-[10px] text-[#9D969D]">كارب</span>
+                  <span className="text-[10px] text-[#9D969D]">{ar.nutrition.carbs}</span>
                 </div>
                 <div className="p-2 rounded-lg bg-sky-950/30 border border-sky-500/20 text-sky-300 text-xs">
                   <span className="block font-bold">{result.suggestedFatsGrams}g</span>
-                  <span className="text-[10px] text-[#9D969D]">دهون</span>
+                  <span className="text-[10px] text-[#9D969D]">{ar.nutrition.fats}</span>
                 </div>
               </div>
             </div>
@@ -224,9 +224,10 @@ export function TdeeCalculatorModal({
             >
               <Check className="w-4 h-4" />
               <span>
-                {isPending ? "جاري التطبيق..." : ar.nutrition.tdeeModal.applyAsTargetsBtn}
+                {isPending ? ar.nutrition.tdeeModal.applying : ar.nutrition.tdeeModal.applyAsTargetsBtn}
               </span>
             </button>
+
           </div>
         )}
       </div>

@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { db } from "../data/db";
 import {
   exercises,
@@ -20,7 +19,7 @@ import {
   appSettings,
 } from "../data/schema";
 import { eq } from "drizzle-orm";
-import { validateSession, destroySession } from "./session";
+import { validateSession } from "./session";
 import { getUserNow } from "./activities-queries";
 
 export interface ExportDataResult {
@@ -178,10 +177,12 @@ export async function confirmUnitTagAction(input: {
   }
 }
 
+import { logoutAction as authLogoutAction } from "./auth";
+
 /**
- * Destroys session and redirects to login.
+ * Canonical logoutAction delegated to auth.
  */
 export async function logoutAction(): Promise<void> {
-  await destroySession();
-  redirect("/login");
+  return authLogoutAction();
 }
+

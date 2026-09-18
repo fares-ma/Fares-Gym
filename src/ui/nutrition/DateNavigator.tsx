@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronRight, ChevronLeft, Calendar as CalendarIcon } from "lucide-react";
+import { ar } from "@/i18n/ar";
 
 interface DateNavigatorProps {
   currentDate: string; // YYYY-MM-DD
@@ -41,10 +42,11 @@ export function DateNavigator({ currentDate, onDateChange }: DateNavigatorProps)
 
   return (
     <div className="flex items-center justify-between gap-2 p-2.5 rounded-2xl bg-[#1A151D] border border-[#2B252E]">
+      {/* Right side in RTL = Previous day */}
       <button
-        onClick={handleNextDay}
+        onClick={handlePrevDay}
         className="p-2 rounded-xl text-[#9D969D] hover:text-[#F2EADF] hover:bg-[#211C23] transition-colors"
-        title="اليوم التالي"
+        title={ar.nutrition.dateNav.prevDay}
       >
         <ChevronRight className="w-5 h-5" />
       </button>
@@ -68,15 +70,16 @@ export function DateNavigator({ currentDate, onDateChange }: DateNavigatorProps)
             onClick={handleToday}
             className="comic-badge text-[10px] px-2 py-0.5 bg-[#211C23] text-[#D6AA63] hover:bg-[#2B252E] transition-all"
           >
-            اليوم
+            {ar.nutrition.dateNav.today}
           </button>
         )}
       </div>
 
+      {/* Left side in RTL = Next day */}
       <button
-        onClick={handlePrevDay}
+        onClick={handleNextDay}
         className="p-2 rounded-xl text-[#9D969D] hover:text-[#F2EADF] hover:bg-[#211C23] transition-colors"
-        title="اليوم السابق"
+        title={ar.nutrition.dateNav.nextDay}
       >
         <ChevronLeft className="w-5 h-5" />
       </button>

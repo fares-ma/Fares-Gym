@@ -62,7 +62,7 @@ export function calculateMacroProgress(consumed: number, target: number): MacroP
  */
 export function buildDailyNutritionSummary(
   date: string,
-  target: NutritionTarget,
+  target: NutritionTarget | null,
   meals: MealEntry[]
 ): DailyNutritionSummary {
   const totals = calculateDailyTotals(meals);
@@ -71,10 +71,10 @@ export function buildDailyNutritionSummary(
     date,
     target,
     meals,
-    calories: calculateMacroProgress(totals.calories, target.targetCalories),
-    protein: calculateMacroProgress(totals.proteinGrams, target.targetProtein),
-    carbs: calculateMacroProgress(totals.carbsGrams, target.targetCarbs),
-    fats: calculateMacroProgress(totals.fatsGrams, target.targetFats),
+    calories: calculateMacroProgress(totals.calories, target?.targetCalories ?? 0),
+    protein: calculateMacroProgress(totals.proteinGrams, target?.targetProtein ?? 0),
+    carbs: calculateMacroProgress(totals.carbsGrams, target?.targetCarbs ?? 0),
+    fats: calculateMacroProgress(totals.fatsGrams, target?.targetFats ?? 0),
   };
 }
 

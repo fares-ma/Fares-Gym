@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { db } from "../data/db";
 import { sessions } from "../data/schema";
@@ -9,6 +10,9 @@ const SESSION_DURATION_DAYS = 14;
 const SESSION_DURATION_MS = SESSION_DURATION_DAYS * 24 * 60 * 60 * 1000;
 
 function hashToken(token: string): string {
+  if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET) {
+    throw new Error("SESSION_SECRET must be set in production");
+  }
   const secret = process.env.SESSION_SECRET || "default_dev_secret_fares_hub_min32chars";
   return crypto.createHmac("sha256", secret).update(token).digest("hex");
 }
@@ -48,8 +52,9 @@ export async function createSession(): Promise<string> {
 
 /**
  * Validates the session from the cookie and implements sliding window renewal.
+ * Memoized per request using React cache().
  */
-export async function validateSession(): Promise<boolean> {
+export const validateSession = cache(async function validateSession(): Promise<boolean> {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get(COOKIE_NAME)?.value;
 
@@ -75,32 +80,39 @@ export async function validateSession(): Promise<boolean> {
   }
 
   const session = existing[0];
-  if (session.tokenHash !== tokenHashed) {
+  const hashA = Buffer.from(session.tokenHash, "hex");
+  const hashB = Buffer.from(tokenHashed, "hex");
+  if (hashA.length !== hashB.length || !crypto.timingSafeEqual(hashA, hashB)) {
     return false;
   }
 
-  // Sliding window: extend expiration by 14 days
-  const newExpiresAt = new Date(now.getTime() + SESSION_DURATION_MS);
-  await db
-    .update(sessions)
-    .set({ expiresAt: newExpiresAt })
-    .where(eq(sessions.id, sessionId));
+  // Sliding window: only extend expiration if less than 7 days remaining
+  const remainingLifetimeMs = session.expiresAt.getTime() - now.getTime();
+  const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
-  // Update cookie expiry if in a context allowing cookie mutation (Server Action / Route Handler)
-  try {
-    cookieStore.set(COOKIE_NAME, sessionCookie, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      expires: newExpiresAt,
-    });
-  } catch {
-    // Read-only context (Server Component layout/page); DB session expiry was already extended
+  if (remainingLifetimeMs < SEVEN_DAYS_MS) {
+    const newExpiresAt = new Date(now.getTime() + SESSION_DURATION_MS);
+    await db
+      .update(sessions)
+      .set({ expiresAt: newExpiresAt })
+      .where(eq(sessions.id, sessionId));
+
+    // Update cookie expiry if in a context allowing cookie mutation (Server Action / Route Handler)
+    try {
+      cookieStore.set(COOKIE_NAME, sessionCookie, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        expires: newExpiresAt,
+      });
+    } catch {
+      // Read-only context (Server Component layout/page); DB session expiry was already extended
+    }
   }
 
   return true;
-}
+});
 
 /**
  * Destroys the current session from DB and deletes the cookie.

@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getTimeAwareGreeting } from "@/lib/utils";
 import { ar } from "@/i18n/ar";
-import { Dumbbell, ArrowRight, Flame } from "lucide-react";
+import { Dumbbell, ArrowLeft, Flame } from "lucide-react";
 import { MiniFares } from "@/ui/MiniFares";
 import { ScheduleStepper } from "@/ui/ScheduleStepper";
 import { NutritionSnapshotCard } from "@/ui/NutritionSnapshotCard";
@@ -13,14 +13,15 @@ import {
   getWorkoutProgramsWithRotation,
   getActiveWorkoutSession,
 } from "@/server/workout-queries";
-import { getDailyNutrition } from "@/src/server/nutrition-queries";
-import { getActivitiesSummary } from "@/src/server/activities-queries";
+import { getDailyNutrition } from "@/server/nutrition-queries";
+import { getDashboardActivities } from "@/server/activities-queries";
+import { getUserTodayDateStr, formatUserArabicDate } from "@/lib/date-utils";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const greeting = getTimeAwareGreeting();
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = getUserTodayDateStr();
 
   // Fetch real workout, nutrition, and activities data
   let nextProgramName = "Posterior A";
@@ -34,7 +35,7 @@ export default async function HomePage() {
       getWorkoutProgramsWithRotation(),
       getActiveWorkoutSession(),
       getDailyNutrition(todayStr),
-      getActivitiesSummary(),
+      getDashboardActivities(),
     ]);
 
     todayNutrition = nutritionData;
@@ -55,14 +56,9 @@ export default async function HomePage() {
     // Graceful fallback if database is loading/seeding
   }
 
-  // Current Arabic Date formatted
-  const now = new Date();
-  const arabicDate = now.toLocaleDateString("ar-EG", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  // Current Arabic Date formatted with Cairo timezone
+  const arabicDate = formatUserArabicDate();
+
 
   return (
     <div className="space-y-4 md:space-y-5 pb-6">
@@ -120,7 +116,7 @@ export default async function HomePage() {
               </span>
               {activeSessionId && (
                 <span className="comic-badge text-[10px] bg-[#7C1D38] text-[#F2EADF] animate-pulse">
-                  جلسة نشطة الآن
+                  {ar.home.activeSessionBadge}
                 </span>
               )}
             </div>
@@ -131,13 +127,13 @@ export default async function HomePage() {
               </h2>
               <div className="flex items-center gap-2 mt-1 text-xs font-bold text-[#D6AA63]">
                 <Dumbbell className="w-4 h-4" />
-                <span>{exerciseCount} تمارين</span>
+                <span>{ar.workout.rotation.exercisesCount.replace("{count}", String(exerciseCount))}</span>
               </div>
             </div>
 
             {/* Motivational Speech */}
             <p className="text-xs sm:text-sm text-[#9D969D] font-medium leading-relaxed max-w-sm">
-              ❝ يلا نتحرك.. الأداء بيصنع الفرق ❞
+              ❝ {ar.home.missionMotto} ❞
             </p>
 
             {/* CTA Button */}
@@ -149,16 +145,17 @@ export default async function HomePage() {
                 {activeSessionId ? (
                   <>
                     <Flame className="w-4 h-4 text-[#D6AA63] animate-pulse" />
-                    <span>استئناف الجلسة</span>
+                    <span>{ar.workout.active.resumeCTA}</span>
                   </>
                 ) : (
                   <>
                     <span>START WORKOUT</span>
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                   </>
                 )}
               </Link>
             </div>
+
           </div>
 
           {/* Hero Mini Fares Character Illustration */}

@@ -2,6 +2,7 @@
 
 import crypto from "crypto";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { db } from "../data/db";
 import {
   workoutSessions,
@@ -15,6 +16,28 @@ import { validateSession } from "./session";
 import { parseWeight } from "../domain/workout/weight-parser";
 import { calculateWarmupSets } from "../domain/workout/warmup-engine";
 
+export const startWorkoutSessionSchema = z.object({
+  programId: z.string().trim().min(1, "معرف البرنامج مطلوب"),
+});
+
+export const logSetEntrySchema = z.object({
+  entryId: z.string().trim().min(1, "معرف المجموعة مطلوب"),
+  actualWeight: z.string().trim().min(1, "الوزن مطلوب"),
+  actualReps: z.number().int().min(0, "العدات يجب أن تكون 0 أو أكثر"),
+  isCompleted: z.boolean().optional(),
+  status: z.enum(["pending", "completed", "skipped"]).optional(),
+  notes: z.string().optional().nullable(),
+});
+
+export const completeWorkoutSessionSchema = z.object({
+  sessionId: z.string().trim().min(1, "معرف الجلسة مطلوب"),
+  notes: z.string().optional().nullable(),
+});
+
+export const abandonWorkoutSessionSchema = z.object({
+  sessionId: z.string().trim().min(1, "معرف الجلسة مطلوب"),
+});
+
 /**
  * Starts a new active workout session or resumes an existing in-progress one.
  */
@@ -25,6 +48,12 @@ export async function startWorkoutSessionAction(programId: string): Promise<{
 }> {
   const isAuthed = await validateSession();
   if (!isAuthed) return { success: false, error: "Unauthorized" };
+
+  const parsed = startWorkoutSessionSchema.safeParse({ programId });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message || "Invalid input" };
+  }
+  const validProgramId = parsed.data.programId;
 
   try {
     // 1. Check if there's already an active in-progress session
@@ -43,7 +72,7 @@ export async function startWorkoutSessionAction(programId: string): Promise<{
     const [program] = await db
       .select()
       .from(workoutPrograms)
-      .where(eq(workoutPrograms.id, programId))
+      .where(eq(workoutPrograms.id, validProgramId))
       .orderBy(desc(workoutPrograms.version))
       .limit(1);
 
@@ -157,9 +186,15 @@ export async function logSetEntryAction(input: {
   const isAuthed = await validateSession();
   if (!isAuthed) return { success: false, error: "Unauthorized" };
 
+  const parsed = logSetEntrySchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message || "Invalid input" };
+  }
+  const validated = parsed.data;
+
   try {
-    const parsedWeight = parseWeight(input.actualWeight);
-    const setStatus = input.status ?? (input.isCompleted ? "completed" : "pending");
+    const parsedWeight = parseWeight(validated.actualWeight);
+    const setStatus = validated.status ?? (validated.isCompleted ? "completed" : "pending");
     const isCompleted = setStatus === "completed";
 
     await db.transaction(async (tx) => {
@@ -167,7 +202,7 @@ export async function logSetEntryAction(input: {
       const [entry] = await tx
         .select()
         .from(performedSets)
-        .where(eq(performedSets.id, input.entryId))
+        .where(eq(performedSets.id, validated.entryId))
         .limit(1);
 
       if (!entry) {
@@ -231,13 +266,13 @@ export async function logSetEntryAction(input: {
         .update(performedSets)
         .set({
           actualWeight: parsedWeight,
-          actualReps: input.actualReps,
+          actualReps: validated.actualReps,
           completed: isCompleted,
           status: setStatus,
-          notes: input.notes !== undefined ? input.notes : entry.notes,
+          notes: validated.notes !== undefined ? (validated.notes ?? null) : entry.notes,
           timestamp: new Date(),
         })
-        .where(eq(performedSets.id, input.entryId));
+        .where(eq(performedSets.id, validated.entryId));
     });
 
     revalidatePath("/workout/active");
@@ -258,11 +293,17 @@ export async function completeWorkoutSessionAction(
   const isAuthed = await validateSession();
   if (!isAuthed) return { success: false, error: "Unauthorized" };
 
+  const parsed = completeWorkoutSessionSchema.safeParse({ sessionId, notes });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message || "Invalid input" };
+  }
+  const { sessionId: validSessionId, notes: validNotes } = parsed.data;
+
   try {
     const [session] = await db
       .select()
       .from(workoutSessions)
-      .where(eq(workoutSessions.id, sessionId))
+      .where(eq(workoutSessions.id, validSessionId))
       .limit(1);
 
     if (!session) return { success: false, error: "Session not found" };
@@ -282,11 +323,11 @@ export async function completeWorkoutSessionAction(
         status: "completed",
         completedAt,
         durationSeconds,
-        notes: notes || null,
+        notes: validNotes || null,
       })
       .where(
         and(
-          eq(workoutSessions.id, sessionId),
+          eq(workoutSessions.id, validSessionId),
           eq(workoutSessions.status, "in_progress")
         )
       )
@@ -319,6 +360,12 @@ export async function abandonWorkoutSessionAction(sessionId: string): Promise<{
   const isAuthed = await validateSession();
   if (!isAuthed) return { success: false, error: "Unauthorized" };
 
+  const parsed = abandonWorkoutSessionSchema.safeParse({ sessionId });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.errors[0]?.message || "Invalid input" };
+  }
+  const validSessionId = parsed.data.sessionId;
+
   try {
     await db
       .update(workoutSessions)
@@ -328,7 +375,7 @@ export async function abandonWorkoutSessionAction(sessionId: string): Promise<{
       })
       .where(
         and(
-          eq(workoutSessions.id, sessionId),
+          eq(workoutSessions.id, validSessionId),
           eq(workoutSessions.status, "in_progress")
         )
       );

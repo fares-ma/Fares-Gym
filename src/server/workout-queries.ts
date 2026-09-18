@@ -18,69 +18,71 @@ export async function getWorkoutProgramsWithRotation(): Promise<{
   programs: ProgramSummary[];
   nextProgramId: string;
 }> {
-  // 1. Fetch active programs sorted by orderIndex
-  const allPrograms = await db
-    .select()
-    .from(workoutPrograms)
-    .where(eq(workoutPrograms.isActive, true));
+  // 1. Fetch active programs, exercises, and completed sessions in parallel
+  const [allPrograms, allProgramExercises, completedSessions] = await Promise.all([
+    db.select().from(workoutPrograms).where(eq(workoutPrograms.isActive, true)),
+    db
+      .select({
+        programId: workoutProgramExercises.programId,
+        programVersion: workoutProgramExercises.programVersion,
+      })
+      .from(workoutProgramExercises),
+    db
+      .select({
+        programId: workoutSessions.programId,
+        completedAt: workoutSessions.completedAt,
+      })
+      .from(workoutSessions)
+      .where(eq(workoutSessions.status, "completed"))
+      .orderBy(desc(workoutSessions.completedAt)),
+  ]);
 
-  const sortedPrograms = [...allPrograms].sort((a, b) => a.orderIndex - b.orderIndex);
+  // Retain only maximum version per program id
+  const programsById = new Map<string, (typeof allPrograms)[number]>();
+  for (const prog of allPrograms) {
+    const existing = programsById.get(prog.id);
+    if (!existing || prog.version > existing.version) {
+      programsById.set(prog.id, prog);
+    }
+  }
 
-  // 2. Fetch the most recently completed session to determine rotation
-  const [lastCompletedSession] = await db
-    .select({
-      programId: workoutSessions.programId,
-      completedAt: workoutSessions.completedAt,
-    })
-    .from(workoutSessions)
-    .where(eq(workoutSessions.status, "completed"))
-    .orderBy(desc(workoutSessions.completedAt))
-    .limit(1);
+  const sortedPrograms = Array.from(programsById.values()).sort(
+    (a, b) => a.orderIndex - b.orderIndex
+  );
 
+  // Determine rotation from most recently completed session
+  const lastCompletedSession = completedSessions[0];
   const nextProgramId = getNextProgramId(
     sortedPrograms.map((p) => ({ id: p.id, orderIndex: p.orderIndex })),
     lastCompletedSession?.programId
   );
 
-  // 3. For each program, get exercise count and last completion date
-  const programSummaries: ProgramSummary[] = await Promise.all(
-    sortedPrograms.map(async (prog) => {
-      // Count exercises
-      const progExercises = await db
-        .select({ id: workoutProgramExercises.id })
-        .from(workoutProgramExercises)
-        .where(
-          and(
-            eq(workoutProgramExercises.programId, prog.id),
-            eq(workoutProgramExercises.programVersion, prog.version)
-          )
-        );
+  // Group exercise counts by programId:version
+  const exerciseCountMap = new Map<string, number>();
+  for (const row of allProgramExercises) {
+    const key = `${row.programId}:${row.programVersion}`;
+    exerciseCountMap.set(key, (exerciseCountMap.get(key) || 0) + 1);
+  }
 
-      // Get last completed date for this specific program
-      const [lastDone] = await db
-        .select({ completedAt: workoutSessions.completedAt })
-        .from(workoutSessions)
-        .where(
-          and(
-            eq(workoutSessions.programId, prog.id),
-            eq(workoutSessions.status, "completed")
-          )
-        )
-        .orderBy(desc(workoutSessions.completedAt))
-        .limit(1);
+  // Map last completed date per program
+  const lastDoneMap = new Map<string, Date>();
+  for (const sess of completedSessions) {
+    if (sess.completedAt && !lastDoneMap.has(sess.programId)) {
+      lastDoneMap.set(sess.programId, new Date(sess.completedAt));
+    }
+  }
 
-      return {
-        id: prog.id,
-        name: prog.name,
-        version: prog.version,
-        orderIndex: prog.orderIndex,
-        isActive: prog.isActive ?? true,
-        exerciseCount: progExercises.length,
-        isNextScheduled: prog.id === nextProgramId,
-        lastCompletedAt: lastDone?.completedAt ? new Date(lastDone.completedAt) : null,
-      };
-    })
-  );
+  // Build program summaries in memory with zero extra queries
+  const programSummaries: ProgramSummary[] = sortedPrograms.map((prog) => ({
+    id: prog.id,
+    name: prog.name,
+    version: prog.version,
+    orderIndex: prog.orderIndex,
+    isActive: prog.isActive ?? true,
+    exerciseCount: exerciseCountMap.get(`${prog.id}:${prog.version}`) || 0,
+    isNextScheduled: prog.id === nextProgramId,
+    lastCompletedAt: lastDoneMap.get(prog.id) || null,
+  }));
 
   return {
     programs: programSummaries,

@@ -27,7 +27,7 @@ export default async function WorkoutHistoryPage() {
             <span>{ar.workout.tabs.history}</span>
           </h1>
           <p className="text-xs text-[#9D969D] mt-1">
-            سجل الجلسات يوثق تاريخك الرياضي بدقة ولا يقبل الحذف أو التعديل
+            {ar.workout.history.subtitle}
           </p>
         </div>
 
@@ -46,8 +46,9 @@ export default async function WorkoutHistoryPage() {
             {ar.workout.history.emptyState}
           </h3>
           <p className="text-xs text-[#9D969D] max-w-sm mx-auto mb-5">
-            ابدأ أول جلسة تمرين لتسجيل أول إنجاز في تاريخك الرياضي.
+            {ar.workout.history.emptyStateDesc}
           </p>
+
           <Link
             href="/workout"
             className="comic-btn-primary inline-flex items-center justify-center py-2.5 px-5 rounded-xl text-xs font-black shadow-lg shadow-[#7C1D38]/30"

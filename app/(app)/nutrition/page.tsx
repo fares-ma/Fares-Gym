@@ -1,5 +1,6 @@
-import { getDailyNutrition } from "@/src/server/nutrition-queries";
-import { NutritionView } from "@/src/ui/nutrition/NutritionView";
+import { getDailyNutrition } from "@/server/nutrition-queries";
+import { NutritionView } from "@/ui/nutrition/NutritionView";
+import { getUserTodayDateStr } from "@/lib/date-utils";
 
 interface NutritionPageProps {
   searchParams?: Promise<{
@@ -9,8 +10,9 @@ interface NutritionPageProps {
 
 export default async function NutritionPage({ searchParams }: NutritionPageProps) {
   const resolvedParams = await searchParams;
-  const today = new Date().toISOString().split("T")[0];
+  const today = getUserTodayDateStr();
   const date = resolvedParams?.date || today;
+
 
   const summary = await getDailyNutrition(date);
 
