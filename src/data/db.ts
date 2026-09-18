@@ -10,6 +10,8 @@ if (typeof dns?.setDefaultResultOrder === "function") {
 const connectionString =
   process.env.DATABASE_URL ||
   process.env.POSTGRES_URL ||
+  process.env.POSTGRES_URL_NON_POOLING ||
+  process.env.POSTGRES_DATABASE_URL_UNPOOLED ||
   "postgresql://placeholder:placeholder@localhost:5432/placeholder";
 
 const sql = neon(connectionString);
