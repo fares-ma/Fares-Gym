@@ -18,6 +18,7 @@ export function BodyWeightSection({
 }: BodyWeightSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   const latest = entries.length > 0 ? entries[entries.length - 1] : null;
   const previous = entries.length > 1 ? entries[entries.length - 2] : null;
@@ -25,9 +26,18 @@ export function BodyWeightSection({
 
   const handleDelete = (id: string) => {
     if (!window.confirm(ar.progress.deleteWeightConfirm)) return;
+    setError(null);
     startTransition(async () => {
-      await deleteBodyWeightAction(id);
-      onWeightLogged?.();
+      try {
+        const res = await deleteBodyWeightAction(id);
+        if (res.success) {
+          onWeightLogged?.();
+        } else {
+          setError(res.error || ar.errors.generic);
+        }
+      } catch {
+        setError(ar.errors.generic);
+      }
     });
   };
 
@@ -181,7 +191,8 @@ export function BodyWeightSection({
                   <button
                     onClick={() => handleDelete(e.id)}
                     disabled={isPending}
-                    className="text-[#9D969D] hover:text-rose-400 p-1 transition-colors"
+                    aria-label={`حذف قياس ${e.weightKg} كجم بتاريخ ${e.date}`}
+                    className="text-[#9D969D] hover:text-rose-400 p-1 transition-colors cursor-pointer disabled:opacity-50"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -189,6 +200,13 @@ export function BodyWeightSection({
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Error display */}
+      {error && (
+        <div className="p-2.5 rounded-xl bg-rose-950/40 border border-rose-900/60 text-rose-300 text-xs font-medium">
+          {error}
         </div>
       )}
 

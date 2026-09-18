@@ -145,6 +145,35 @@ describe("Progress Engine Domain Logic", () => {
     // Volume = (80 * 8) + (85 * 6) = 640 + 510 = 1150 (heating set excluded)
     const volume = calculateSessionVolume(sets);
     assert.equal(volume, 1150);
+
+    // Verify tag isolation
+    const mixedSets: PerformedSetRecord[] = [
+      {
+        id: "m1",
+        sessionId: "sess2",
+        exerciseId: "press",
+        type: "working",
+        actualReps: 10,
+        actualWeight: { rawWeight: "50K", numericValue: 50, unitTag: "K", isUnitConfirmed: true },
+        status: "completed",
+        timestamp: new Date(),
+      },
+      {
+        id: "m2",
+        sessionId: "sess2",
+        exerciseId: "press",
+        type: "working",
+        actualReps: 8,
+        actualWeight: { rawWeight: "15B", numericValue: 15, unitTag: "B", isUnitConfirmed: true },
+        status: "completed",
+        timestamp: new Date(),
+      },
+    ];
+
+    const kVolume = calculateSessionVolume(mixedSets, "K");
+    const bVolume = calculateSessionVolume(mixedSets, "B");
+    assert.equal(kVolume, 500); // 50 * 10
+    assert.equal(bVolume, 120); // 15 * 8
   });
 
   it("should compute consistency metrics correctly", () => {

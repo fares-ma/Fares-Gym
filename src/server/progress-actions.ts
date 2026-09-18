@@ -9,7 +9,25 @@ import { eq } from "drizzle-orm";
 import { validateSession } from "./session";
 
 const BodyWeightSchema = z.object({
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)")
+    .refine(
+      (val) => {
+        const [yearStr, monthStr, dayStr] = val.split("-");
+        const year = parseInt(yearStr, 10);
+        const month = parseInt(monthStr, 10);
+        const day = parseInt(dayStr, 10);
+        if (month < 1 || month > 12 || day < 1 || day > 31) return false;
+        const d = new Date(Date.UTC(year, month - 1, day));
+        return (
+          d.getUTCFullYear() === year &&
+          d.getUTCMonth() === month - 1 &&
+          d.getUTCDate() === day
+        );
+      },
+      { message: "Invalid calendar date" }
+    ),
   weightKg: z.number().positive("Weight must be greater than 0").max(300, "Invalid weight value"),
   notes: z.string().trim().max(250).optional().default(""),
 });
@@ -28,28 +46,22 @@ export async function logBodyWeightAction(input: {
   try {
     const parsed = BodyWeightSchema.parse(input);
 
-    // Check if an entry exists for this date to upsert
-    const existing = await db
-      .select()
-      .from(bodyMetrics)
-      .where(eq(bodyMetrics.date, parsed.date));
-
-    if (existing.length > 0) {
-      await db
-        .update(bodyMetrics)
-        .set({
-          weightKg: parsed.weightKg,
-          notes: parsed.notes || null,
-        })
-        .where(eq(bodyMetrics.id, existing[0].id));
-    } else {
-      await db.insert(bodyMetrics).values({
+    // Atomic upsert with conflict handling on unique date
+    await db
+      .insert(bodyMetrics)
+      .values({
         id: crypto.randomUUID(),
         date: parsed.date,
         weightKg: parsed.weightKg,
         notes: parsed.notes || null,
+      })
+      .onConflictDoUpdate({
+        target: bodyMetrics.date,
+        set: {
+          weightKg: parsed.weightKg,
+          notes: parsed.notes || null,
+        },
       });
-    }
 
     revalidatePath("/progress");
     return { success: true };

@@ -188,7 +188,7 @@ export const progressSnapshots = pgTable("progress_snapshots", {
 
 export const bodyMetrics = pgTable("body_metrics", {
   id: text("id").primaryKey(),
-  date: text("date").notNull(),
+  date: text("date").notNull().unique(),
   weightKg: real("weight_kg"),
   notes: text("notes"),
 });

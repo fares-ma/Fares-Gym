@@ -25,6 +25,7 @@ export interface SessionVolumePoint {
   sessionId: string;
   date: string; // YYYY-MM-DD
   programName: string;
+  unitTag: string; // "K" | "B" | ""
   totalVolume: number;
   workingSetsCount: number;
 }

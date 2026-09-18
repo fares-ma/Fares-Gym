@@ -43,11 +43,16 @@ export function WorkoutVolumeChart({ volumes }: WorkoutVolumeChartProps) {
             const percentage = Math.max(8, Math.round((v.totalVolume / maxVolume) * 100));
 
             return (
-              <div key={v.sessionId} className="space-y-1">
+              <div key={`${v.sessionId}-${v.unitTag}`} className="space-y-1">
                 {/* Meta row */}
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-[#F2EADF]">{v.programName}</span>
+                    {v.unitTag && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#2B252E] font-mono text-[#D6AA63] font-bold">
+                        [{v.unitTag}]
+                      </span>
+                    )}
                     <span className="text-[11px] font-mono text-[#9D969D]">({v.date})</span>
                   </div>
                   <div className="flex items-center gap-2 font-mono">
@@ -55,7 +60,7 @@ export function WorkoutVolumeChart({ volumes }: WorkoutVolumeChartProps) {
                       {v.workingSetsCount} مجموعات
                     </span>
                     <strong className="text-sm font-black text-[#D6AA63]">
-                      {v.totalVolume.toLocaleString()}
+                      {v.totalVolume.toLocaleString()}{v.unitTag ? ` [${v.unitTag}]` : ""}
                     </strong>
                   </div>
                 </div>

@@ -11,17 +11,31 @@ interface LogBodyWeightModalProps {
   onWeightLogged?: () => void;
 }
 
+function getLocalTodayDate(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export function LogBodyWeightModal({
   isOpen,
   onClose,
   onWeightLogged,
 }: LogBodyWeightModalProps) {
   const [isPending, startTransition] = useTransition();
-  const today = new Date().toISOString().split("T")[0];
-  const [date, setDate] = useState(today);
+  const [date, setDate] = useState(getLocalTodayDate);
   const [weightKg, setWeightKg] = useState("");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setDate(getLocalTodayDate());
+      setError(null);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -35,19 +49,23 @@ export function LogBodyWeightModal({
 
     setError(null);
     startTransition(async () => {
-      const res = await logBodyWeightAction({
-        date,
-        weightKg: parsedWeight,
-        notes: notes.trim(),
-      });
+      try {
+        const res = await logBodyWeightAction({
+          date,
+          weightKg: parsedWeight,
+          notes: notes.trim(),
+        });
 
-      if (res.success) {
-        setWeightKg("");
-        setNotes("");
-        onWeightLogged?.();
-        onClose();
-      } else {
-        setError(res.error || ar.errors.generic);
+        if (res.success) {
+          setWeightKg("");
+          setNotes("");
+          onWeightLogged?.();
+          onClose();
+        } else {
+          setError(res.error || ar.errors.generic);
+        }
+      } catch {
+        setError(ar.errors.generic);
       }
     });
   };

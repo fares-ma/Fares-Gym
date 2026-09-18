@@ -6,7 +6,7 @@ import {
   workoutPrograms,
   exercises,
 } from "../data/schema";
-import { desc, asc, eq, and } from "drizzle-orm";
+import { desc, asc, eq, and, gte } from "drizzle-orm";
 import {
   BodyWeightEntry,
   ExercisePR,
@@ -25,9 +25,14 @@ import { getUserNow } from "./activities-queries";
  * Retrieves chronological body weight logs.
  */
 export async function getBodyWeightHistory(limitDays: number = 90): Promise<BodyWeightEntry[]> {
+  const now = getUserNow();
+  const cutoffDate = new Date(now.getTime() - limitDays * 24 * 60 * 60 * 1000);
+  const cutoffStr = `${cutoffDate.getFullYear()}-${String(cutoffDate.getMonth() + 1).padStart(2, "0")}-${String(cutoffDate.getDate()).padStart(2, "0")}`;
+
   const rows = await db
     .select()
     .from(bodyMetrics)
+    .where(gte(bodyMetrics.date, cutoffStr))
     .orderBy(asc(bodyMetrics.date));
 
   return rows
@@ -126,17 +131,48 @@ export async function getWorkoutVolumeHistory(): Promise<SessionVolumePoint[]> {
 
   for (const session of sessionsRows) {
     const sets = setsBySession[session.id] || [];
-    const volume = calculateSessionVolume(sets);
     const dateStr = session.startedAt.toISOString().split("T")[0];
     const programName = programNames[session.programId] || session.programId;
 
-    points.push({
-      sessionId: session.id,
-      date: dateStr,
-      programName,
-      totalVolume: volume,
-      workingSetsCount: sets.length,
-    });
+    const validSets = sets.filter(
+      (s) =>
+        s.type === "working" &&
+        s.status === "completed" &&
+        s.actualWeight &&
+        s.actualReps
+    );
+
+    if (validSets.length === 0) {
+      points.push({
+        sessionId: session.id,
+        date: dateStr,
+        programName,
+        unitTag: "",
+        totalVolume: 0,
+        workingSetsCount: 0,
+      });
+      continue;
+    }
+
+    // Group sets by unit tag to preserve opaque tag separation
+    const setsByTag: Record<string, PerformedSetRecord[]> = {};
+    for (const s of validSets) {
+      const tag = s.actualWeight?.unitTag || "";
+      if (!setsByTag[tag]) setsByTag[tag] = [];
+      setsByTag[tag].push(s);
+    }
+
+    for (const [tag, tagSets] of Object.entries(setsByTag)) {
+      const volume = calculateSessionVolume(tagSets, tag);
+      points.push({
+        sessionId: session.id,
+        date: dateStr,
+        programName,
+        unitTag: tag,
+        totalVolume: volume,
+        workingSetsCount: tagSets.length,
+      });
+    }
   }
 
   return points;

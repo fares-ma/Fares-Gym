@@ -99,15 +99,20 @@ export function computeExercisePRs(
 
 /**
  * Calculates total volume for a completed session: sum of (weight * reps) for working sets.
+ * When unitTag is specified, only sets matching that unitTag are accumulated to preserve opaque tag separation.
  */
-export function calculateSessionVolume(sets: PerformedSetRecord[]): number {
+export function calculateSessionVolume(
+  sets: PerformedSetRecord[],
+  unitTag?: string
+): number {
   return sets
     .filter(
       (s) =>
         s.type === "working" &&
         s.status === "completed" &&
         s.actualWeight &&
-        s.actualReps
+        s.actualReps &&
+        (unitTag === undefined || (s.actualWeight.unitTag || "") === unitTag)
     )
     .reduce((total, s) => {
       return total + (s.actualWeight!.numericValue * s.actualReps!);
