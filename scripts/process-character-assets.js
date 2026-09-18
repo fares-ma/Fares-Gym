@@ -2,8 +2,12 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-const brainDir = 'C:\\Users\\Fares\\.gemini\\antigravity-ide\\brain\\c1383f2c-5ae8-4971-a7e5-7852296611bd';
-const publicDir = 'C:\\Users\\Fares\\Desktop\\Gym\\public\\character';
+const brainDir = process.env.CHARACTER_SOURCE_DIR;
+if (!brainDir) {
+  console.error('Error: CHARACTER_SOURCE_DIR environment variable is required.');
+  process.exit(1);
+}
+const publicDir = path.resolve(__dirname, '..', 'public', 'character');
 
 // Helper: Remove dark background outside sticker border via flood fill
 async function makeTransparent(inputPath, outputPath, cropBox = null) {
@@ -185,15 +189,22 @@ async function run() {
     },
   ];
 
+  let failures = 0;
   for (const t of tasks) {
     try {
       await makeTransparent(t.src, t.dest, t.crop);
     } catch (err) {
+      failures++;
       console.error(`Error processing ${t.dest}:`, err.message);
     }
   }
 
-  console.log('All character assets successfully processed!');
+  if (failures > 0) {
+    console.error(`Processing completed with ${failures} failure(s).`);
+    process.exitCode = 1;
+  } else {
+    console.log('All character assets successfully processed!');
+  }
 }
 
 run();

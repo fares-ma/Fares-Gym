@@ -29,8 +29,6 @@ function getIcon(title: string, isCurrent: boolean) {
 }
 
 export const ScheduleStepper: React.FC<ScheduleStepperProps> = ({ blocks = [] }) => {
-  const displayBlocks = blocks.length > 0 ? blocks : [];
-
   return (
     <div className="comic-card p-4 md:p-5 flex flex-col gap-3">
       {/* Header */}
@@ -47,17 +45,22 @@ export const ScheduleStepper: React.FC<ScheduleStepperProps> = ({ blocks = [] })
         </Link>
       </div>
 
-      {/* Stepper horizontal row */}
-      <div className="flex items-center justify-between gap-1 overflow-x-auto py-2 no-scrollbar">
-        {displayBlocks.map((item) => {
-          const isCurrent = item.status === "current";
-          const isCompleted = item.status === "completed";
+      {/* Stepper horizontal row or empty state */}
+      {blocks.length === 0 ? (
+        <div className="py-6 text-center text-xs text-[#9D969D]">
+          لا توجد فترات مجدولة لليوم
+        </div>
+      ) : (
+        <div className="flex items-center justify-between gap-1 overflow-x-auto py-2 no-scrollbar">
+          {blocks.map((item) => {
+            const isCurrent = item.status === "current";
+            const isCompleted = item.status === "completed";
 
-          return (
-            <div
-              key={item.id}
-              className="flex-1 min-w-[62px] flex flex-col items-center text-center group cursor-pointer"
-            >
+            return (
+              <div
+                key={item.occurrenceId || item.id}
+                className="flex-1 min-w-[62px] flex flex-col items-center text-center group cursor-pointer"
+              >
               {/* Icon Container */}
               <div
                 className={`relative w-11 h-11 rounded-full flex items-center justify-center transition-transform duration-150 ${
@@ -102,6 +105,7 @@ export const ScheduleStepper: React.FC<ScheduleStepperProps> = ({ blocks = [] })
           );
         })}
       </div>
-    </div>
-  );
+    )}
+  </div>
+);
 };

@@ -9,20 +9,13 @@ import {
 } from "../domain/activities/types";
 import { enrichScheduleBlocks } from "../domain/activities/schedule-engine";
 
-const DEFAULT_BLOCKS: ScheduleBlock[] = [
-  { id: "def-1", title: "مذاكرة مركزة", dayOfWeek: 7, startTime: "13:00", endTime: "15:00" },
-  { id: "def-2", title: "وجبة الغداء", dayOfWeek: 7, startTime: "15:00", endTime: "16:00" },
-  { id: "def-3", title: "الجيم والتمرين", dayOfWeek: 7, startTime: "17:00", endTime: "18:30" },
-  { id: "def-4", title: "راحة واستشفاء", dayOfWeek: 7, startTime: "19:00", endTime: "20:30" },
-  { id: "def-5", title: "مراجعة اليوم وتخطيط الغد", dayOfWeek: 7, startTime: "22:00", endTime: "23:00" },
-];
-
 /**
  * Retrieves schedule blocks active on a specific day of week (0-6) or 7 (daily),
  * including overnight blocks from the preceding weekday that spill over into today.
  */
 export async function getScheduleBlocksForDay(
-  dayOfWeek: number
+  dayOfWeek: number,
+  now?: Date
 ): Promise<EnrichedScheduleBlock[]> {
   const prevDay = (dayOfWeek + 6) % 7;
 
@@ -37,43 +30,42 @@ export async function getScheduleBlocksForDay(
       )
     );
 
-  let sourceBlocks: ScheduleBlock[];
-
   if (rows.length === 0) {
-    sourceBlocks = DEFAULT_BLOCKS;
-  } else {
-    // 1. Blocks originating on the current day (dayOfWeek or daily 7)
-    const currentDayBlocks: ScheduleBlock[] = rows
-      .filter((b) => b.dayOfWeek === dayOfWeek || b.dayOfWeek === 7)
-      .map((b) => ({
-        id: b.id,
-        title: b.title,
-        dayOfWeek: b.dayOfWeek,
-        startTime: b.startTime,
-        endTime: b.endTime,
-        isFromPrecedingDay: false,
-      }));
-
-    // 2. Overnight blocks originating from preceding weekday that spill over into today
-    const precedingOvernightBlocks: ScheduleBlock[] = rows
-      .filter(
-        (b) =>
-          (b.dayOfWeek === prevDay || b.dayOfWeek === 7) &&
-          b.endTime < b.startTime
-      )
-      .map((b) => ({
-        id: `${b.id}-prev`,
-        title: b.title,
-        dayOfWeek: b.dayOfWeek,
-        startTime: b.startTime,
-        endTime: b.endTime,
-        isFromPrecedingDay: true,
-      }));
-
-    sourceBlocks = [...precedingOvernightBlocks, ...currentDayBlocks];
+    return [];
   }
 
-  return enrichScheduleBlocks(sourceBlocks);
+  // 1. Blocks originating on the current day (dayOfWeek or daily 7)
+  const currentDayBlocks: ScheduleBlock[] = rows
+    .filter((b) => b.dayOfWeek === dayOfWeek || b.dayOfWeek === 7)
+    .map((b) => ({
+      id: b.id,
+      occurrenceId: b.id,
+      title: b.title,
+      dayOfWeek: b.dayOfWeek,
+      startTime: b.startTime,
+      endTime: b.endTime,
+      isFromPrecedingDay: false,
+    }));
+
+  // 2. Overnight blocks originating from preceding weekday that spill over into today
+  const precedingOvernightBlocks: ScheduleBlock[] = rows
+    .filter(
+      (b) =>
+        (b.dayOfWeek === prevDay || b.dayOfWeek === 7) &&
+        b.endTime < b.startTime
+    )
+    .map((b) => ({
+      id: b.id,
+      occurrenceId: `${b.id}-prev`,
+      title: b.title,
+      dayOfWeek: b.dayOfWeek,
+      startTime: b.startTime,
+      endTime: b.endTime,
+      isFromPrecedingDay: true,
+    }));
+
+  const sourceBlocks = [...precedingOvernightBlocks, ...currentDayBlocks];
+  return enrichScheduleBlocks(sourceBlocks, now);
 }
 
 /**
@@ -111,6 +103,14 @@ export async function getRecentNotes(limit = 30): Promise<QuickNote[]> {
 }
 
 /**
+ * Helper to get the current timestamp in the user's configured time zone (defaults to Africa/Cairo).
+ */
+export function getUserNow(): Date {
+  const timeZone = process.env.APP_TIMEZONE || "Africa/Cairo";
+  return new Date(new Date().toLocaleString("en-US", { timeZone }));
+}
+
+/**
  * High-level helper returning full activities dashboard state for today.
  */
 export async function getActivitiesSummary(): Promise<{
@@ -118,10 +118,11 @@ export async function getActivitiesSummary(): Promise<{
   reminders: ReminderItem[];
   notes: QuickNote[];
 }> {
-  const currentDayOfWeek = new Date().getDay();
+  const now = getUserNow();
+  const currentDayOfWeek = now.getDay();
 
   const [schedule, rems, noteList] = await Promise.all([
-    getScheduleBlocksForDay(currentDayOfWeek),
+    getScheduleBlocksForDay(currentDayOfWeek, now),
     getAllReminders(),
     getRecentNotes(30),
   ]);

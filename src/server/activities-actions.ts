@@ -17,7 +17,11 @@ const ScheduleBlockSchema = z.object({
 
 const ReminderSchema = z.object({
   text: z.string().trim().min(1, "Reminder text is required"),
-  dueTime: z.string().default(""),
+  dueTime: z
+    .string()
+    .trim()
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$|^$/, "Invalid due time (HH:MM)")
+    .default(""),
 });
 
 const NoteSchema = z.object({

@@ -32,6 +32,11 @@ export function AddScheduleBlockModal({
       return;
     }
 
+    if (startTime === endTime) {
+      setError("وقت البداية والنهاية لا يمكن أن يكونا متطابقين");
+      return;
+    }
+
     setError(null);
     startTransition(async () => {
       const res = await createScheduleBlockAction({

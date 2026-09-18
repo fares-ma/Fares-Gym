@@ -97,6 +97,10 @@ export function enrichScheduleBlocks(
   now: Date = new Date()
 ): EnrichedScheduleBlock[] {
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const currentDate = `${year}-${month}-${day}`;
 
   const sorted = [...blocks].sort((a, b) => {
     // Preceding day blocks ending this morning sort first
@@ -113,8 +117,9 @@ export function enrichScheduleBlocks(
       endM,
       currentMinutes,
       {
-        isFromPrecedingDay: block.isFromPrecedingDay ?? false,
+        isFromPrecedingDay: block.isFromPrecedingDay,
         occurrenceDate: block.occurrenceDate,
+        currentDate,
       }
     );
 

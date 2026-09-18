@@ -120,8 +120,17 @@ export function RemindersSection({ reminders, onChanged }: RemindersSectionProps
               }`}
             >
               <div
+                role="checkbox"
+                aria-checked={item.isCompleted}
+                tabIndex={0}
                 onClick={() => handleToggle(item.id, item.isCompleted)}
-                className="flex items-center gap-3 min-w-0 flex-1 cursor-pointer select-none"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleToggle(item.id, item.isCompleted);
+                  }
+                }}
+                className="flex items-center gap-3 min-w-0 flex-1 cursor-pointer select-none focus:outline-none focus-visible:ring-1 focus-visible:ring-[#D6AA63] rounded-lg"
               >
                 {/* Custom Checkbox */}
                 <div

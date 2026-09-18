@@ -10,42 +10,34 @@ interface RemindersCardProps {
   initialReminders?: ReminderItem[];
 }
 
-const DEFAULT_REMINDERS: ReminderItem[] = [
-  { id: "1", text: "مراجعة SQL", dueTime: "10:00", isCompleted: false },
-  { id: "2", text: "تحضير شنطة الجيم", dueTime: "16:00", isCompleted: false },
-  { id: "3", text: "شرب الماء (2 لتر)", dueTime: "", isCompleted: true },
-  { id: "4", text: "مراجعة الملاحظات", dueTime: "22:00", isCompleted: false },
-];
-
 export const RemindersCard: React.FC<RemindersCardProps> = ({
-  initialReminders,
+  initialReminders = [],
 }) => {
-  const [items, setItems] = useState<ReminderItem[]>(
-    initialReminders && initialReminders.length > 0
-      ? initialReminders
-      : DEFAULT_REMINDERS
-  );
+  const [items, setItems] = useState<ReminderItem[]>(initialReminders);
 
   const toggleReminder = async (id: string) => {
     const current = items.find((r) => r.id === id);
     if (!current) return;
     const nextVal = !current.isCompleted;
 
+    const revert = () => {
+      setItems((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, isCompleted: !nextVal } : r))
+      );
+    };
+
     // Optimistic UI update
     setItems((prev) =>
       prev.map((r) => (r.id === id ? { ...r, isCompleted: nextVal } : r))
     );
 
-    // Persist to Neon DB if not a demo numeric ID
-    if (id.length > 5) {
-      try {
-        await toggleReminderAction(id, nextVal);
-      } catch {
-        // Revert on error
-        setItems((prev) =>
-          prev.map((r) => (r.id === id ? { ...r, isCompleted: !nextVal } : r))
-        );
+    try {
+      const res = await toggleReminderAction(id, nextVal);
+      if (!res.success) {
+        revert();
       }
+    } catch {
+      revert();
     }
   };
 
@@ -65,47 +57,53 @@ export const RemindersCard: React.FC<RemindersCardProps> = ({
         </Link>
       </div>
 
-      {/* Checklist items */}
-      <div className="flex flex-col gap-2.5 my-auto">
-        {items.slice(0, 4).map((item) => (
-          <div
-            key={item.id}
-            onClick={() => toggleReminder(item.id)}
-            className="flex items-center justify-between gap-2 p-1.5 rounded-lg hover:bg-[#211C23]/60 cursor-pointer transition-colors"
-          >
-            <div className="flex items-center gap-2.5 min-w-0">
-              {/* Checkbox */}
-              <div
-                className={`w-4 h-4 rounded-md flex items-center justify-center transition-all ${
-                  item.isCompleted
-                    ? "bg-[#7C1D38] text-[#F2EADF] border border-[#A83252]"
-                    : "border border-[#3D3542] bg-[#18151B]"
-                }`}
-              >
-                {item.isCompleted && <Check className="w-3 h-3 stroke-[3]" />}
+      {/* Checklist items or empty state */}
+      {items.length === 0 ? (
+        <div className="py-6 text-center text-xs text-[#9D969D] my-auto">
+          لا توجد تذكيرات مسجلة اليوم
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2.5 my-auto">
+          {items.slice(0, 4).map((item) => (
+            <div
+              key={item.id}
+              onClick={() => toggleReminder(item.id)}
+              className="flex items-center justify-between gap-2 p-1.5 rounded-lg hover:bg-[#211C23]/60 cursor-pointer transition-colors"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                {/* Checkbox */}
+                <div
+                  className={`w-4 h-4 rounded-md flex items-center justify-center transition-all ${
+                    item.isCompleted
+                      ? "bg-[#7C1D38] text-[#F2EADF] border border-[#A83252]"
+                      : "border border-[#3D3542] bg-[#18151B]"
+                  }`}
+                >
+                  {item.isCompleted && <Check className="w-3 h-3 stroke-[3]" />}
+                </div>
+
+                {/* Title */}
+                <span
+                  className={`text-xs font-semibold truncate ${
+                    item.isCompleted
+                      ? "line-through text-[#9D969D]/60"
+                      : "text-[#F2EADF]"
+                  }`}
+                >
+                  {item.text}
+                </span>
               </div>
 
-              {/* Title */}
-              <span
-                className={`text-xs font-semibold truncate ${
-                  item.isCompleted
-                    ? "line-through text-[#9D969D]/60"
-                    : "text-[#F2EADF]"
-                }`}
-              >
-                {item.text}
-              </span>
+              {/* Time */}
+              {item.dueTime && (
+                <span className="text-[11px] font-mono text-[#9D969D] shrink-0">
+                  {item.dueTime}
+                </span>
+              )}
             </div>
-
-            {/* Time */}
-            {item.dueTime && (
-              <span className="text-[11px] font-mono text-[#9D969D] shrink-0">
-                {item.dueTime}
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Footer */}
       <div className="mt-3 pt-2.5 border-t border-[#2B252E] flex items-center gap-2 text-xs text-[#9D969D]">

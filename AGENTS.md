@@ -44,3 +44,21 @@ Tracks:
 - **Domain Logic Separation**: Pure domain algorithms (weight parser, warm-up engine, program rotation, progress math) reside in `src/domain/` as pure TypeScript functions with zero React dependencies and dedicated unit tests.
 - **User Interface Language**: The web application UI is Egyptian Arabic (RTL layout using logical start/end properties). Exercise names remain in English. All UI strings reside in `src/i18n/ar.ts` (no hardcoded Arabic text inside UI components).
 - **Documentation & Spec Language**: All technical specs, plans, tasks, architecture docs, and code comments are written in clear, structured English to ensure clean formatting and readability across all IDEs and tools.
+
+## Activities, Timezones & UI Operational Invariants
+1. **Timezone Invariance (`APP_TIMEZONE`)**:
+   - Never rely directly on raw server `new Date().getDay()` or server UTC in server queries and components.
+   - Always derive timestamps and current weekdays in the user's configured timezone (`process.env.APP_TIMEZONE || "Africa/Cairo"`).
+2. **Schedule Entity Identity vs Synthetic Occurrence**:
+   - `ScheduleBlock.id` is strictly the persistent PostgreSQL primary key (never mutate or append `-prev` to `id`).
+   - Use `ScheduleBlock.occurrenceId` for synthetic rendering identities (e.g. `${id}-prev` for overnight blocks from the preceding day) to ensure unique React keys without breaking delete/update mutations.
+3. **Empty State Integrity (No Phantom Seed Data)**:
+   - When database rows for a user's day or checklist are empty, return an empty array `[]` and render the dedicated Arabic empty state UI. Never inject hardcoded default/demo items into live user query results.
+4. **Time Validation & Overnight Schedule Support**:
+   - 24-hour time strings must strictly validate against `^([01]\d|2[0-3]):[0-5]\d$`.
+   - Overnight blocks (`endTime < startTime`, e.g. 23:00 to 07:00) are fully supported. Only zero-duration blocks (`startTime === endTime`) are rejected.
+5. **Interactive UI Accessibility & Optimistic Resilience**:
+   - Custom clickable checklist elements must be fully keyboard accessible (`role="checkbox"`, `aria-checked`, `tabIndex={0}`, `onKeyDown` with `Enter`/`Space`).
+   - Optimistic state updates must always revert cleanly on server action failure (`!res.success` or caught error) via a unified revert helper.
+6. **Portability of Scripts**:
+   - Maintenance and asset scripts must never hardcode developer-specific local paths; use repository-relative path resolution and environment variables with explicit validation and exit codes.

@@ -75,7 +75,7 @@ export function ScheduleTimeline({ blocks, onBlockDeleted }: ScheduleTimelinePro
 
         return (
           <div
-            key={block.id}
+            key={block.occurrenceId || block.id}
             className={`comic-card p-4 border transition-all flex items-center justify-between gap-3 ${
               isCurrent
                 ? "bg-gradient-to-r from-[#2B1D12] via-[#21171A] to-[#1A151D] border-[#D6AA63] shadow-lg shadow-amber-950/20"

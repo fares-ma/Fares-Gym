@@ -6,6 +6,7 @@ export interface ScheduleBlock {
   dayOfWeek: number; // 0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday, 7=Daily
   startTime: string; // HH:MM
   endTime: string; // HH:MM
+  occurrenceId?: string; // Synthetic occurrence key (e.g. "id-prev") for rendering
   occurrenceDate?: string; // YYYY-MM-DD
   isFromPrecedingDay?: boolean;
 }
