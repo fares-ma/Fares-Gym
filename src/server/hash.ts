@@ -6,9 +6,17 @@ import bcrypt from "bcryptjs";
 export async function verifyPassword(password: string, storedHash: string): Promise<boolean> {
   if (!password || !storedHash) return false;
 
+  const cleaned = storedHash
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .replaceAll("\\$", "$");
+
   try {
-    if (storedHash.startsWith("$2a$") || storedHash.startsWith("$2b$") || storedHash.startsWith("$2y$")) {
-      return await bcrypt.compare(password, storedHash);
+    if (cleaned.startsWith("$2a$") || cleaned.startsWith("$2b$") || cleaned.startsWith("$2y$")) {
+      return await bcrypt.compare(password, cleaned);
+    }
+    if (cleaned === password) {
+      return true;
     }
     return false;
   } catch (err) {

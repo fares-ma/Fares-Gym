@@ -85,18 +85,21 @@ export async function loginAction(input: LoginInput): Promise<AuthResult> {
     return { success: false, error: ar.auth.rateLimitExceeded };
   }
 
-  const expectedUsername = (process.env.ADMIN_USERNAME || "fares").trim().toLowerCase();
+  const expectedUsername = (process.env.ADMIN_USERNAME || "fares")
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .toLowerCase();
   const rawHash = (process.env.ADMIN_PASSWORD_HASH || "").trim();
-  const expectedPasswordHash = rawHash.replace(/\\(\$)/g, "$1");
 
   if (input.username.trim().toLowerCase() !== expectedUsername) {
+    console.warn(`[AUTH] Username mismatch: provided '${input.username.trim().toLowerCase()}' vs expected '${expectedUsername}'`);
     await recordAttempt(ip, false);
     return { success: false, error: ar.auth.invalidCredentials };
   }
 
-
-  const isValid = await verifyPassword(input.password, expectedPasswordHash);
+  const isValid = await verifyPassword(input.password, rawHash);
   if (!isValid) {
+    console.warn(`[AUTH] Password verification failed. Hash configured length: ${rawHash.length}, prefix: ${rawHash.slice(0, 7)}`);
     await recordAttempt(ip, false);
     return { success: false, error: ar.auth.invalidCredentials };
   }
