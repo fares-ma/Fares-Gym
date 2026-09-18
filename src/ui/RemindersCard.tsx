@@ -3,29 +3,53 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Bell, Check } from "lucide-react";
+import { ReminderItem } from "@/src/domain/activities/types";
+import { toggleReminderAction } from "@/src/server/activities-actions";
 
-interface ReminderItem {
-  id: string;
-  title: string;
-  time?: string;
-  completed: boolean;
+interface RemindersCardProps {
+  initialReminders?: ReminderItem[];
 }
 
-export const RemindersCard: React.FC = () => {
-  const [reminders, setReminders] = useState<ReminderItem[]>([
-    { id: "1", title: "مراجعة SQL", time: "10:00", completed: false },
-    { id: "2", title: "تحضير شنطة الجيم", time: "16:00", completed: false },
-    { id: "3", title: "شرب الماء (2 لتر)", completed: true },
-    { id: "4", title: "مراجعة الملاحظات", time: "22:00", completed: false },
-  ]);
+const DEFAULT_REMINDERS: ReminderItem[] = [
+  { id: "1", text: "مراجعة SQL", dueTime: "10:00", isCompleted: false },
+  { id: "2", text: "تحضير شنطة الجيم", dueTime: "16:00", isCompleted: false },
+  { id: "3", text: "شرب الماء (2 لتر)", dueTime: "", isCompleted: true },
+  { id: "4", text: "مراجعة الملاحظات", dueTime: "22:00", isCompleted: false },
+];
 
-  const toggleReminder = (id: string) => {
-    setReminders((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, completed: !r.completed } : r))
+export const RemindersCard: React.FC<RemindersCardProps> = ({
+  initialReminders,
+}) => {
+  const [items, setItems] = useState<ReminderItem[]>(
+    initialReminders && initialReminders.length > 0
+      ? initialReminders
+      : DEFAULT_REMINDERS
+  );
+
+  const toggleReminder = async (id: string) => {
+    const current = items.find((r) => r.id === id);
+    if (!current) return;
+    const nextVal = !current.isCompleted;
+
+    // Optimistic UI update
+    setItems((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, isCompleted: nextVal } : r))
     );
+
+    // Persist to Neon DB if not a demo numeric ID
+    if (id.length > 5) {
+      try {
+        await toggleReminderAction(id, nextVal);
+      } catch {
+        // Revert on error
+        setItems((prev) =>
+          prev.map((r) => (r.id === id ? { ...r, isCompleted: !nextVal } : r))
+        );
+      }
+    }
   };
 
-  const pendingCount = reminders.filter((r) => !r.completed).length;
+  const pendingCount = items.filter((r) => !r.isCompleted).length;
 
   return (
     <div className="comic-card p-4 md:p-5 flex flex-col justify-between">
@@ -43,7 +67,7 @@ export const RemindersCard: React.FC = () => {
 
       {/* Checklist items */}
       <div className="flex flex-col gap-2.5 my-auto">
-        {reminders.map((item) => (
+        {items.slice(0, 4).map((item) => (
           <div
             key={item.id}
             onClick={() => toggleReminder(item.id)}
@@ -53,30 +77,30 @@ export const RemindersCard: React.FC = () => {
               {/* Checkbox */}
               <div
                 className={`w-4 h-4 rounded-md flex items-center justify-center transition-all ${
-                  item.completed
+                  item.isCompleted
                     ? "bg-[#7C1D38] text-[#F2EADF] border border-[#A83252]"
                     : "border border-[#3D3542] bg-[#18151B]"
                 }`}
               >
-                {item.completed && <Check className="w-3 h-3 stroke-[3]" />}
+                {item.isCompleted && <Check className="w-3 h-3 stroke-[3]" />}
               </div>
 
               {/* Title */}
               <span
                 className={`text-xs font-semibold truncate ${
-                  item.completed
+                  item.isCompleted
                     ? "line-through text-[#9D969D]/60"
                     : "text-[#F2EADF]"
                 }`}
               >
-                {item.title}
+                {item.text}
               </span>
             </div>
 
             {/* Time */}
-            {item.time && (
+            {item.dueTime && (
               <span className="text-[11px] font-mono text-[#9D969D] shrink-0">
-                {item.time}
+                {item.dueTime}
               </span>
             )}
           </div>

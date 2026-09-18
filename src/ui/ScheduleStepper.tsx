@@ -3,55 +3,33 @@
 import React from "react";
 import Link from "next/link";
 import { Dumbbell, Laptop, Utensils, Coffee, BookOpen, Check } from "lucide-react";
+import { EnrichedScheduleBlock } from "@/src/domain/activities/types";
 
-interface ScheduleItem {
-  id: string;
-  time: string;
-  label: string;
-  icon: React.ReactNode;
-  status: "completed" | "current" | "upcoming";
-  subtitle?: string;
+interface ScheduleStepperProps {
+  blocks?: EnrichedScheduleBlock[];
 }
 
-export const ScheduleStepper: React.FC = () => {
-  const scheduleItems: ScheduleItem[] = [
-    {
-      id: "gym",
-      time: "17:00",
-      label: "الجيم",
-      icon: <Dumbbell className="w-5 h-5 text-[#F2EADF]" />,
-      status: "current",
-      subtitle: "بعد 42 دقيقة",
-    },
-    {
-      id: "study",
-      time: "13:00",
-      label: "مذاكرة",
-      icon: <Laptop className="w-4 h-4 text-[#9D969D]" />,
-      status: "completed",
-    },
-    {
-      id: "lunch",
-      time: "15:00",
-      label: "غداء",
-      icon: <Utensils className="w-4 h-4 text-[#9D969D]" />,
-      status: "completed",
-    },
-    {
-      id: "rest",
-      time: "19:00",
-      label: "راحة",
-      icon: <Coffee className="w-4 h-4 text-[#9D969D]" />,
-      status: "upcoming",
-    },
-    {
-      id: "review",
-      time: "22:00",
-      label: "مراجعة",
-      icon: <BookOpen className="w-4 h-4 text-[#9D969D]" />,
-      status: "upcoming",
-    },
-  ];
+function getIcon(title: string, isCurrent: boolean) {
+  const t = title.toLowerCase();
+  const iconClass = isCurrent ? "w-5 h-5 text-[#F2EADF]" : "w-4 h-4 text-[#9D969D]";
+
+  if (t.includes("جيم") || t.includes("تمرين") || t.includes("gym")) {
+    return <Dumbbell className={iconClass} />;
+  }
+  if (t.includes("مذاكرة") || t.includes("study") || t.includes("شغل") || t.includes("work")) {
+    return <Laptop className={iconClass} />;
+  }
+  if (t.includes("غداء") || t.includes("فطار") || t.includes("أكل")) {
+    return <Utensils className={iconClass} />;
+  }
+  if (t.includes("راحة") || t.includes("قهوة") || t.includes("rest")) {
+    return <Coffee className={iconClass} />;
+  }
+  return <BookOpen className={iconClass} />;
+}
+
+export const ScheduleStepper: React.FC<ScheduleStepperProps> = ({ blocks = [] }) => {
+  const displayBlocks = blocks.length > 0 ? blocks : [];
 
   return (
     <div className="comic-card p-4 md:p-5 flex flex-col gap-3">
@@ -71,7 +49,7 @@ export const ScheduleStepper: React.FC = () => {
 
       {/* Stepper horizontal row */}
       <div className="flex items-center justify-between gap-1 overflow-x-auto py-2 no-scrollbar">
-        {scheduleItems.map((item) => {
+        {displayBlocks.map((item) => {
           const isCurrent = item.status === "current";
           const isCompleted = item.status === "completed";
 
@@ -90,7 +68,7 @@ export const ScheduleStepper: React.FC = () => {
                     : "bg-[#18151B] border border-[#2B252E]/60 opacity-60"
                 }`}
               >
-                {item.icon}
+                {getIcon(item.title, isCurrent)}
                 {isCompleted && (
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#34D399] flex items-center justify-center text-black">
                     <Check className="w-2.5 h-2.5 stroke-[3]" />
@@ -104,18 +82,18 @@ export const ScheduleStepper: React.FC = () => {
                   isCurrent ? "text-[#F2EADF]" : "text-[#9D969D]"
                 }`}
               >
-                {item.label}
+                {item.title}
               </span>
 
               {/* Time */}
               <span className="text-[11px] font-mono text-[#9D969D]/80">
-                {item.time}
+                {item.startTime}
               </span>
 
               {/* Subtitle / Countdown */}
-              {item.subtitle ? (
+              {isCurrent && item.remainingMinutes !== undefined ? (
                 <span className="text-[10px] font-bold text-[#A83252] mt-0.5 whitespace-nowrap animate-pulse">
-                  {item.subtitle}
+                  متبقي {item.remainingMinutes} د
                 </span>
               ) : isCompleted ? (
                 <span className="text-[10px] text-[#34D399] mt-0.5">✓</span>

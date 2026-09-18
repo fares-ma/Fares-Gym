@@ -14,6 +14,7 @@ import {
   getActiveWorkoutSession,
 } from "@/server/workout-queries";
 import { getDailyNutrition } from "@/src/server/nutrition-queries";
+import { getActivitiesSummary } from "@/src/server/activities-queries";
 
 export const dynamic = "force-dynamic";
 
@@ -21,20 +22,23 @@ export default async function HomePage() {
   const greeting = getTimeAwareGreeting();
   const todayStr = new Date().toISOString().split("T")[0];
 
-  // Fetch real workout & nutrition data
+  // Fetch real workout, nutrition, and activities data
   let nextProgramName = "Posterior A";
   let exerciseCount = 8;
   let activeSessionId: string | null = null;
   let todayNutrition = null;
+  let activitiesData = null;
 
   try {
-    const [{ programs }, activeData, nutritionData] = await Promise.all([
+    const [{ programs }, activeData, nutritionData, activities] = await Promise.all([
       getWorkoutProgramsWithRotation(),
       getActiveWorkoutSession(),
       getDailyNutrition(todayStr),
+      getActivitiesSummary(),
     ]);
 
     todayNutrition = nutritionData;
+    activitiesData = activities;
 
     if (activeData) {
       nextProgramName = activeData.program.name;
@@ -178,7 +182,7 @@ export default async function HomePage() {
       </div>
 
       {/* 3. Schedule Stepper (الجدول الحالي) */}
-      <ScheduleStepper />
+      <ScheduleStepper blocks={activitiesData?.schedule} />
 
       {/* 4. Dual Cards: Nutrition Snapshot + Reminders */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -193,7 +197,7 @@ export default async function HomePage() {
           fatTarget={todayNutrition?.fats.target}
           loggedMeals={todayNutrition?.meals.length}
         />
-        <RemindersCard />
+        <RemindersCard initialReminders={activitiesData?.reminders} />
       </div>
 
       {/* 5. Quote Banner with Mini Fares */}
