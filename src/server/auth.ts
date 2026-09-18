@@ -27,31 +27,40 @@ async function getClientIp(): Promise<string> {
 }
 
 async function isRateLimited(ip: string): Promise<boolean> {
-  const now = new Date();
-  const windowStart = new Date(now.getTime() - RATE_LIMIT_WINDOW_MS);
+  try {
+    const now = new Date();
+    const windowStart = new Date(now.getTime() - RATE_LIMIT_WINDOW_MS);
 
-  const attempts = await db
-    .select()
-    .from(loginAttempts)
-    .where(
-      and(
-        eq(loginAttempts.ipAddress, ip),
-        eq(loginAttempts.success, false),
-        gt(loginAttempts.attemptedAt, windowStart)
+    const attempts = await db
+      .select()
+      .from(loginAttempts)
+      .where(
+        and(
+          eq(loginAttempts.ipAddress, ip),
+          eq(loginAttempts.success, false),
+          gt(loginAttempts.attemptedAt, windowStart)
+        )
       )
-    )
-    .orderBy(desc(loginAttempts.attemptedAt));
+      .orderBy(desc(loginAttempts.attemptedAt));
 
-  return attempts.length >= MAX_FAILED_ATTEMPTS;
+    return attempts.length >= MAX_FAILED_ATTEMPTS;
+  } catch (err) {
+    console.error("Rate limiting check failed (proceeding):", err);
+    return false;
+  }
 }
 
 async function recordAttempt(ip: string, success: boolean): Promise<void> {
-  await db.insert(loginAttempts).values({
-    id: crypto.randomUUID(),
-    ipAddress: ip,
-    attemptedAt: new Date(),
-    success: success,
-  });
+  try {
+    await db.insert(loginAttempts).values({
+      id: crypto.randomUUID(),
+      ipAddress: ip,
+      attemptedAt: new Date(),
+      success: success,
+    });
+  } catch (err) {
+    console.error("Failed to record login attempt:", err);
+  }
 }
 
 export type AuthResult = {
