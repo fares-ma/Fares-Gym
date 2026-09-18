@@ -3,6 +3,8 @@ import { validateSession } from "@/server/session";
 import { Sidebar } from "@/ui/Sidebar";
 import { BottomNav } from "@/ui/BottomNav";
 
+export const dynamic = "force-dynamic";
+
 export default async function AppLayout({
   children,
 }: {
