@@ -12,8 +12,15 @@ const cairo = Cairo({
 export const metadata: Metadata = {
   title: "Fares Hub — لوحة فارس الشخصية",
   description: "لوحة التحكم الشخصية لمتابعة الجيم والتغذية والأنشطة",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Fares Hub",
+  },
   icons: {
-    icon: "/fares.jpeg",
+    icon: "/character/avatar.png",
+    apple: "/character/avatar.png",
   },
 };
 

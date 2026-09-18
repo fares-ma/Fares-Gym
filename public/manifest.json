@@ -1,0 +1,26 @@
+{
+  "name": "Fares Hub — اللوحة الشخصية",
+  "short_name": "Fares Hub",
+  "description": "لوحة فارس الشخصية لإدارة الجيم والتغذية والأنشطة والتقدم",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#120E15",
+  "theme_color": "#7C1D38",
+  "orientation": "portrait-primary",
+  "dir": "rtl",
+  "lang": "ar-EG",
+  "icons": [
+    {
+      "src": "/character/avatar.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/character/poses/avatar-circle.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
