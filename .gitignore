@@ -38,6 +38,10 @@ pnpm-debug.log*
 Thumbs.db
 *.swp
 *.swo
+
+# Local tooling & scratch
+.playwright-mcp/
+scratch/
 .vscode/*
 !.vscode/extensions.json
 .idea/

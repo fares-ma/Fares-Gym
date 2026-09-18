@@ -49,8 +49,8 @@ export async function getBodyWeightHistory(limitDays: number = 90): Promise<Body
  * Computes all-time PRs for all exercises with tags preserved.
  */
 export async function getAllExercisePRs(): Promise<ExercisePR[]> {
-  const [setsRows, exerciseRows] = await Promise.all([
-    db
+  try {
+    const setsRows = await db
       .select()
       .from(performedSets)
       .where(
@@ -59,63 +59,16 @@ export async function getAllExercisePRs(): Promise<ExercisePR[]> {
           eq(performedSets.completed, true)
         )
       )
-      .orderBy(asc(performedSets.timestamp)),
-    db.select().from(exercises),
-  ]);
+      .orderBy(asc(performedSets.timestamp));
 
-  const exerciseNames: Record<string, string> = {};
-  for (const ex of exerciseRows) {
-    exerciseNames[ex.id] = ex.displayName;
-  }
+    const exerciseRows = await db.select().from(exercises);
 
-  const setRecords: PerformedSetRecord[] = setsRows.map((s) => ({
-    id: s.id,
-    sessionId: s.sessionId,
-    exerciseId: s.exerciseId,
-    type: s.type,
-    actualReps: s.actualReps,
-    actualWeight: s.actualWeight,
-    status: s.status,
-    timestamp: s.timestamp,
-  }));
-
-  return computeExercisePRs(setRecords, exerciseNames);
-}
-
-/**
- * Retrieves volume data points per completed workout session.
- */
-export async function getWorkoutVolumeHistory(): Promise<SessionVolumePoint[]> {
-  const [sessionsRows, setsRows, programsRows] = await Promise.all([
-    db
-      .select()
-      .from(workoutSessions)
-      .where(eq(workoutSessions.status, "completed"))
-      .orderBy(asc(workoutSessions.startedAt)),
-    db
-      .select()
-      .from(performedSets)
-      .where(
-        and(
-          eq(performedSets.type, "working"),
-          eq(performedSets.completed, true)
-        )
-      ),
-    db.select().from(workoutPrograms),
-  ]);
-
-  const programNames: Record<string, string> = {};
-  for (const p of programsRows) {
-    programNames[p.id] = p.name;
-  }
-
-  // Group sets by session
-  const setsBySession: Record<string, PerformedSetRecord[]> = {};
-  for (const s of setsRows) {
-    if (!setsBySession[s.sessionId]) {
-      setsBySession[s.sessionId] = [];
+    const exerciseNames: Record<string, string> = {};
+    for (const ex of exerciseRows) {
+      exerciseNames[ex.id] = ex.displayName;
     }
-    setsBySession[s.sessionId].push({
+
+    const setRecords: PerformedSetRecord[] = setsRows.map((s) => ({
       id: s.id,
       sessionId: s.sessionId,
       exerciseId: s.exerciseId,
@@ -124,58 +77,114 @@ export async function getWorkoutVolumeHistory(): Promise<SessionVolumePoint[]> {
       actualWeight: s.actualWeight,
       status: s.status,
       timestamp: s.timestamp,
-    });
+    }));
+
+    return computeExercisePRs(setRecords, exerciseNames);
+  } catch (err) {
+    console.error("Error in getAllExercisePRs:", err);
+    return [];
   }
+}
 
-  const points: SessionVolumePoint[] = [];
+/**
+ * Retrieves volume data points per completed workout session.
+ */
+export async function getWorkoutVolumeHistory(): Promise<SessionVolumePoint[]> {
+  try {
+    const sessionsRows = await db
+      .select()
+      .from(workoutSessions)
+      .where(eq(workoutSessions.status, "completed"))
+      .orderBy(asc(workoutSessions.startedAt));
 
-  for (const session of sessionsRows) {
-    const sets = setsBySession[session.id] || [];
-    const dateStr = session.startedAt.toISOString().split("T")[0];
-    const programName = programNames[session.programId] || session.programId;
+    const setsRows = await db
+      .select()
+      .from(performedSets)
+      .where(
+        and(
+          eq(performedSets.type, "working"),
+          eq(performedSets.completed, true)
+        )
+      );
 
-    const validSets = sets.filter(
-      (s) =>
-        s.type === "working" &&
-        s.status === "completed" &&
-        s.actualWeight &&
-        s.actualReps
-    );
+    const programsRows = await db.select().from(workoutPrograms);
 
-    if (validSets.length === 0) {
-      points.push({
-        sessionId: session.id,
-        date: dateStr,
-        programName,
-        unitTag: "",
-        totalVolume: 0,
-        workingSetsCount: 0,
+    const programNames: Record<string, string> = {};
+    for (const p of programsRows) {
+      programNames[p.id] = p.name;
+    }
+
+    // Group sets by session
+    const setsBySession: Record<string, PerformedSetRecord[]> = {};
+    for (const s of setsRows) {
+      if (!setsBySession[s.sessionId]) {
+        setsBySession[s.sessionId] = [];
+      }
+      setsBySession[s.sessionId].push({
+        id: s.id,
+        sessionId: s.sessionId,
+        exerciseId: s.exerciseId,
+        type: s.type,
+        actualReps: s.actualReps,
+        actualWeight: s.actualWeight,
+        status: s.status,
+        timestamp: s.timestamp,
       });
-      continue;
     }
 
-    // Group sets by unit tag to preserve opaque tag separation
-    const setsByTag: Record<string, PerformedSetRecord[]> = {};
-    for (const s of validSets) {
-      const tag = s.actualWeight?.unitTag || "";
-      if (!setsByTag[tag]) setsByTag[tag] = [];
-      setsByTag[tag].push(s);
+    const points: SessionVolumePoint[] = [];
+
+    for (const session of sessionsRows) {
+      const sets = setsBySession[session.id] || [];
+      const dateStr = session.startedAt.toISOString().split("T")[0];
+      const programName = programNames[session.programId] || session.programId;
+
+      const validSets = sets.filter(
+        (s) =>
+          s.type === "working" &&
+          s.status === "completed" &&
+          s.actualWeight &&
+          s.actualReps
+      );
+
+      if (validSets.length === 0) {
+        points.push({
+          sessionId: session.id,
+          date: dateStr,
+          programName,
+          unitTag: "",
+          totalVolume: 0,
+          workingSetsCount: 0,
+        });
+        continue;
+      }
+
+      // Group sets by unit tag to preserve opaque tag separation
+      const setsByTag: Record<string, PerformedSetRecord[]> = {};
+      for (const s of validSets) {
+        const tag = s.actualWeight?.unitTag || "";
+        if (!setsByTag[tag]) setsByTag[tag] = [];
+        setsByTag[tag].push(s);
+      }
+
+      for (const [tag, tagSets] of Object.entries(setsByTag)) {
+        const volume = calculateSessionVolume(tagSets, tag);
+        points.push({
+          sessionId: session.id,
+          date: dateStr,
+          programName,
+          unitTag: tag,
+          totalVolume: volume,
+          workingSetsCount: tagSets.length,
+        });
+      }
     }
 
-    for (const [tag, tagSets] of Object.entries(setsByTag)) {
-      const volume = calculateSessionVolume(tagSets, tag);
-      points.push({
-        sessionId: session.id,
-        date: dateStr,
-        programName,
-        unitTag: tag,
-        totalVolume: volume,
-        workingSetsCount: tagSets.length,
-      });
-    }
+    return points;
+  } catch (err) {
+    console.error("Error in getWorkoutVolumeHistory:", err);
+    return [];
   }
-
-  return points;
 }
 
 /**
@@ -189,19 +198,32 @@ export async function getProgressSummary(): Promise<{
 }> {
   const now = getUserNow();
 
-  const [sessionsRows, bodyWeights, prs, volumes] = await Promise.all([
-    db.select().from(workoutSessions),
-    getBodyWeightHistory(),
-    getAllExercisePRs(),
-    getWorkoutVolumeHistory(),
-  ]);
+  try {
+    const sessionsRows = await db.select().from(workoutSessions);
+    const bodyWeights = await getBodyWeightHistory();
+    const prs = await getAllExercisePRs();
+    const volumes = await getWorkoutVolumeHistory();
 
-  const consistency = computeConsistencyMetrics(sessionsRows, now);
+    const consistency = computeConsistencyMetrics(sessionsRows, now);
 
-  return {
-    consistency,
-    bodyWeights,
-    prs,
-    volumes,
-  };
+    return {
+      consistency,
+      bodyWeights,
+      prs,
+      volumes,
+    };
+  } catch (err) {
+    console.error("Error in getProgressSummary:", err);
+    return {
+      consistency: {
+        totalCompletedSessions: 0,
+        currentStreakWeeks: 0,
+        last30DaysActiveCount: 0,
+        last30DaysRate: 0,
+      },
+      bodyWeights: [],
+      prs: [],
+      volumes: [],
+    };
+  }
 }
