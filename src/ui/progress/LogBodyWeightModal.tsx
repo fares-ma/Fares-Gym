@@ -1,0 +1,165 @@
+"use client";
+
+import React, { useState, useTransition } from "react";
+import { X, Scale } from "lucide-react";
+import { ar } from "@/i18n/ar";
+import { logBodyWeightAction } from "@/src/server/progress-actions";
+
+interface LogBodyWeightModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onWeightLogged?: () => void;
+}
+
+export function LogBodyWeightModal({
+  isOpen,
+  onClose,
+  onWeightLogged,
+}: LogBodyWeightModalProps) {
+  const [isPending, startTransition] = useTransition();
+  const today = new Date().toISOString().split("T")[0];
+  const [date, setDate] = useState(today);
+  const [weightKg, setWeightKg] = useState("");
+  const [notes, setNotes] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const parsedWeight = parseFloat(weightKg);
+    if (isNaN(parsedWeight) || parsedWeight <= 0) {
+      setError("برجاء إدخال وزن صحيح بالكيلوجرام");
+      return;
+    }
+
+    setError(null);
+    startTransition(async () => {
+      const res = await logBodyWeightAction({
+        date,
+        weightKg: parsedWeight,
+        notes: notes.trim(),
+      });
+
+      if (res.success) {
+        setWeightKg("");
+        setNotes("");
+        onWeightLogged?.();
+        onClose();
+      } else {
+        setError(res.error || ar.errors.generic);
+      }
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+      <div
+        className="comic-card w-full max-w-md p-6 border border-[#2B252E] bg-[#1A151D] shadow-2xl space-y-5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-[#2B252E] pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-[#211C23] text-[#D6AA63]">
+              <Scale className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-[#F2EADF]">
+                {ar.progress.weightModal.title}
+              </h3>
+              <p className="text-xs text-[#9D969D]">
+                سجل وزنك للمقارنة ومتابعة التطور
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-[#9D969D] hover:text-[#F2EADF] hover:bg-[#211C23] transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-900/60 text-rose-300 text-xs font-medium">
+            {error}
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4 text-start">
+          {/* Date */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-[#F2EADF]">
+              {ar.progress.weightModal.dateLabel}
+            </label>
+            <input
+              type="date"
+              required
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full bg-[#110D13] border border-[#2B252E] rounded-xl px-3.5 py-2.5 text-sm text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
+            />
+          </div>
+
+          {/* Weight */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-[#F2EADF]">
+              {ar.progress.weightModal.weightLabel}
+            </label>
+            <div className="relative">
+              <input
+                type="number"
+                step="0.1"
+                required
+                placeholder="مثال: 78.5"
+                value={weightKg}
+                onChange={(e) => setWeightKg(e.target.value)}
+                className="w-full bg-[#110D13] border border-[#2B252E] rounded-xl px-3.5 py-2.5 text-sm text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
+              />
+              <span className="absolute left-3 top-2.5 text-xs text-[#9D969D] font-mono select-none">
+                كجم
+              </span>
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-[#F2EADF]">
+              {ar.progress.weightModal.notesLabel}
+            </label>
+            <input
+              type="text"
+              placeholder={ar.progress.weightModal.notesPlaceholder}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="w-full bg-[#110D13] border border-[#2B252E] rounded-xl px-3.5 py-2.5 text-sm text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="pt-2 flex items-center justify-end gap-2.5">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-xl text-xs font-bold text-[#9D969D] hover:bg-[#211C23] transition-colors"
+            >
+              إلغاء
+            </button>
+            <button
+              type="submit"
+              disabled={isPending}
+              className="comic-btn-primary px-5 py-2.5 rounded-xl text-xs font-black shadow-lg shadow-[#7C1D38]/30 cursor-pointer disabled:opacity-50"
+            >
+              {isPending
+                ? ar.progress.weightModal.saving
+                : ar.progress.weightModal.submitBtn}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

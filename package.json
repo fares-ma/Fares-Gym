@@ -11,7 +11,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx --env-file=.env src/data/seed.ts",
-    "test:domain": "npx tsx --test src/domain/workout/__tests__/*.test.ts src/domain/nutrition/__tests__/*.test.ts src/domain/activities/__tests__/*.test.ts"
+    "test:domain": "npx tsx --test src/domain/workout/__tests__/*.test.ts src/domain/nutrition/__tests__/*.test.ts src/domain/activities/__tests__/*.test.ts src/domain/progress/__tests__/*.test.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.0",
