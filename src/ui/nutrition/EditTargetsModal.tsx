@@ -62,36 +62,36 @@ export function EditTargetsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="comic-card w-full max-w-md p-6 border border-[#2B252E] bg-[#1A151D] shadow-2xl space-y-5"
+        className="comic-card w-full max-w-md p-6 border border-[#2A242E] bg-[#151318] shadow-2xl space-y-5"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#2B252E]">
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-amber-500/10 text-[#D6AA63]">
+        <div className="flex items-center justify-between pb-3 border-b border-[#2A242E]">
+          <div className="flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-[#C9A15A]/20 text-[#C9A15A] border border-[#C9A15A]/30">
               <Target className="w-5 h-5" />
             </span>
             <div className="text-start">
-              <h2 className="text-base sm:text-lg font-black text-[#F2EADF]">
+              <h2 className="text-base sm:text-lg font-black text-[#F1E9DD]">
                 {ar.nutrition.editTargetsModal.title}
               </h2>
-              <p className="text-[11px] text-[#9D969D]">
+              <p className="text-[11px] text-[#A7A0A6]">
                 {ar.nutrition.editTargetsModal.subtitle}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#9D969D] hover:text-[#F2EADF] hover:bg-[#211C23] transition-colors"
+            className="p-2 rounded-lg text-[#A7A0A6] hover:text-[#F1E9DD] hover:bg-[#1D1920] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {error && (
-          <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/30 text-xs text-red-400 font-bold">
+          <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-900/60 text-xs text-rose-300 font-bold">
             {error}
           </div>
         )}
@@ -99,7 +99,7 @@ export function EditTargetsModal({
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5 text-start">
-            <label className="text-xs font-bold text-orange-400 block">
+            <label className="text-xs font-bold text-[#C9A15A] block">
               {ar.nutrition.editTargetsModal.caloriesLabel}
             </label>
             <input
@@ -110,12 +110,12 @@ export function EditTargetsModal({
               max="10000"
               disabled={isPending}
               required
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110D13] border border-[#2B252E] text-sm font-mono text-[#F2EADF] focus:outline-none focus:border-orange-500"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110F14] border border-[#2A242E] text-sm font-mono text-[#F1E9DD] focus:outline-none focus:border-[#C9A15A]"
             />
           </div>
 
           <div className="space-y-1.5 text-start">
-            <label className="text-xs font-bold text-emerald-400 block">
+            <label className="text-xs font-bold text-[#A83252] block">
               {ar.nutrition.editTargetsModal.proteinLabel}
             </label>
             <input
@@ -127,12 +127,12 @@ export function EditTargetsModal({
               max="999"
               disabled={isPending}
               required
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110D13] border border-[#2B252E] text-sm font-mono text-[#F2EADF] focus:outline-none focus:border-emerald-500"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110F14] border border-[#2A242E] text-sm font-mono text-[#F1E9DD] focus:outline-none focus:border-[#A83252]"
             />
           </div>
 
           <div className="space-y-1.5 text-start">
-            <label className="text-xs font-bold text-amber-400 block">
+            <label className="text-xs font-bold text-[#C9A15A] block">
               {ar.nutrition.editTargetsModal.carbsLabel}
             </label>
             <input
@@ -144,12 +144,12 @@ export function EditTargetsModal({
               max="999"
               disabled={isPending}
               required
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110D13] border border-[#2B252E] text-sm font-mono text-[#F2EADF] focus:outline-none focus:border-amber-500"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110F14] border border-[#2A242E] text-sm font-mono text-[#F1E9DD] focus:outline-none focus:border-[#C9A15A]"
             />
           </div>
 
           <div className="space-y-1.5 text-start">
-            <label className="text-xs font-bold text-sky-400 block">
+            <label className="text-xs font-bold text-[#34D399] block">
               {ar.nutrition.editTargetsModal.fatsLabel}
             </label>
             <input
@@ -161,7 +161,7 @@ export function EditTargetsModal({
               max="999"
               disabled={isPending}
               required
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110D13] border border-[#2B252E] text-sm font-mono text-[#F2EADF] focus:outline-none focus:border-sky-500"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110F14] border border-[#2A242E] text-sm font-mono text-[#F1E9DD] focus:outline-none focus:border-[#34D399]"
             />
           </div>
 
@@ -170,14 +170,14 @@ export function EditTargetsModal({
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="px-4 py-2.5 rounded-xl border border-[#2B252E] text-xs font-bold text-[#9D969D] hover:text-[#F2EADF] hover:bg-[#211C23] transition-colors"
+              className="px-4 py-2.5 rounded-xl border border-[#2A242E] bg-[#1D1920] text-xs font-bold text-[#A7A0A6] hover:text-[#F1E9DD] hover:bg-[#25202A] transition-colors min-h-[44px] cursor-pointer"
             >
               {ar.nutrition.editTargetsModal.cancelBtn}
             </button>
             <button
               type="submit"
               disabled={isPending}
-              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-lg shadow-amber-950/40 transition-all disabled:opacity-50"
+              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#C9A15A] hover:bg-[#B88F48] text-[#110F14] font-black text-xs shadow-lg shadow-[#C9A15A]/20 transition-all disabled:opacity-50 min-h-[44px] cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>

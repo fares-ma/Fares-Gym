@@ -60,37 +60,37 @@ export function SetEntryRow({
 
   return (
     <div
-      className={`rounded-xl p-3 sm:p-3.5 border transition-all flex items-center justify-between gap-2.5 ${
+      className={`rounded-2xl p-3 sm:p-3.5 border transition-all flex items-center justify-between gap-2.5 ${
         isCompleted
-          ? "bg-[#18151B] border-[#34D399]/60 shadow-sm"
+          ? "bg-[#151318] border-[#34D399]/60 shadow-xs"
           : isHeating
-          ? "bg-[#18151B] border-[#D6AA63]/30"
-          : "bg-[#18151B] border-[#2B252E] hover:border-[#7C1D38]/50"
+          ? "bg-[#151318] border-[#C9A15A]/30"
+          : "bg-[#151318] border-[#2A242E] hover:border-[#7A1735]/50"
       }`}
     >
       {/* Set Label */}
-      <div className="flex items-center gap-2 min-w-[85px]">
+      <div className="flex items-center gap-2.5 min-w-[85px]">
         {isHeating ? (
-          <span className="p-1.5 rounded-lg bg-[#211C23] text-[#D6AA63] border border-[#D6AA63]/30">
-            <Flame className="w-3.5 h-3.5" />
+          <span className="p-2 rounded-xl bg-[#1D1920] text-[#C9A15A] border border-[#C9A15A]/30">
+            <Flame className="w-4 h-4" />
           </span>
         ) : (
-          <span className="p-1.5 rounded-lg bg-[#211C23] text-[#7C1D38] border border-[#7C1D38]/40">
-            <Dumbbell className="w-3.5 h-3.5" />
+          <span className="p-2 rounded-xl bg-[#1D1920] text-[#A83252] border border-[#7A1735]/40">
+            <Dumbbell className="w-4 h-4" />
           </span>
         )}
         <div className="text-right">
-          <span className="text-xs font-black text-[#F2EADF] block">
+          <span className="text-xs font-black text-[#F1E9DD] block">
             {ar.workout.active.setNumber.replace("{num}", String(setNumber))}
           </span>
-          <span className="text-[10px] text-[#9D969D] font-mono">
+          <span className="text-[11px] text-[#A7A0A6] font-mono font-semibold">
             {formatWeight(targetWeight)}
           </span>
         </div>
       </div>
 
-      {/* Inputs for weight & reps */}
-      <div className="flex items-center gap-2 flex-1 justify-center max-w-[200px]">
+      {/* Inputs for weight & reps (48px gym tap target) */}
+      <div className="flex items-center gap-2 flex-1 justify-center max-w-[210px]">
         {/* Weight input */}
         <div className="flex-1">
           <input
@@ -99,14 +99,14 @@ export function SetEntryRow({
             onChange={(e) => setWeightStr(e.target.value)}
             disabled={isCompleted || isPending}
             placeholder={ar.workout.active.weightPlaceholder}
-            className="w-full bg-[#211C23] border border-[#362E3B] rounded-lg py-2 px-2 text-center text-sm font-mono font-black text-[#F2EADF] focus:outline-none focus:border-[#7C1D38] disabled:opacity-75"
+            className="w-full h-12 bg-[#1D1920] border border-[#2A242E] rounded-xl px-2 text-center text-sm font-mono font-black text-[#F1E9DD] focus:outline-none focus:border-[#A83252] focus:ring-1 focus:ring-[#A83252] disabled:opacity-70 transition-colors"
           />
         </div>
 
-        <span className="text-[#9D969D] text-xs font-bold">×</span>
+        <span className="text-[#A7A0A6] text-xs font-bold font-latin">×</span>
 
         {/* Reps input */}
-        <div className="w-14">
+        <div className="w-16">
           <input
             type="number"
             value={reps}
@@ -116,25 +116,25 @@ export function SetEntryRow({
             disabled={isCompleted || isPending}
             min={1}
             max={99}
-            className="w-full bg-[#211C23] border border-[#362E3B] rounded-lg py-2 px-2 text-center text-sm font-mono font-black text-[#F2EADF] focus:outline-none focus:border-[#7C1D38] disabled:opacity-75"
+            className="w-full h-12 bg-[#1D1920] border border-[#2A242E] rounded-xl px-2 text-center text-sm font-mono font-black text-[#F1E9DD] focus:outline-none focus:border-[#A83252] focus:ring-1 focus:ring-[#A83252] disabled:opacity-70 transition-colors"
           />
         </div>
       </div>
 
-      {/* Complete Button */}
+      {/* Complete Button (44px min tap target) */}
       <button
         onClick={handleToggleComplete}
         disabled={isPending}
-        className={`flex items-center justify-center gap-1.5 py-2 px-3 sm:px-4 rounded-xl text-xs font-black transition-all cursor-pointer ${
+        className={`flex items-center justify-center gap-1.5 min-h-[44px] sm:min-h-[48px] py-2.5 px-3 sm:px-4 rounded-xl text-xs font-black transition-all cursor-pointer ${
           isCompleted
-            ? "bg-[#34D399]/20 text-[#34D399] border border-[#34D399]/40 hover:bg-[#34D399]/30"
+            ? "bg-[#34D399]/15 text-[#34D399] border border-[#34D399]/40 hover:bg-[#34D399]/25"
             : isHeating
-            ? "comic-btn-secondary"
-            : "comic-btn-primary"
-        } disabled:opacity-50 min-w-[85px]`}
+            ? "hub-btn-secondary"
+            : "hub-btn-primary"
+        } disabled:opacity-50 min-w-[90px]`}
       >
         <Check
-          className={`w-3.5 h-3.5 ${isCompleted ? "text-[#34D399]" : ""}`}
+          className={`w-4 h-4 ${isCompleted ? "text-[#34D399]" : ""}`}
         />
         <span>
           {isCompleted
@@ -145,3 +145,4 @@ export function SetEntryRow({
     </div>
   );
 }
+

@@ -10,25 +10,7 @@ import { validateSession } from "./session";
 import { getUserTodayDateStr } from "../lib/date-utils";
 
 
-const MealInputSchema = z.object({
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
-  name: z.string().trim().min(1, "Meal name is required"),
-  calories: z.number().int().nonnegative("Calories must be non-negative"),
-  proteinGrams: z.number().nonnegative("Protein must be non-negative").default(0),
-  carbsGrams: z.number().nonnegative("Carbohydrates must be non-negative").default(0),
-  fatsGrams: z.number().nonnegative("Fats must be non-negative").default(0),
-});
-
-const TargetInputSchema = z.object({
-  effectiveDate: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)")
-    .optional(),
-  targetCalories: z.number().int().positive("Target calories must be greater than 0"),
-  targetProtein: z.number().nonnegative("Target protein must be non-negative"),
-  targetCarbs: z.number().nonnegative("Target carbohydrates must be non-negative"),
-  targetFats: z.number().nonnegative("Target fats must be non-negative"),
-});
+import { MealInputSchema, TargetInputSchema } from "./schemas";
 
 /**
  * Logs a new meal for a specified calendar date.

@@ -69,37 +69,37 @@ export function TdeeCalculatorModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="comic-card w-full max-w-lg p-6 border border-[#2B252E] bg-[#1A151D] shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto"
+        className="comic-card w-full max-w-lg p-6 border border-[#2A242E] bg-[#151318] shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#2B252E]">
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-purple-500/10 text-purple-400">
+        <div className="flex items-center justify-between pb-3 border-b border-[#2A242E]">
+          <div className="flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-[#7A1735]/20 text-[#C9A15A] border border-[#7A1735]/30">
               <Calculator className="w-5 h-5" />
             </span>
             <div className="text-start">
-              <h2 className="text-base sm:text-lg font-black text-[#F2EADF]">
+              <h2 className="text-base sm:text-lg font-black text-[#F1E9DD]">
                 {ar.nutrition.tdeeModal.title}
               </h2>
-              <p className="text-[11px] text-[#9D969D]">
+              <p className="text-[11px] text-[#A7A0A6]">
                 {ar.nutrition.tdeeModal.subtitle}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#9D969D] hover:text-[#F2EADF] hover:bg-[#211C23] transition-colors"
+            className="p-2 rounded-lg text-[#A7A0A6] hover:text-[#F1E9DD] hover:bg-[#1D1920] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Informational Notice */}
-        <div className="flex items-start gap-2.5 p-3 rounded-xl bg-[#211C23] border border-[#2B252E] text-[11px] text-[#9D969D] text-start leading-relaxed">
-          <AlertCircle className="w-4 h-4 text-[#D6AA63] shrink-0 mt-0.5" />
+        {/* Informational Notice - Strict Rule Non-negotiable: formula is editable suggestion only */}
+        <div className="flex items-start gap-2.5 p-3 rounded-xl bg-[#1D1920] border border-[#C9A15A]/30 text-xs text-[#C9A15A] text-start leading-relaxed shadow-xs">
+          <AlertCircle className="w-4 h-4 text-[#C9A15A] shrink-0 mt-0.5" />
           <span>{ar.nutrition.tdeeModal.disclaimer}</span>
         </div>
 
@@ -107,7 +107,7 @@ export function TdeeCalculatorModal({
         <form onSubmit={handleCalculate} className="space-y-4">
           <div className="grid grid-cols-3 gap-2.5">
             <div className="space-y-1 text-start">
-              <label className="text-xs font-bold text-[#9D969D] block">
+              <label className="text-xs font-bold text-[#A7A0A6] block">
                 {ar.nutrition.tdeeModal.weightLabel}
               </label>
               <input
@@ -116,12 +116,12 @@ export function TdeeCalculatorModal({
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
                 required
-                className="w-full px-3 py-2 rounded-xl bg-[#110D13] border border-[#2B252E] text-sm font-mono text-[#F2EADF] focus:outline-none focus:border-purple-500"
+                className="w-full px-3 py-2 rounded-xl bg-[#110F14] border border-[#2A242E] text-sm font-mono text-[#F1E9DD] focus:outline-none focus:border-[#C9A15A]"
               />
             </div>
 
             <div className="space-y-1 text-start">
-              <label className="text-xs font-bold text-[#9D969D] block">
+              <label className="text-xs font-bold text-[#A7A0A6] block">
                 {ar.nutrition.tdeeModal.heightLabel}
               </label>
               <input
@@ -129,12 +129,12 @@ export function TdeeCalculatorModal({
                 value={height}
                 onChange={(e) => setHeight(e.target.value)}
                 required
-                className="w-full px-3 py-2 rounded-xl bg-[#110D13] border border-[#2B252E] text-sm font-mono text-[#F2EADF] focus:outline-none focus:border-purple-500"
+                className="w-full px-3 py-2 rounded-xl bg-[#110F14] border border-[#2A242E] text-sm font-mono text-[#F1E9DD] focus:outline-none focus:border-[#C9A15A]"
               />
             </div>
 
             <div className="space-y-1 text-start">
-              <label className="text-xs font-bold text-[#9D969D] block">
+              <label className="text-xs font-bold text-[#A7A0A6] block">
                 {ar.nutrition.tdeeModal.ageLabel}
               </label>
               <input
@@ -142,19 +142,19 @@ export function TdeeCalculatorModal({
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
                 required
-                className="w-full px-3 py-2 rounded-xl bg-[#110D13] border border-[#2B252E] text-sm font-mono text-[#F2EADF] focus:outline-none focus:border-purple-500"
+                className="w-full px-3 py-2 rounded-xl bg-[#110F14] border border-[#2A242E] text-sm font-mono text-[#F1E9DD] focus:outline-none focus:border-[#C9A15A]"
               />
             </div>
           </div>
 
           <div className="space-y-1.5 text-start">
-            <label className="text-xs font-bold text-[#9D969D] block">
+            <label className="text-xs font-bold text-[#A7A0A6] block">
               {ar.nutrition.tdeeModal.activityLabel}
             </label>
             <select
               value={activity}
               onChange={(e) => setActivity(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110D13] border border-[#2B252E] text-xs text-[#F2EADF] focus:outline-none focus:border-purple-500"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110F14] border border-[#2A242E] text-xs text-[#F1E9DD] focus:outline-none focus:border-[#C9A15A]"
             >
               <option value="1.2">{ar.nutrition.tdeeModal.activitySedentary}</option>
               <option value="1.375">{ar.nutrition.tdeeModal.activityLight}</option>
@@ -165,31 +165,31 @@ export function TdeeCalculatorModal({
 
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-lg shadow-purple-950/40 transition-all"
+            className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#7A1735] hover:bg-[#942042] text-[#F1E9DD] font-black text-xs shadow-lg shadow-[#7A1735]/30 transition-all min-h-[44px] cursor-pointer"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-4 h-4 text-[#C9A15A]" />
             <span>{ar.nutrition.tdeeModal.calculateBtn}</span>
           </button>
         </form>
 
         {/* Results Section */}
         {result && (
-          <div className="p-4 rounded-2xl bg-[#110D13] border border-[#2B252E] space-y-4 animate-in fade-in">
+          <div className="p-4 rounded-2xl bg-[#110F14] border border-[#2A242E] space-y-4 animate-in fade-in">
             <div className="grid grid-cols-2 gap-3 text-start">
-              <div className="p-3 rounded-xl bg-[#1A151D] border border-[#2B252E]">
-                <span className="text-[11px] text-[#9D969D] block">
+              <div className="p-3 rounded-xl bg-[#151318] border border-[#2A242E]">
+                <span className="text-[11px] text-[#A7A0A6] block">
                   {ar.nutrition.tdeeModal.estimatedBmr}
                 </span>
-                <span className="text-lg font-black text-[#F2EADF] font-mono">
+                <span className="text-lg font-black text-[#F1E9DD] font-mono">
                   {result.bmr.toLocaleString()} kcal
                 </span>
               </div>
 
-              <div className="p-3 rounded-xl bg-[#1A151D] border border-orange-500/30">
-                <span className="text-[11px] text-orange-400 block font-bold">
+              <div className="p-3 rounded-xl bg-[#151318] border border-[#C9A15A]/40">
+                <span className="text-[11px] text-[#C9A15A] block font-bold">
                   {ar.nutrition.tdeeModal.estimatedTdee}
                 </span>
-                <span className="text-lg font-black text-orange-300 font-mono">
+                <span className="text-lg font-black text-[#C9A15A] font-mono">
                   {result.tdee.toLocaleString()} kcal
                 </span>
               </div>
@@ -197,21 +197,21 @@ export function TdeeCalculatorModal({
 
             {/* Suggested Macro Splits */}
             <div className="space-y-1.5 text-start">
-              <span className="text-xs font-bold text-[#F2EADF] block">
+              <span className="text-xs font-bold text-[#F1E9DD] block">
                 {ar.nutrition.tdeeModal.suggestedSplit}
               </span>
               <div className="grid grid-cols-3 gap-2 text-center font-mono">
-                <div className="p-2 rounded-lg bg-emerald-950/30 border border-emerald-500/20 text-emerald-300 text-xs">
+                <div className="p-2 rounded-lg bg-[#7A1735]/15 border border-[#7A1735]/30 text-[#A83252] text-xs">
                   <span className="block font-bold">{result.suggestedProteinGrams}g</span>
-                  <span className="text-[10px] text-[#9D969D]">{ar.nutrition.protein}</span>
+                  <span className="text-[10px] text-[#A7A0A6]">{ar.nutrition.protein}</span>
                 </div>
-                <div className="p-2 rounded-lg bg-amber-950/30 border border-amber-500/20 text-amber-300 text-xs">
+                <div className="p-2 rounded-lg bg-[#C9A15A]/15 border border-[#C9A15A]/30 text-[#C9A15A] text-xs">
                   <span className="block font-bold">{result.suggestedCarbsGrams}g</span>
-                  <span className="text-[10px] text-[#9D969D]">{ar.nutrition.carbs}</span>
+                  <span className="text-[10px] text-[#A7A0A6]">{ar.nutrition.carbs}</span>
                 </div>
-                <div className="p-2 rounded-lg bg-sky-950/30 border border-sky-500/20 text-sky-300 text-xs">
+                <div className="p-2 rounded-lg bg-[#34D399]/15 border border-[#34D399]/30 text-[#34D399] text-xs">
                   <span className="block font-bold">{result.suggestedFatsGrams}g</span>
-                  <span className="text-[10px] text-[#9D969D]">{ar.nutrition.fats}</span>
+                  <span className="text-[10px] text-[#A7A0A6]">{ar.nutrition.fats}</span>
                 </div>
               </div>
             </div>
@@ -220,14 +220,13 @@ export function TdeeCalculatorModal({
             <button
               onClick={handleApplyAsTargets}
               disabled={isPending}
-              className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#D6AA63] hover:bg-[#C29650] text-[#110D13] font-black text-xs shadow-lg shadow-amber-950/30 transition-all disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#C9A15A] hover:bg-[#B88F48] text-[#110F14] font-black text-xs shadow-lg shadow-[#C9A15A]/20 transition-all disabled:opacity-50 min-h-[44px] cursor-pointer"
             >
               <Check className="w-4 h-4" />
               <span>
                 {isPending ? ar.nutrition.tdeeModal.applying : ar.nutrition.tdeeModal.applyAsTargetsBtn}
               </span>
             </button>
-
           </div>
         )}
       </div>

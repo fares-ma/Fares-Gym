@@ -1,6 +1,20 @@
 import type { Metadata } from "next";
-import { Cairo } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Inter, Cairo } from "next/font/google";
 import "./globals.css";
+
+const ibmPlexArabic = IBM_Plex_Sans_Arabic({
+  subsets: ["arabic"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-arabic",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-latin",
+  display: "swap",
+});
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
@@ -31,7 +45,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" dir="rtl" className="dark" suppressHydrationWarning>
-      <body className={`${cairo.variable} font-sans antialiased min-h-screen bg-[#0F0D11] text-[#F2EADF]`}>
+      <body className={`${ibmPlexArabic.variable} ${inter.variable} ${cairo.variable} font-sans antialiased min-h-screen bg-[#0D0C0F] text-[#F1E9DD]`}>
         {children}
       </body>
     </html>

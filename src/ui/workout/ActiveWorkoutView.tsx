@@ -144,16 +144,16 @@ export function ActiveWorkoutView({
       )}
 
       {/* Top Session Status Bar */}
-      <div className="comic-card p-3 sm:p-4 flex items-center justify-between gap-4 border-[#2B252E]">
+      <div className="hub-card p-3.5 sm:p-4 flex items-center justify-between gap-4 border border-[#2A242E]">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#7C1D38]/30 flex items-center justify-center text-[#E0537A]">
-            <Dumbbell className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-xl bg-[#4A1024] border border-[#7A1735] flex items-center justify-center text-[#F1E9DD] shrink-0">
+            <Dumbbell className="w-5 h-5 text-[#C9A15A]" />
           </div>
           <div>
-            <span className="text-xs font-black text-[#D6AA63] block">
+            <span className="text-xs font-black text-[#C9A15A] block font-latin">
               {program.name}
             </span>
-            <p className="text-[11px] text-[#9D969D]">
+            <p className="text-[11px] text-[#A7A0A6] font-medium">
               {ar.workout.active.exerciseProgress
                 .replace("{current}", String(currentIdx + 1))
                 .replace("{total}", String(exercises.length))}
@@ -164,15 +164,15 @@ export function ActiveWorkoutView({
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowFinishModal(true)}
-            className="comic-btn-primary text-xs font-black px-3.5 py-2 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#7C1D38]/30"
+            className="hub-btn-primary text-xs font-black px-4 py-2.5 rounded-xl flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#7A1735]/40"
           >
-            <CheckCircle className="w-3.5 h-3.5 text-[#D6AA63]" />
+            <CheckCircle className="w-4 h-4 text-[#C9A15A]" />
             <span>{ar.workout.active.finishWorkout}</span>
           </button>
 
           <button
             onClick={handleAbandonSession}
-            className="text-xs text-[#9D969D] hover:text-red-400 p-2 rounded-lg transition-colors cursor-pointer"
+            className="text-xs text-[#A7A0A6] hover:text-[#E05252] p-2 rounded-xl hover:bg-[#1D1920] transition-colors cursor-pointer"
             title={ar.workout.active.discardCTA}
           >
             <AlertTriangle className="w-4 h-4" />
@@ -181,31 +181,31 @@ export function ActiveWorkoutView({
       </div>
 
       {/* Current Exercise Hero Card */}
-      <div className="comic-card-accent p-5 sm:p-6 shadow-xl bg-[#18151B]">
+      <div className="hub-card-accent p-5 sm:p-6 shadow-xl border border-[#7A1735]">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="comic-badge text-[10px] bg-[#211C23] text-[#D6AA63]">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="hub-badge text-[10px] font-latin">
                 EXERCISE {String(currentIdx + 1).padStart(2, "0")}
               </span>
             </div>
-            <h2 className="text-2xl font-black text-[#F2EADF]">
+            <h2 className="text-2xl font-black text-[#F1E9DD] tracking-tight">
               {currentExercise.displayName}
             </h2>
-            <div className="flex items-center gap-3 mt-1.5 text-xs text-[#9D969D]">
-              <span className="font-mono text-[#D6AA63] font-black bg-[#211C23] px-2 py-0.5 rounded-md border border-[#362E3B]">
+            <div className="flex items-center gap-3 mt-1.5 text-xs text-[#A7A0A6] flex-wrap">
+              <span className="font-mono text-[#C9A15A] font-black bg-[#1D1920] px-2.5 py-0.5 rounded-md border border-[#2A242E]">
                 {ar.workout.details.weightTarget}{" "}
                 {formatWeight(currentExercise.defaultWeight)}
               </span>
               <span>•</span>
-              <span className="font-bold">
+              <span className="font-bold text-[#F1E9DD]">
                 {ar.workout.details.repsTarget} {currentExercise.targetReps}
               </span>
               {currentExercise.targetRest !== "-" && (
                 <>
                   <span>•</span>
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-[#9D969D]" />
+                    <Clock className="w-3.5 h-3.5 text-[#A7A0A6]" />
                     {currentExercise.targetRest} {ar.workout.details.minutes}
                   </span>
                 </>
@@ -217,8 +217,8 @@ export function ActiveWorkoutView({
         {/* Heating Sets Section */}
         {heatingEntries.length > 0 && (
           <div className="mb-5 space-y-2">
-            <h3 className="text-xs font-black text-[#D6AA63] uppercase tracking-wider flex items-center gap-1.5 px-1">
-              <Flame className="w-4 h-4 text-[#D6AA63]" />
+            <h3 className="text-xs font-black text-[#C9A15A] uppercase tracking-wider flex items-center gap-1.5 px-1">
+              <Flame className="w-4 h-4 text-[#C9A15A]" />
               <span>{ar.workout.active.heatingSetsHeader}</span>
             </h3>
             <div className="space-y-2">
@@ -241,8 +241,8 @@ export function ActiveWorkoutView({
 
         {/* Working Sets Section */}
         <div className="space-y-2">
-          <h3 className="text-xs font-black text-[#E0537A] uppercase tracking-wider flex items-center gap-1.5 px-1">
-            <Dumbbell className="w-4 h-4 text-[#7C1D38]" />
+          <h3 className="text-xs font-black text-[#F1E9DD] uppercase tracking-wider flex items-center gap-1.5 px-1">
+            <Dumbbell className="w-4 h-4 text-[#A83252]" />
             <span>{ar.workout.active.workingSetsHeader}</span>
           </h3>
           <div className="space-y-2">
@@ -268,7 +268,7 @@ export function ActiveWorkoutView({
         <button
           onClick={() => setCurrentIdx((prev) => Math.max(0, prev - 1))}
           disabled={currentIdx === 0}
-          className="flex-1 py-3 px-4 rounded-xl text-xs font-black comic-btn-secondary disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2 cursor-pointer"
+          className="flex-1 min-h-[48px] py-3 px-4 rounded-xl text-xs font-black hub-btn-secondary disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2 cursor-pointer"
         >
           <ArrowRight className="w-4 h-4" />
           <span>{ar.workout.active.prevExerciseBtn}</span>
@@ -279,7 +279,7 @@ export function ActiveWorkoutView({
             setCurrentIdx((prev) => Math.min(exercises.length - 1, prev + 1))
           }
           disabled={currentIdx === exercises.length - 1}
-          className="flex-1 py-3 px-4 rounded-xl text-xs font-black comic-btn-primary disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-[#7C1D38]/30"
+          className="flex-1 min-h-[48px] py-3 px-4 rounded-xl text-xs font-black hub-btn-primary disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-[#7A1735]/40"
         >
           <span>{ar.workout.active.nextExerciseBtn}</span>
           <ArrowLeft className="w-4 h-4" />
@@ -298,15 +298,15 @@ export function ActiveWorkoutView({
 
       {/* Finish Session Confirmation Modal */}
       {showFinishModal && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="comic-card-accent p-6 max-w-md w-full space-y-4 shadow-2xl bg-[#18151B] animate-in fade-in zoom-in-95">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="hub-card-elevated p-6 max-w-md w-full space-y-4 shadow-2xl border border-[#2A242E] animate-in zoom-in-95 duration-200">
             <div className="flex items-center gap-3">
               <MiniFares pose="trophy" size="sm" animate="bounce" />
               <div>
-                <h3 className="text-lg font-black text-[#F2EADF]">
+                <h3 className="text-lg font-black text-[#F1E9DD]">
                   {ar.workout.active.finishWorkout}
                 </h3>
-                <p className="text-xs text-[#9D969D]">
+                <p className="text-xs text-[#A7A0A6]">
                   {ar.workout.active.confirmFinish}
                 </p>
               </div>
@@ -314,7 +314,7 @@ export function ActiveWorkoutView({
 
             {/* Notes Input */}
             <div>
-              <label className="block text-xs font-bold text-[#F2EADF] mb-1.5">
+              <label className="block text-xs font-bold text-[#F1E9DD] mb-1.5">
                 {ar.workout.active.sessionNotesLabel}
               </label>
               <textarea
@@ -322,7 +322,7 @@ export function ActiveWorkoutView({
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
                 placeholder={ar.workout.active.notesPlaceholder}
-                className="w-full bg-[#211C23] border border-[#362E3B] rounded-xl p-3 text-xs text-[#F2EADF] placeholder-[#9D969D]/60 focus:outline-none focus:border-[#7C1D38]"
+                className="w-full bg-[#151318] border border-[#2A242E] rounded-xl p-3 text-xs text-[#F1E9DD] placeholder-[#6B646B] focus:outline-none focus:border-[#A83252] focus:ring-1 focus:ring-[#A83252] transition-colors"
               />
             </div>
 
@@ -330,7 +330,7 @@ export function ActiveWorkoutView({
               <button
                 onClick={handleFinishSession}
                 disabled={isPending}
-                className="flex-1 comic-btn-primary py-2.5 px-4 rounded-xl text-xs font-black cursor-pointer disabled:opacity-50"
+                className="flex-1 hub-btn-primary min-h-[44px] py-2.5 px-4 rounded-xl text-xs font-black cursor-pointer disabled:opacity-50"
               >
                 {isPending
                   ? ar.workout.active.saving
@@ -340,7 +340,7 @@ export function ActiveWorkoutView({
               <button
                 onClick={() => setShowFinishModal(false)}
                 disabled={isPending}
-                className="comic-btn-secondary py-2.5 px-4 rounded-xl text-xs font-bold cursor-pointer"
+                className="hub-btn-secondary min-h-[44px] py-2.5 px-4 rounded-xl text-xs font-bold cursor-pointer"
               >
                 {ar.workout.active.undo}
               </button>

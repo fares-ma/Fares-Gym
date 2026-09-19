@@ -102,9 +102,8 @@ export async function getRecentNotes(limit = 30): Promise<QuickNote[]> {
   }));
 }
 
-import { getUserNow } from "../lib/date-utils";
-export { getUserNow };
-
+import { getUserNow, getUserWeekday } from "../lib/date-utils";
+export { getUserNow, getUserWeekday };
 
 /**
  * Lightweight helper returning activities needed for the home dashboard (omits unused notes).
@@ -114,7 +113,7 @@ export async function getDashboardActivities(): Promise<{
   reminders: ReminderItem[];
 }> {
   const now = getUserNow();
-  const currentDayOfWeek = now.getDay();
+  const currentDayOfWeek = getUserWeekday(now);
 
   const [schedule, rems] = await Promise.all([
     getScheduleBlocksForDay(currentDayOfWeek, now),
@@ -136,7 +135,7 @@ export async function getActivitiesSummary(): Promise<{
   notes: QuickNote[];
 }> {
   const now = getUserNow();
-  const currentDayOfWeek = now.getDay();
+  const currentDayOfWeek = getUserWeekday(now);
 
   const [schedule, rems, noteList] = await Promise.all([
     getScheduleBlocksForDay(currentDayOfWeek, now),

@@ -6,10 +6,13 @@ export function middleware(request: NextRequest) {
   const sessionCookie = request.cookies.get("fares_hub_session")?.value;
 
   // Allow static files, public API routes, or Next.js internals
+  // Use a strict extension regex instead of naive pathname.includes(".")
+  // to prevent auth bypass via crafted paths like /api/data.secret
+  const STATIC_FILE_RE = /\.(ico|png|jpg|jpeg|gif|svg|webp|avif|css|js|map|woff2?|ttf|eot|json|webmanifest|xml|txt|robots\.txt)$/i;
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api/public") ||
-    pathname.includes(".") ||
+    STATIC_FILE_RE.test(pathname) ||
     pathname === "/favicon.ico"
   ) {
     return NextResponse.next();

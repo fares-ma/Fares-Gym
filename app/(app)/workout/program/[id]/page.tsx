@@ -28,25 +28,25 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
       {/* Back button */}
       <Link
         href="/workout"
-        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#9D969D] hover:text-[#F2EADF] transition-colors"
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#A7A0A6] hover:text-[#F1E9DD] transition-colors"
       >
         <ArrowRight className="w-4 h-4" />
         <span>{ar.workout.details.backToPrograms}</span>
       </Link>
 
       {/* Program Header */}
-      <div className="comic-card p-6 border border-[#2B252E] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="hub-card p-6 border border-[#2A242E] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-black text-[#F2EADF]">
+            <h1 className="text-2xl sm:text-3xl font-black text-[#F1E9DD]">
               {program.name}
             </h1>
-            <span className="comic-badge text-xs">
+            <span className="hub-badge text-xs font-mono">
               v{program.version}
             </span>
           </div>
-          <p className="text-xs text-[#9D969D] mt-1 flex items-center gap-1.5">
-            <Dumbbell className="w-3.5 h-3.5 text-[#7C1D38]" />
+          <p className="text-xs text-[#A7A0A6] mt-1.5 flex items-center gap-1.5 font-medium">
+            <Dumbbell className="w-3.5 h-3.5 text-[#A83252]" />
             <span>
               {ar.workout.rotation.exercisesCount.replace(
                 "{count}",
@@ -70,7 +70,7 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
 
       {/* Exercises List */}
       <div className="space-y-3">
-        <h2 className="text-base font-black text-[#F2EADF] px-1">
+        <h2 className="text-base font-black text-[#F1E9DD] px-1">
           {ar.workout.details.exercisesTitle}
         </h2>
         <div className="space-y-2.5">
@@ -82,3 +82,4 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
     </div>
   );
 }
+

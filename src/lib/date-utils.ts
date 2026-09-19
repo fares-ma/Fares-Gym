@@ -5,6 +5,30 @@
 
 export const APP_TIMEZONE = process.env.APP_TIMEZONE || "Africa/Cairo";
 
+const WEEKDAY_MAP: Record<string, number> = {
+  Sun: 0,
+  Mon: 1,
+  Tue: 2,
+  Wed: 3,
+  Thu: 4,
+  Fri: 5,
+  Sat: 6,
+};
+
+/**
+ * Returns the day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+ * strictly calculated in the user's configured timezone (APP_TIMEZONE / "Africa/Cairo").
+ * Prevents UTC server mismatch where a server in UTC returns yesterday's or tomorrow's weekday.
+ */
+export function getUserWeekday(date: Date = new Date()): number {
+  const shortName = new Intl.DateTimeFormat("en-US", {
+    timeZone: APP_TIMEZONE,
+    weekday: "short",
+  }).format(date);
+
+  return WEEKDAY_MAP[shortName] ?? 0;
+}
+
 /**
  * Returns a Date object adjusted to the user's configured timezone.
  */

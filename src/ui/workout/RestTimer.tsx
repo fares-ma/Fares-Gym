@@ -33,21 +33,21 @@ export function RestTimer({
 
   return (
     <div className="fixed bottom-20 md:bottom-6 inset-x-3 md:inset-x-auto md:end-6 md:w-96 z-50 animate-in fade-in slide-in-from-bottom-5 duration-300">
-      <div className="comic-card-accent p-4 shadow-2xl shadow-black/80 text-[#F2EADF] bg-[#18151B]">
+      <div className="hub-card-accent p-4.5 shadow-2xl shadow-black/80 text-[#F1E9DD] border border-[#7A1735]">
         {/* Header */}
         <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
-            <span className="comic-badge text-[10px] bg-[#7C1D38] text-[#F2EADF] border-none">
+            <span className="hub-badge-burgundy text-[10px] font-latin">
               REST & RECOVERY
             </span>
-            <span className="font-black text-xs text-[#D6AA63]">
+            <span className="font-black text-xs text-[#C9A15A]">
               {ar.workout.timer.title}
             </span>
           </div>
 
           <button
             onClick={onSkip}
-            className="text-[#9D969D] hover:text-[#F2EADF] p-1 rounded-lg hover:bg-[#211C23] transition-colors cursor-pointer"
+            className="text-[#A7A0A6] hover:text-[#F1E9DD] p-1.5 rounded-lg hover:bg-[#1D1920] transition-colors cursor-pointer"
             title={ar.workout.timer.skipTimer}
           >
             <X className="w-4 h-4" />
@@ -68,19 +68,19 @@ export function RestTimer({
 
           {/* Time Display */}
           <div className="flex-1 text-center">
-            <div className="text-4xl font-black tracking-wider font-mono text-[#F2EADF] drop-shadow">
+            <div className="text-4xl font-black tracking-wider font-mono text-[#F1E9DD] drop-shadow">
               {formattedTime}
             </div>
-            <p className="text-[11px] text-[#9D969D] font-medium mt-0.5">
+            <p className="text-[11px] text-[#A7A0A6] font-medium mt-0.5">
               {ar.workout.timer.restTip}
             </p>
           </div>
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-[#211C23] h-2 rounded-full overflow-hidden my-2 border border-[#2B252E]">
+        <div className="w-full bg-[#1D1920] h-2 rounded-full overflow-hidden my-2 border border-[#2A242E]">
           <div
-            className="bg-gradient-to-r from-[#7C1D38] via-[#A83252] to-[#D6AA63] h-full transition-all duration-500 rounded-full"
+            className="bg-gradient-to-r from-[#7A1735] via-[#A83252] to-[#C9A15A] h-full transition-all duration-500 rounded-full"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -90,25 +90,25 @@ export function RestTimer({
           <div className="flex items-center gap-2">
             <button
               onClick={() => onAddTime(30)}
-              className="flex items-center gap-1 text-xs font-bold px-2.5 py-1.5 rounded-lg bg-[#211C23] hover:bg-[#2B252E] text-[#F2EADF] border border-[#362E3B] transition-colors cursor-pointer"
+              className="flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-xl bg-[#1D1920] hover:bg-[#26202A] text-[#F1E9DD] border border-[#2A242E] transition-colors cursor-pointer"
             >
-              <Plus className="w-3 h-3 text-[#D6AA63]" />
+              <Plus className="w-3.5 h-3.5 text-[#C9A15A]" />
               <span>{ar.workout.timer.add30s}</span>
             </button>
 
             <button
               onClick={() => onAddTime(-30)}
               disabled={secondsRemaining <= 30}
-              className="flex items-center gap-1 text-xs font-bold px-2.5 py-1.5 rounded-lg bg-[#211C23] hover:bg-[#2B252E] text-[#F2EADF] border border-[#362E3B] transition-colors disabled:opacity-40 cursor-pointer"
+              className="flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-xl bg-[#1D1920] hover:bg-[#26202A] text-[#F1E9DD] border border-[#2A242E] transition-colors disabled:opacity-40 cursor-pointer"
             >
-              <Minus className="w-3 h-3 text-[#D6AA63]" />
+              <Minus className="w-3.5 h-3.5 text-[#C9A15A]" />
               <span>{ar.workout.timer.sub30s}</span>
             </button>
           </div>
 
           <button
             onClick={onSkip}
-            className="text-xs font-bold text-[#9D969D] hover:text-[#D6AA63] transition-colors cursor-pointer"
+            className="text-xs font-bold text-[#A7A0A6] hover:text-[#C9A15A] transition-colors cursor-pointer px-2 py-1"
           >
             {ar.workout.timer.skipTimer}
           </button>
@@ -117,3 +117,4 @@ export function RestTimer({
     </div>
   );
 }
+

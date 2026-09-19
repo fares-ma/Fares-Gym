@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Dumbbell, Apple, Calendar, Menu } from "lucide-react";
+import { Home, Dumbbell, Apple, Calendar, Menu, History, TrendingUp, Settings } from "lucide-react";
 import { ar } from "../i18n/ar";
 import { cn } from "../lib/utils";
 import { useState } from "react";
@@ -25,41 +25,57 @@ export function BottomNav() {
 
   return (
     <>
-      {/* Popover for "More" menu */}
+      {/* Backdrop & Popover for "More" menu */}
       {moreMenuOpen && (
         <div
           onClick={() => setMoreMenuOpen(false)}
-          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 md:hidden flex flex-col justify-end p-4"
+          className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 md:hidden flex flex-col justify-end p-4 animate-in fade-in duration-200"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="comic-card p-4 mb-16 space-y-2 border border-[#7C1D38]/50 shadow-2xl animate-breathe"
+            className="hub-card-elevated p-4 mb-20 space-y-2 border border-[#2A242E] shadow-2xl rounded-2xl animate-in slide-in-from-bottom-4 duration-200"
           >
-            <div className="text-xs font-black text-[#D6AA63] tracking-widest uppercase mb-2">
-              {ar.nav.morePages}
+            <div className="text-xs font-black text-[#C9A15A] tracking-wider uppercase mb-3 px-2 flex items-center justify-between">
+              <span>{ar.nav.morePages}</span>
+              <span className="text-[10px] text-[#A7A0A6] font-latin">Fares Hub</span>
             </div>
             <Link
               href="/workout/history"
               onClick={() => setMoreMenuOpen(false)}
-              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#211C23] text-sm font-bold text-[#F2EADF]"
+              className={cn(
+                "flex items-center gap-3 p-3 rounded-xl transition-colors font-bold text-sm",
+                pathname.startsWith("/workout/history")
+                  ? "bg-[#7A1735] text-[#F1E9DD] shadow-sm shadow-[#7A1735]/40"
+                  : "text-[#F1E9DD] hover:bg-[#26202A]"
+              )}
             >
-              <span>📜</span>
+              <History className="w-5 h-5 text-[#C9A15A]" />
               <span>{ar.nav.workoutHistory}</span>
             </Link>
             <Link
               href="/progress"
               onClick={() => setMoreMenuOpen(false)}
-              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#211C23] text-sm font-bold text-[#F2EADF]"
+              className={cn(
+                "flex items-center gap-3 p-3 rounded-xl transition-colors font-bold text-sm",
+                pathname === "/progress"
+                  ? "bg-[#7A1735] text-[#F1E9DD] shadow-sm shadow-[#7A1735]/40"
+                  : "text-[#F1E9DD] hover:bg-[#26202A]"
+              )}
             >
-              <span>📈</span>
+              <TrendingUp className="w-5 h-5 text-[#C9A15A]" />
               <span>{ar.nav.progress}</span>
             </Link>
             <Link
               href="/settings"
               onClick={() => setMoreMenuOpen(false)}
-              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-[#211C23] text-sm font-bold text-[#F2EADF]"
+              className={cn(
+                "flex items-center gap-3 p-3 rounded-xl transition-colors font-bold text-sm",
+                pathname === "/settings"
+                  ? "bg-[#7A1735] text-[#F1E9DD] shadow-sm shadow-[#7A1735]/40"
+                  : "text-[#F1E9DD] hover:bg-[#26202A]"
+              )}
             >
-              <span>⚙️</span>
+              <Settings className="w-5 h-5 text-[#C9A15A]" />
               <span>{ar.nav.settings}</span>
             </Link>
           </div>
@@ -67,38 +83,41 @@ export function BottomNav() {
       )}
 
       {/* Main Bottom Nav Bar */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 bg-[#18151B] border-t border-[#2B252E] z-40 py-1 px-2 shadow-2xl">
-        <div className="flex items-center justify-around">
+      <nav
+        aria-label={ar.nav.ariaMobileNav}
+        className="md:hidden fixed bottom-0 inset-x-0 bg-[#151318]/95 backdrop-blur-md border-t border-[#2A242E] z-40 pt-1.5 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] px-3 shadow-2xl"
+      >
+        <div className="flex items-center justify-around max-w-md mx-auto">
           {MOBILE_ITEMS.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all duration-150 relative min-w-[56px]",
-                  isActive ? "text-[#F2EADF]" : "text-[#9D969D] hover:text-[#F2EADF]"
+                  "flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all duration-150 relative min-w-[56px] min-h-[48px]",
+                  isActive ? "text-[#F1E9DD]" : "text-[#A7A0A6] hover:text-[#F1E9DD]"
                 )}
               >
                 <div
                   className={cn(
-                    "p-1 rounded-lg transition-transform",
-                    isActive ? "text-[#7C1D38] scale-110" : ""
+                    "p-1 rounded-lg transition-transform duration-150",
+                    isActive ? "text-[#A83252] scale-110" : ""
                   )}
                 >
                   <Icon className="w-5 h-5" />
                 </div>
                 <span
                   className={cn(
-                    "text-[10px] tracking-tight font-bold",
-                    isActive ? "text-[#7C1D38]" : ""
+                    "text-[10px] tracking-tight font-bold transition-colors",
+                    isActive ? "text-[#F1E9DD]" : "text-[#A7A0A6]"
                   )}
                 >
                   {item.label}
                 </span>
                 {isActive && (
-                  <div className="w-4 h-1 rounded-full bg-[#7C1D38] mt-0.5" />
+                  <div className="w-3.5 h-1 rounded-full bg-[#7A1735] mt-0.5 shadow-xs shadow-[#7A1735]" />
                 )}
               </Link>
             );
@@ -109,18 +128,30 @@ export function BottomNav() {
             type="button"
             onClick={() => setMoreMenuOpen(!moreMenuOpen)}
             className={cn(
-              "flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all duration-150 relative min-w-[56px] cursor-pointer",
+              "flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all duration-150 relative min-w-[56px] min-h-[48px] cursor-pointer",
               isMoreActive || moreMenuOpen
-                ? "text-[#7C1D38]"
-                : "text-[#9D969D] hover:text-[#F2EADF]"
+                ? "text-[#F1E9DD]"
+                : "text-[#A7A0A6] hover:text-[#F1E9DD]"
             )}
           >
-            <div className="p-1">
+            <div
+              className={cn(
+                "p-1 rounded-lg transition-transform duration-150",
+                isMoreActive || moreMenuOpen ? "text-[#A83252] scale-110" : ""
+              )}
+            >
               <Menu className="w-5 h-5" />
             </div>
-            <span className="text-[10px] tracking-tight font-bold">{ar.nav.more}</span>
+            <span
+              className={cn(
+                "text-[10px] tracking-tight font-bold transition-colors",
+                isMoreActive || moreMenuOpen ? "text-[#F1E9DD]" : "text-[#A7A0A6]"
+              )}
+            >
+              {ar.nav.more}
+            </span>
             {(isMoreActive || moreMenuOpen) && (
-              <div className="w-4 h-1 rounded-full bg-[#7C1D38] mt-0.5" />
+              <div className="w-3.5 h-1 rounded-full bg-[#7A1735] mt-0.5 shadow-xs shadow-[#7A1735]" />
             )}
           </button>
         </div>

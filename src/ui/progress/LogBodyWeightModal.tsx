@@ -71,29 +71,29 @@ export function LogBodyWeightModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="comic-card w-full max-w-md p-5 md:p-6 bg-[#18151B] border border-[#2B252E] space-y-4 shadow-2xl"
+        className="comic-card w-full max-w-md p-5 md:p-6 bg-[#151318] border border-[#2A242E] space-y-4 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#2B252E] pb-3">
+        <div className="flex items-center justify-between border-b border-[#2A242E] pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-[#211C23] text-[#D6AA63]">
+            <div className="p-2.5 rounded-xl bg-[#7A1735]/20 text-[#C9A15A] border border-[#7A1735]/30">
               <Scale className="w-5 h-5" />
             </div>
-            <div>
-              <h3 className="text-lg font-black text-[#F2EADF]">
+            <div className="text-start">
+              <h3 className="text-lg font-black text-[#F1E9DD]">
                 {ar.progress.weightModal.title}
               </h3>
-              <p className="text-xs text-[#9D969D]">
+              <p className="text-xs text-[#A7A0A6]">
                 {ar.progress.weightModal.subtitle}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#9D969D] hover:text-[#F2EADF] hover:bg-[#211C23] transition-colors"
+            className="p-2 rounded-lg text-[#A7A0A6] hover:text-[#F1E9DD] hover:bg-[#1D1920] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -110,7 +110,7 @@ export function LogBodyWeightModal({
         <form onSubmit={handleSubmit} className="space-y-4 text-start">
           {/* Date */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#F2EADF]">
+            <label className="text-xs font-bold text-[#A7A0A6]">
               {ar.progress.weightModal.dateLabel}
             </label>
             <input
@@ -118,13 +118,13 @@ export function LogBodyWeightModal({
               required
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full bg-[#110D13] border border-[#2B252E] rounded-xl px-3.5 py-2.5 text-sm text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
+              className="w-full bg-[#110F14] border border-[#2A242E] rounded-xl px-3.5 py-2.5 text-sm text-[#F1E9DD] focus:outline-none focus:border-[#C9A15A]"
             />
           </div>
 
           {/* Weight */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#F2EADF]">
+            <label className="text-xs font-bold text-[#A7A0A6]">
               {ar.progress.weightModal.weightLabel}
             </label>
             <div className="relative">
@@ -135,9 +135,9 @@ export function LogBodyWeightModal({
                 placeholder="78.5"
                 value={weightKg}
                 onChange={(e) => setWeightKg(e.target.value)}
-                className="w-full bg-[#110D13] border border-[#2B252E] rounded-xl px-3.5 py-2.5 text-sm text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
+                className="w-full bg-[#110F14] border border-[#2A242E] rounded-xl px-3.5 py-2.5 text-sm text-[#F1E9DD] placeholder-[#6B646B] focus:outline-none focus:border-[#C9A15A]"
               />
-              <span className="absolute end-3 top-2.5 text-xs text-[#9D969D] font-mono select-none">
+              <span className="absolute end-3 top-2.5 text-xs text-[#A7A0A6] font-mono select-none">
                 {ar.progress.kgSuffix}
               </span>
             </div>
@@ -145,7 +145,7 @@ export function LogBodyWeightModal({
 
           {/* Notes */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-[#F2EADF]">
+            <label className="text-xs font-bold text-[#A7A0A6]">
               {ar.progress.weightModal.notesLabel}
             </label>
             <input
@@ -153,7 +153,7 @@ export function LogBodyWeightModal({
               placeholder={ar.progress.weightModal.notesPlaceholder}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-[#110D13] border border-[#2B252E] rounded-xl px-3.5 py-2.5 text-sm text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
+              className="w-full bg-[#110F14] border border-[#2A242E] rounded-xl px-3.5 py-2.5 text-sm text-[#F1E9DD] placeholder-[#6B646B] focus:outline-none focus:border-[#C9A15A]"
             />
           </div>
 
@@ -162,14 +162,14 @@ export function LogBodyWeightModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-bold text-[#9D969D] hover:bg-[#211C23] transition-colors"
+              className="px-4 py-2.5 rounded-xl border border-[#2A242E] bg-[#1D1920] text-xs font-bold text-[#A7A0A6] hover:text-[#F1E9DD] hover:bg-[#25202A] transition-colors min-h-[44px] cursor-pointer"
             >
               {ar.progress.weightModal.cancelBtn}
             </button>
             <button
               type="submit"
               disabled={isPending}
-              className="comic-btn-primary px-5 py-2.5 rounded-xl text-xs font-black shadow-lg shadow-[#7C1D38]/30 cursor-pointer disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-[#7A1735] hover:bg-[#942042] text-[#F1E9DD] text-xs font-black shadow-lg shadow-[#7A1735]/30 transition-all min-h-[44px] cursor-pointer disabled:opacity-50"
             >
               {isPending
                 ? ar.progress.weightModal.saving

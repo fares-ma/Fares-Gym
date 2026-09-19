@@ -20,7 +20,7 @@ import {
 } from "../data/schema";
 import { eq } from "drizzle-orm";
 import { validateSession } from "./session";
-import { getUserNow } from "./activities-queries";
+import { getUserNow, getUserTodayDateStr } from "../lib/date-utils";
 
 export interface ExportDataResult {
   success: boolean;
@@ -70,14 +70,16 @@ export async function exportAllDataAction(): Promise<ExportDataResult> {
     ]);
 
     const now = getUserNow();
-    const isoDate = now.toISOString().split("T")[0];
-    const timestampStr = now.toISOString();
+    const localDateStr = getUserTodayDateStr();
+    const utcTimestampStr = new Date().toISOString();
 
     const backupPayload = {
       meta: {
         app: "Fares Hub",
         exportVersion: "1.0.0",
-        exportedAt: timestampStr,
+        exportedAtUtc: utcTimestampStr,
+        exportedAtLocalDate: localDateStr,
+        timezone: "Africa/Cairo",
         source: "Neon Serverless PostgreSQL",
         targetUser: "fares",
       },
@@ -104,13 +106,13 @@ export async function exportAllDataAction(): Promise<ExportDataResult> {
       .insert(appSettings)
       .values({
         key: "last_backup_timestamp",
-        value: timestampStr,
+        value: utcTimestampStr,
         updatedAt: now,
       })
       .onConflictDoUpdate({
         target: appSettings.key,
         set: {
-          value: timestampStr,
+          value: utcTimestampStr,
           updatedAt: now,
         },
       });
@@ -120,7 +122,7 @@ export async function exportAllDataAction(): Promise<ExportDataResult> {
     return {
       success: true,
       jsonData: JSON.stringify(backupPayload, null, 2),
-      filename: `fares-hub-backup-${isoDate}.json`,
+      filename: `fares-hub-backup-${localDateStr}.json`,
     };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Export failed";

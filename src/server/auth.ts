@@ -99,7 +99,7 @@ export async function loginAction(input: LoginInput): Promise<AuthResult> {
 
   const isValid = await verifyPassword(input.password, rawHash);
   if (!isValid) {
-    console.warn(`[AUTH] Password verification failed. Hash configured length: ${rawHash.length}, prefix: ${rawHash.slice(0, 7)}`);
+    console.warn("[AUTH] Password verification failed");
     await recordAttempt(ip, false);
     return { success: false, error: ar.auth.invalidCredentials };
   }

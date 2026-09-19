@@ -42,13 +42,13 @@ export function ActivitiesView({
       <div className="space-y-4">
         {/* Navigation Tabs */}
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#1A151D] border border-[#2B252E]">
+          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#1D1920] border border-[#2A242E]">
             <button
               onClick={() => setActiveTab("schedule")}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all min-h-[44px] cursor-pointer ${
                 activeTab === "schedule"
-                  ? "bg-[#D6AA63] text-[#110D13] shadow-md shadow-amber-950/20"
-                  : "text-[#9D969D] hover:text-[#F2EADF]"
+                  ? "bg-[#C9A15A] text-[#110F14] font-black shadow-md shadow-[#C9A15A]/20"
+                  : "text-[#A7A0A6] hover:text-[#F1E9DD] hover:bg-[#25202A]"
               }`}
             >
               <Calendar className="w-4 h-4" />
@@ -57,16 +57,16 @@ export function ActivitiesView({
 
             <button
               onClick={() => setActiveTab("reminders")}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all min-h-[44px] cursor-pointer ${
                 activeTab === "reminders"
-                  ? "bg-[#D6AA63] text-[#110D13] shadow-md shadow-amber-950/20"
-                  : "text-[#9D969D] hover:text-[#F2EADF]"
+                  ? "bg-[#C9A15A] text-[#110F14] font-black shadow-md shadow-[#C9A15A]/20"
+                  : "text-[#A7A0A6] hover:text-[#F1E9DD] hover:bg-[#25202A]"
               }`}
             >
               <Bell className="w-4 h-4" />
               <span>{ar.activities.remindersTab}</span>
               {pendingRemindersCount > 0 && (
-                <span className="w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center font-mono">
+                <span className="px-1.5 py-0.5 rounded-full bg-[#7A1735] text-[#F1E9DD] text-[10px] font-mono font-bold">
                   {pendingRemindersCount}
                 </span>
               )}
@@ -74,10 +74,10 @@ export function ActivitiesView({
 
             <button
               onClick={() => setActiveTab("notes")}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all min-h-[44px] cursor-pointer ${
                 activeTab === "notes"
-                  ? "bg-[#D6AA63] text-[#110D13] shadow-md shadow-amber-950/20"
-                  : "text-[#9D969D] hover:text-[#F2EADF]"
+                  ? "bg-[#C9A15A] text-[#110F14] font-black shadow-md shadow-[#C9A15A]/20"
+                  : "text-[#A7A0A6] hover:text-[#F1E9DD] hover:bg-[#25202A]"
               }`}
             >
               <StickyNote className="w-4 h-4" />
@@ -88,7 +88,7 @@ export function ActivitiesView({
           {activeTab === "schedule" && (
             <button
               onClick={() => setIsAddBlockOpen(true)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D6AA63] hover:bg-[#C29650] text-[#110D13] font-black text-xs shadow-md shadow-amber-950/30 transition-all"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#7A1735] hover:bg-[#942042] text-[#F1E9DD] font-black text-xs shadow-lg shadow-[#7A1735]/30 transition-all min-h-[44px] cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>{ar.activities.addBlockCTA}</span>

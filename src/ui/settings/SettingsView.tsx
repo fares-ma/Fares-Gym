@@ -17,18 +17,18 @@ export function SettingsView({ summary }: SettingsViewProps) {
   return (
     <div className="space-y-6 max-w-3xl mx-auto pb-10">
       {/* Hero Header */}
-      <div className="comic-card p-6 border border-[#2B252E] flex items-center justify-between gap-4">
-        <div>
+      <div className="comic-card p-6 border border-[#2A242E] bg-[#151318] flex items-center justify-between gap-4 shadow-sm">
+        <div className="text-start">
           <div className="flex items-center gap-2 mb-1">
-            <span className="comic-badge text-[10px] bg-[#211C23] text-[#D6AA63]">
+            <span className="comic-badge text-[10px] bg-[#1D1920] text-[#C9A15A] border border-[#C9A15A]/30 font-mono">
               SYSTEM PREFERENCES & SOVEREIGNTY
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#F2EADF] flex items-center gap-2.5">
-            <SettingsIcon className="w-6 h-6 text-[#7C1D38]" />
+          <h1 className="text-2xl sm:text-3xl font-black text-[#F1E9DD] flex items-center gap-2.5">
+            <SettingsIcon className="w-6 h-6 text-[#7A1735]" />
             <span>{ar.settings.title}</span>
           </h1>
-          <p className="text-xs text-[#9D969D] mt-1">
+          <p className="text-xs text-[#A7A0A6] mt-1">
             {ar.settings.subtitle}
           </p>
         </div>

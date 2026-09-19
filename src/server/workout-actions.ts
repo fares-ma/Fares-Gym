@@ -16,27 +16,12 @@ import { validateSession } from "./session";
 import { parseWeight } from "../domain/workout/weight-parser";
 import { calculateWarmupSets } from "../domain/workout/warmup-engine";
 
-export const startWorkoutSessionSchema = z.object({
-  programId: z.string().trim().min(1, "معرف البرنامج مطلوب"),
-});
-
-export const logSetEntrySchema = z.object({
-  entryId: z.string().trim().min(1, "معرف المجموعة مطلوب"),
-  actualWeight: z.string().trim().min(1, "الوزن مطلوب"),
-  actualReps: z.number().int().min(0, "العدات يجب أن تكون 0 أو أكثر"),
-  isCompleted: z.boolean().optional(),
-  status: z.enum(["pending", "completed", "skipped"]).optional(),
-  notes: z.string().optional().nullable(),
-});
-
-export const completeWorkoutSessionSchema = z.object({
-  sessionId: z.string().trim().min(1, "معرف الجلسة مطلوب"),
-  notes: z.string().optional().nullable(),
-});
-
-export const abandonWorkoutSessionSchema = z.object({
-  sessionId: z.string().trim().min(1, "معرف الجلسة مطلوب"),
-});
+import {
+  startWorkoutSessionSchema,
+  logSetEntrySchema,
+  completeWorkoutSessionSchema,
+  abandonWorkoutSessionSchema,
+} from "./schemas";
 
 /**
  * Starts a new active workout session or resumes an existing in-progress one.
@@ -209,20 +194,25 @@ export async function logSetEntryAction(input: {
         throw new Error("Set entry not found");
       }
 
-      // 2. Verify parent WorkoutSession has status in_progress atomically
+      // 2. Verify parent WorkoutSession is active and strictly guard completed sessions
       const [parentSession] = await tx
         .select()
         .from(workoutSessions)
-        .where(
-          and(
-            eq(workoutSessions.id, entry.sessionId),
-            eq(workoutSessions.status, "in_progress")
-          )
-        )
+        .where(eq(workoutSessions.id, entry.sessionId))
         .limit(1);
 
       if (!parentSession) {
-        throw new Error("Cannot modify sets in a completed or inactive session");
+        throw new Error("Workout session not found");
+      }
+
+      if (parentSession.status === "completed") {
+        throw new Error(
+          "Cannot modify sets in a completed session. Completed sessions are strictly immutable."
+        );
+      }
+
+      if (parentSession.status !== "in_progress") {
+        throw new Error("Cannot modify sets in an inactive workout session");
       }
 
       // 3. Validate unit tag against existing entries for this exercise
@@ -307,8 +297,14 @@ export async function completeWorkoutSessionAction(
       .limit(1);
 
     if (!session) return { success: false, error: "Session not found" };
+    if (session.status === "completed") {
+      return {
+        success: false,
+        error: "Session is already completed and strictly immutable",
+      };
+    }
     if (session.status !== "in_progress") {
-      return { success: false, error: "Session is already completed or inactive" };
+      return { success: false, error: "Session is inactive or already ended" };
     }
 
     const completedAt = new Date();
@@ -367,6 +363,23 @@ export async function abandonWorkoutSessionAction(sessionId: string): Promise<{
   const validSessionId = parsed.data.sessionId;
 
   try {
+    const [session] = await db
+      .select()
+      .from(workoutSessions)
+      .where(eq(workoutSessions.id, validSessionId))
+      .limit(1);
+
+    if (!session) return { success: false, error: "Session not found" };
+    if (session.status === "completed") {
+      return {
+        success: false,
+        error: "Cannot abandon a completed session. Completed sessions are strictly immutable.",
+      };
+    }
+    if (session.status !== "in_progress") {
+      return { success: false, error: "Session is inactive" };
+    }
+
     await db
       .update(workoutSessions)
       .set({

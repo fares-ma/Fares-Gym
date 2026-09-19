@@ -56,11 +56,11 @@ export function ScheduleTimeline({ blocks, onBlockDeleted }: ScheduleTimelinePro
 
   if (blocks.length === 0) {
     return (
-      <div className="comic-card p-8 border border-dashed border-[#2B252E] text-center space-y-3 bg-[#161218]">
-        <div className="w-12 h-12 rounded-2xl bg-[#211C23] text-[#D6AA63] mx-auto flex items-center justify-center">
+      <div className="comic-card p-8 border border-dashed border-[#2A242E] text-center space-y-3 bg-[#151318]">
+        <div className="w-12 h-12 rounded-2xl bg-[#1D1920] text-[#C9A15A] mx-auto flex items-center justify-center border border-[#2A242E]">
           <Calendar className="w-6 h-6" />
         </div>
-        <p className="text-xs sm:text-sm text-[#9D969D] max-w-sm mx-auto leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#A7A0A6] max-w-sm mx-auto leading-relaxed">
           {ar.activities.emptySchedule}
         </p>
       </div>
@@ -72,16 +72,17 @@ export function ScheduleTimeline({ blocks, onBlockDeleted }: ScheduleTimelinePro
       {blocks.map((block) => {
         const isCurrent = block.status === "current";
         const isCompleted = block.status === "completed";
+        const isOvernight = block.endTime < block.startTime;
 
         return (
           <div
             key={block.occurrenceId || block.id}
-            className={`comic-card p-4 border transition-all flex items-center justify-between gap-3 ${
+            className={`comic-card p-4 border transition-all flex items-center justify-between gap-3 shadow-sm ${
               isCurrent
-                ? "bg-gradient-to-r from-[#2B1D12] via-[#21171A] to-[#1A151D] border-[#D6AA63] shadow-lg shadow-amber-950/20"
+                ? "bg-gradient-to-r from-[#2A151D] via-[#1D1920] to-[#151318] border-[#C9A15A] shadow-md shadow-[#C9A15A]/10"
                 : isCompleted
-                ? "bg-[#141016]/60 border-[#221D25] opacity-75"
-                : "bg-[#1A151D] border-[#2B252E] hover:border-[#3B3240]"
+                ? "bg-[#110F14]/70 border-[#221C26] opacity-70"
+                : "bg-[#151318] border-[#2A242E] hover:border-[#3D3342]"
             }`}
           >
             <div className="flex items-center gap-3 min-w-0">
@@ -89,10 +90,10 @@ export function ScheduleTimeline({ blocks, onBlockDeleted }: ScheduleTimelinePro
               <div
                 className={`p-2.5 rounded-xl shrink-0 ${
                   isCurrent
-                    ? "bg-[#D6AA63] text-[#110D13] shadow-md shadow-amber-900/30"
+                    ? "bg-[#C9A15A] text-[#110F14] shadow-md shadow-[#C9A15A]/30"
                     : isCompleted
-                    ? "bg-[#211C23] text-[#9D969D]"
-                    : "bg-[#211C23] text-[#D6AA63]"
+                    ? "bg-[#1D1920] text-[#A7A0A6] border border-[#2A242E]"
+                    : "bg-[#1D1920] text-[#C9A15A] border border-[#2A242E]"
                 }`}
               >
                 {getIconForActivity(block.title)}
@@ -104,31 +105,38 @@ export function ScheduleTimeline({ blocks, onBlockDeleted }: ScheduleTimelinePro
                   <h4
                     className={`font-bold text-sm truncate ${
                       isCurrent
-                        ? "text-[#F2EADF] font-black text-base"
+                        ? "text-[#F1E9DD] font-black text-base"
                         : isCompleted
-                        ? "text-[#9D969D] line-through"
-                        : "text-[#F2EADF]"
+                        ? "text-[#A7A0A6] line-through"
+                        : "text-[#F1E9DD]"
                     }`}
                   >
                     {block.title}
                   </h4>
 
                   {isCurrent && (
-                    <span className="comic-badge text-[10px] bg-[#D6AA63] text-[#110D13] font-black animate-pulse flex items-center gap-1">
+                    <span className="comic-badge text-[10px] bg-[#C9A15A] text-[#110F14] font-black animate-pulse flex items-center gap-1">
                       <Sparkles className="w-3 h-3" />
                       <span>{ar.activities.currentActivity}</span>
                     </span>
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 text-xs font-mono text-[#9D969D]">
+                <div className="flex items-center gap-2 text-xs font-mono text-[#A7A0A6] flex-wrap">
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{block.startTime} - {block.endTime}</span>
+                    <Clock className="w-3.5 h-3.5 text-[#C9A15A]" />
+                    <span>
+                      {block.startTime} - {block.endTime}
+                    </span>
+                    {isOvernight && (
+                      <span className="text-[10px] text-[#C9A15A] font-bold px-1.5 py-0.5 bg-[#1D1920] border border-[#2A242E] rounded">
+                        (+1)
+                      </span>
+                    )}
                   </span>
 
                   {isCurrent && block.remainingMinutes !== undefined && (
-                    <span className="text-[#D6AA63] font-bold">
+                    <span className="text-[#C9A15A] font-bold">
                       ({ar.activities.remainingTime.replace("{mins}", String(block.remainingMinutes))})
                     </span>
                   )}
@@ -141,7 +149,7 @@ export function ScheduleTimeline({ blocks, onBlockDeleted }: ScheduleTimelinePro
               <button
                 onClick={() => handleDelete(block.id)}
                 disabled={isPending}
-                className="p-2 rounded-xl text-[#9D969D] hover:text-red-400 hover:bg-red-950/20 transition-all disabled:opacity-40"
+                className="p-2 rounded-xl text-[#A7A0A6] hover:text-red-400 hover:bg-red-950/30 transition-all disabled:opacity-40 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
                 title={ar.activities.deleteBlockTooltip}
               >
                 <Trash2 className="w-4 h-4" />

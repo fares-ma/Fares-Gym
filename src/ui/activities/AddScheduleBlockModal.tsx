@@ -57,38 +57,38 @@ export function AddScheduleBlockModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="comic-card w-full max-w-md p-6 border border-[#2B252E] bg-[#1A151D] shadow-2xl space-y-5"
+        className="comic-card w-full max-w-md p-6 border border-[#2A242E] bg-[#151318] shadow-2xl space-y-5"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#2B252E]">
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-xl bg-amber-500/10 text-[#D6AA63]">
+        <div className="flex items-center justify-between pb-3 border-b border-[#2A242E]">
+          <div className="flex items-center gap-2.5">
+            <span className="p-2 rounded-xl bg-[#7A1735]/20 text-[#C9A15A] border border-[#7A1735]/30">
               <Calendar className="w-5 h-5" />
             </span>
-            <h2 className="text-base sm:text-lg font-black text-[#F2EADF]">
+            <h2 className="text-base sm:text-lg font-black text-[#F1E9DD]">
               {ar.activities.blockModal.title}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#9D969D] hover:text-[#F2EADF] hover:bg-[#211C23] transition-colors"
+            className="p-2 rounded-lg text-[#A7A0A6] hover:text-[#F1E9DD] hover:bg-[#1D1920] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {error && (
-          <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/30 text-xs text-red-400 font-bold">
+          <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-900/60 text-xs text-rose-300 font-bold">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5 text-start">
-            <label className="text-xs font-bold text-[#9D969D] block">
+            <label className="text-xs font-bold text-[#A7A0A6] block">
               {ar.activities.blockModal.activityNameLabel} *
             </label>
             <input
@@ -98,18 +98,18 @@ export function AddScheduleBlockModal({
               placeholder={ar.activities.blockModal.activityNamePlaceholder}
               disabled={isPending}
               required
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110D13] border border-[#2B252E] text-sm text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110F14] border border-[#2A242E] text-sm text-[#F1E9DD] placeholder-[#6B646B] focus:outline-none focus:border-[#C9A15A]"
             />
           </div>
 
           <div className="space-y-1.5 text-start">
-            <label className="text-xs font-bold text-[#9D969D] block">
+            <label className="text-xs font-bold text-[#A7A0A6] block">
               {ar.activities.blockModal.dayLabel}
             </label>
             <select
               value={dayOfWeek}
               onChange={(e) => setDayOfWeek(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110D13] border border-[#2B252E] text-xs text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#110F14] border border-[#2A242E] text-xs text-[#F1E9DD] focus:outline-none focus:border-[#C9A15A]"
             >
               <option value="7">{ar.activities.blockModal.allDays}</option>
               <option value="0">{ar.activities.days.sunday}</option>
@@ -124,7 +124,7 @@ export function AddScheduleBlockModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1 text-start">
-              <label className="text-xs font-bold text-[#9D969D] block">
+              <label className="text-xs font-bold text-[#A7A0A6] block">
                 {ar.activities.blockModal.startTimeLabel}
               </label>
               <input
@@ -132,12 +132,12 @@ export function AddScheduleBlockModal({
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
                 required
-                className="w-full px-3 py-2 rounded-xl bg-[#110D13] border border-[#2B252E] text-sm font-mono text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
+                className="w-full px-3 py-2 rounded-xl bg-[#110F14] border border-[#2A242E] text-sm font-mono text-[#F1E9DD] focus:outline-none focus:border-[#C9A15A]"
               />
             </div>
 
             <div className="space-y-1 text-start">
-              <label className="text-xs font-bold text-[#9D969D] block">
+              <label className="text-xs font-bold text-[#A7A0A6] block">
                 {ar.activities.blockModal.endTimeLabel}
               </label>
               <input
@@ -145,7 +145,7 @@ export function AddScheduleBlockModal({
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
                 required
-                className="w-full px-3 py-2 rounded-xl bg-[#110D13] border border-[#2B252E] text-sm font-mono text-[#F2EADF] focus:outline-none focus:border-[#D6AA63]"
+                className="w-full px-3 py-2 rounded-xl bg-[#110F14] border border-[#2A242E] text-sm font-mono text-[#F1E9DD] focus:outline-none focus:border-[#C9A15A]"
               />
             </div>
           </div>
@@ -155,14 +155,14 @@ export function AddScheduleBlockModal({
               type="button"
               onClick={onClose}
               disabled={isPending}
-              className="px-4 py-2.5 rounded-xl border border-[#2B252E] text-xs font-bold text-[#9D969D] hover:text-[#F2EADF] hover:bg-[#211C23] transition-colors"
+              className="px-4 py-2.5 rounded-xl border border-[#2A242E] bg-[#1D1920] text-xs font-bold text-[#A7A0A6] hover:text-[#F1E9DD] hover:bg-[#25202A] transition-colors min-h-[44px] cursor-pointer"
             >
               {ar.activities.blockModal.cancelBtn}
             </button>
             <button
               type="submit"
               disabled={isPending}
-              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#D6AA63] hover:bg-[#C29650] text-[#110D13] font-black text-xs shadow-lg shadow-amber-950/30 transition-all disabled:opacity-50"
+              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#7A1735] hover:bg-[#942042] text-[#F1E9DD] font-black text-xs shadow-lg shadow-[#7A1735]/30 transition-all disabled:opacity-50 min-h-[44px] cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>{isPending ? ar.activities.saving : ar.activities.blockModal.submitBtn}</span>

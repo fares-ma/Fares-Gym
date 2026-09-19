@@ -44,24 +44,24 @@ export function NutritionView({ initialSummary }: NutritionViewProps) {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsEditTargetsOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[#2B252E] bg-[#1A151D] hover:bg-[#211C23] text-xs font-bold text-[#F2EADF] transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#2A242E] bg-[#1D1920] hover:bg-[#25202A] text-xs font-bold text-[#F1E9DD] transition-all min-h-[44px] cursor-pointer"
             >
-              <Target className="w-4 h-4 text-[#D6AA63]" />
+              <Target className="w-4 h-4 text-[#C9A15A]" />
               <span>{ar.nutrition.editTargetsCTA}</span>
             </button>
 
             <button
               onClick={() => setIsTdeeOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[#2B252E] bg-[#1A151D] hover:bg-[#211C23] text-xs font-bold text-[#9D969D] hover:text-[#F2EADF] transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#2A242E] bg-[#1D1920] hover:bg-[#25202A] text-xs font-bold text-[#A7A0A6] hover:text-[#F1E9DD] transition-all min-h-[44px] cursor-pointer"
             >
-              <Calculator className="w-4 h-4 text-purple-400" />
+              <Calculator className="w-4 h-4 text-[#C9A15A]" />
               <span>{ar.nutrition.tdeeCalculatorCTA}</span>
             </button>
           </div>
 
           <button
             onClick={() => setIsAddMealOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold shadow-lg shadow-orange-950/40 transition-all"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#7A1735] hover:bg-[#942042] text-[#F1E9DD] text-xs font-black shadow-lg shadow-[#7A1735]/30 transition-all min-h-[44px] cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>{ar.nutrition.logMealCTA}</span>
@@ -76,10 +76,10 @@ export function NutritionView({ initialSummary }: NutritionViewProps) {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-orange-500/10 text-orange-400">
+            <span className="p-1.5 rounded-lg bg-[#7A1735]/20 text-[#C9A15A] border border-[#7A1735]/30">
               <Utensils className="w-4 h-4" />
             </span>
-            <h3 className="text-base font-black text-[#F2EADF]">
+            <h3 className="text-base font-black text-[#F1E9DD]">
               {ar.nutrition.mealsTitle} ({initialSummary.meals.length})
             </h3>
           </div>

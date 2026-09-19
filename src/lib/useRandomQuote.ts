@@ -3,11 +3,15 @@ import { quotes, QuoteContext } from "@/i18n/quotes";
 export function useRandomQuote(context: QuoteContext): string {
   const list = quotes[context] || quotes.home;
 
-  // Deterministic hourly rotation so SSR matches Client and eliminates layout shift
+  // Deterministic daily rotation using UTC to prevent SSR/Client hydration mismatch.
+  // Vercel serverless runs in UTC; using getUTCHours() ensures the same index
+  // is computed on both server and client regardless of local timezone.
   const now = new Date();
   const dayOfYear = Math.floor(
-    (now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000
+    (Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) -
+      Date.UTC(now.getUTCFullYear(), 0, 0)) /
+      86400000
   );
-  const index = Math.abs(dayOfYear + now.getHours()) % list.length;
+  const index = Math.abs(dayOfYear + now.getUTCHours()) % list.length;
   return list[index] || list[0];
 }

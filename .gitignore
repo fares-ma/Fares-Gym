@@ -42,6 +42,7 @@ Thumbs.db
 # Local tooling & scratch
 .playwright-mcp/
 scratch/
+chatgbt-uiux/
 .vscode/*
 !.vscode/extensions.json
 .idea/

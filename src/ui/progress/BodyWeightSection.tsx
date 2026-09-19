@@ -64,20 +64,20 @@ export function BodyWeightSection({
   }, [entries]);
 
   return (
-    <div className="comic-card p-5 border border-[#2B252E] space-y-4">
+    <div className="comic-card p-5 border border-[#2A242E] bg-[#151318] space-y-4 shadow-sm">
       {/* Section Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-[#211C23] text-[#D6AA63]">
+          <div className="p-2.5 rounded-xl bg-[#7A1735]/20 text-[#C9A15A] border border-[#7A1735]/30">
             <Scale className="w-5 h-5" />
           </div>
-          <div>
-            <h3 className="text-base sm:text-lg font-black text-[#F2EADF]">
+          <div className="text-start">
+            <h3 className="text-base sm:text-lg font-black text-[#F1E9DD]">
               {ar.progress.bodyWeightTitle}
             </h3>
             {latest && (
-              <p className="text-xs text-[#9D969D]">
-                {ar.progress.latestMeasurement} <strong className="text-[#F2EADF] font-mono">{latest.weightKg} {ar.progress.kgSuffix}</strong> ({latest.date})
+              <p className="text-xs text-[#A7A0A6]">
+                {ar.progress.latestMeasurement} <strong className="text-[#F1E9DD] font-mono">{latest.weightKg} {ar.progress.kgSuffix}</strong> ({latest.date})
               </p>
             )}
           </div>
@@ -85,7 +85,7 @@ export function BodyWeightSection({
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-1.5 comic-btn-primary px-3.5 py-2 rounded-xl text-xs font-black shadow-md cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-[#7A1735] hover:bg-[#942042] text-[#F1E9DD] text-xs font-black shadow-lg shadow-[#7A1735]/30 transition-all min-h-[44px] cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>{ar.progress.logWeightCTA}</span>
@@ -94,8 +94,8 @@ export function BodyWeightSection({
 
       {/* Main Content: Chart or Empty */}
       {entries.length === 0 ? (
-        <div className="py-8 text-center border border-dashed border-[#2B252E] rounded-2xl bg-[#161218] p-6 space-y-2">
-          <p className="text-xs text-[#9D969D]">
+        <div className="py-8 text-center border border-dashed border-[#2A242E] rounded-2xl bg-[#151318] p-6 space-y-2">
+          <p className="text-xs text-[#A7A0A6]">
             {ar.progress.emptyWeightLogs}
           </p>
         </div>
@@ -103,16 +103,16 @@ export function BodyWeightSection({
         <div className="space-y-4">
           {/* Quick Metrics highlight */}
           {latest && (
-            <div className="flex items-center gap-4 bg-[#141016] p-3 rounded-xl border border-[#2B252E]">
-              <div>
-                <span className="text-[11px] text-[#9D969D] block">{ar.progress.currentWeight}</span>
-                <span className="text-2xl font-black text-[#F2EADF] font-mono">
-                  {latest.weightKg} <span className="text-xs font-bold text-[#D6AA63]">{ar.progress.kgSuffix}</span>
+            <div className="flex items-center gap-4 bg-[#1D1920] p-3 rounded-xl border border-[#2A242E]">
+              <div className="text-start">
+                <span className="text-[11px] text-[#A7A0A6] block">{ar.progress.currentWeight}</span>
+                <span className="text-2xl font-black text-[#F1E9DD] font-mono">
+                  {latest.weightKg} <span className="text-xs font-bold text-[#C9A15A]">{ar.progress.kgSuffix}</span>
                 </span>
               </div>
               {diff !== null && (
-                <div className="border-e border-[#2B252E] pe-4">
-                  <span className="text-[11px] text-[#9D969D] block">{ar.progress.diffFromPrevious}</span>
+                <div className="border-e border-[#2A242E] pe-4 text-start">
+                  <span className="text-[11px] text-[#A7A0A6] block">{ar.progress.diffFromPrevious}</span>
                   <div className="flex items-center gap-1">
                     {diff <= 0 ? (
                       <TrendingDown className="w-4 h-4 text-emerald-400" />
@@ -130,19 +130,19 @@ export function BodyWeightSection({
 
           {/* SVG Line Chart */}
           {chartPoints && (
-            <div className="bg-[#120E15] p-3 rounded-xl border border-[#2B252E] overflow-hidden">
-              <div className="flex items-center justify-between text-[10px] text-[#9D969D] font-mono mb-1">
+            <div className="bg-[#110F14] p-3 rounded-xl border border-[#2A242E] overflow-hidden">
+              <div className="flex items-center justify-between text-[10px] text-[#A7A0A6] font-mono mb-1">
                 <span>{ar.progress.maxWeight} {chartPoints.maxW} {ar.progress.kgSuffix}</span>
                 <span>{ar.progress.minWeight} {chartPoints.minW} {ar.progress.kgSuffix}</span>
               </div>
               <svg
                 viewBox={`0 0 ${chartPoints.width} ${chartPoints.height}`}
-                className="w-full h-32 stroke-[#D6AA63] fill-none"
+                className="w-full h-32 stroke-[#C9A15A] fill-none"
               >
                 {/* Horizontal Guide lines */}
-                <line x1="20" y1="20" x2={chartPoints.width - 20} y2="20" stroke="#2B252E" strokeDasharray="3 3" />
-                <line x1="20" y1={chartPoints.height / 2} x2={chartPoints.width - 20} y2={chartPoints.height / 2} stroke="#2B252E" strokeDasharray="3 3" />
-                <line x1="20" y1={chartPoints.height - 20} x2={chartPoints.width - 20} y2={chartPoints.height - 20} stroke="#2B252E" strokeDasharray="3 3" />
+                <line x1="20" y1="20" x2={chartPoints.width - 20} y2="20" stroke="#2A242E" strokeDasharray="3 3" />
+                <line x1="20" y1={chartPoints.height / 2} x2={chartPoints.width - 20} y2={chartPoints.height / 2} stroke="#2A242E" strokeDasharray="3 3" />
+                <line x1="20" y1={chartPoints.height - 20} x2={chartPoints.width - 20} y2={chartPoints.height - 20} stroke="#2A242E" strokeDasharray="3 3" />
 
                 {/* Progress Path */}
                 <path
@@ -159,7 +159,7 @@ export function BodyWeightSection({
                     cx={p.x}
                     cy={p.y}
                     r="4"
-                    className="fill-[#7C1D38] stroke-[#F2EADF] stroke-2"
+                    className="fill-[#7A1735] stroke-[#F1E9DD] stroke-2"
                   />
                 ))}
               </svg>
@@ -167,23 +167,23 @@ export function BodyWeightSection({
           )}
 
           {/* Recent Entries History List */}
-          <div className="space-y-1.5 pt-2">
-            <span className="text-xs font-bold text-[#F2EADF] block">{ar.progress.recentMeasurements}</span>
+          <div className="space-y-1.5 pt-2 text-start">
+            <span className="text-xs font-bold text-[#F1E9DD] block">{ar.progress.recentMeasurements}</span>
             <div className="max-h-48 overflow-y-auto space-y-1.5 pe-1">
               {[...entries].reverse().slice(0, 5).map((e) => (
                 <div
                   key={e.id}
-                  className="flex items-center justify-between p-2.5 rounded-lg bg-[#18131A] border border-[#2B252E] text-xs"
+                  className="flex items-center justify-between p-2.5 rounded-lg bg-[#1D1920] border border-[#2A242E] text-xs"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-[#F2EADF] font-bold text-sm">
+                    <span className="font-mono text-[#F1E9DD] font-bold text-sm">
                       {e.weightKg} {ar.progress.kgSuffix}
                     </span>
-                    <span className="text-[11px] font-mono text-[#9D969D]">
+                    <span className="text-[11px] font-mono text-[#A7A0A6]">
                       {e.date}
                     </span>
                     {e.notes && (
-                      <span className="text-[11px] text-[#9D969D]/70 truncate max-w-[150px]">
+                      <span className="text-[11px] text-[#A7A0A6]/70 truncate max-w-[150px]">
                         • {e.notes}
                       </span>
                     )}
@@ -192,9 +192,9 @@ export function BodyWeightSection({
                     onClick={() => handleDelete(e.id)}
                     disabled={isPending}
                     aria-label={ar.progress.deleteWeightAria.replace("{weight}", String(e.weightKg)).replace("{date}", e.date)}
-                    className="text-[#9D969D] hover:text-rose-400 p-1 transition-colors cursor-pointer disabled:opacity-50"
+                    className="text-[#A7A0A6] hover:text-rose-400 p-2 transition-colors cursor-pointer disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               ))}
